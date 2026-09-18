@@ -61,7 +61,8 @@
           "settings": {
             "title": "MEN",
             "subtitle": "T-Shirts, Pants & Sets",
-            "btn_text": "Shop Men"
+            "btn_text": "Shop Men",
+            "collection": "men"
           }
         },
         "cat_women": {
@@ -69,7 +70,8 @@
           "settings": {
             "title": "WOMEN",
             "subtitle": "Tops, Dresses & Sets",
-            "btn_text": "Shop Women"
+            "btn_text": "Shop Women",
+            "collection": "women"
           }
         },
         "cat_kids": {
@@ -77,7 +79,8 @@
           "settings": {
             "title": "KIDS & TEENS",
             "subtitle": "Sets & Casuals",
-            "btn_text": "Shop Kids"
+            "btn_text": "Shop Kids",
+            "collection": "kids"
           }
         },
         "cat_new": {
@@ -85,7 +88,8 @@
           "settings": {
             "title": "NEW ARRIVALS",
             "subtitle": "Fresh Drops",
-            "btn_text": "Explore New"
+            "btn_text": "Explore New",
+            "collection": "new-arrivals"
           }
         },
         "cat_sale": {
@@ -93,7 +97,8 @@
           "settings": {
             "title": "SALE",
             "subtitle": "Up to 40% Off",
-            "btn_text": "Shop Sale"
+            "btn_text": "Shop Sale",
+            "collection": "sale"
           }
         }
       },
@@ -115,6 +120,7 @@
       "settings": {
         "title": "Best Sellers",
         "subtitle": "Our most wanted pieces right now",
+        "collection": "best-sellers",
         "products_to_show": 12,
         "enable_slider": true,
         "columns_desktop": 4,
@@ -127,6 +133,7 @@
       "settings": {
         "title": "Men's Collection",
         "subtitle": "Engineered oversized luxury tees, hoodies, and cargo pants",
+        "collection": "men",
         "products_to_show": 12,
         "enable_slider": true,
         "columns_desktop": 4,
@@ -139,6 +146,7 @@
       "settings": {
         "title": "Women's Collection",
         "subtitle": "Contemporary minimalist silhouettes crafted from premium Egyptian cotton",
+        "collection": "women",
         "products_to_show": 12,
         "enable_slider": true,
         "columns_desktop": 4,
@@ -151,6 +159,7 @@
       "settings": {
         "title": "Kids & Teens Collection",
         "subtitle": "Comfortable everyday staples designed for freedom and movement",
+        "collection": "kids",
         "products_to_show": 12,
         "enable_slider": true,
         "columns_desktop": 4,
