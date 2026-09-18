@@ -1,1 +1,182 @@
-[]
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Never Mind - Luxury Fashion",
+    "theme_version": "1.0.0",
+    "theme_author": "Never Mind Store",
+    "theme_documentation_url": "https://nevermindstore.com",
+    "theme_support_url": "https://nevermindstore.com"
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "color",
+        "id": "color_background",
+        "label": "Background",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "color_background_secondary",
+        "label": "Secondary Background",
+        "default": "#F8F8F9"
+      },
+      {
+        "type": "color",
+        "id": "color_foreground",
+        "label": "Text Color",
+        "default": "#111827"
+      },
+      {
+        "type": "color",
+        "id": "color_foreground_secondary",
+        "label": "Secondary Text Color",
+        "default": "#4B5563"
+      },
+      {
+        "type": "color",
+        "id": "color_border",
+        "label": "Border Color",
+        "default": "#E5E7EB"
+      },
+      {
+        "type": "color",
+        "id": "color_primary",
+        "label": "Primary Accent",
+        "default": "#111827"
+      },
+      {
+        "type": "color",
+        "id": "color_sale",
+        "label": "Sale / Discount Badge",
+        "default": "#E05A47"
+      },
+      {
+        "type": "color",
+        "id": "color_button_bg",
+        "label": "Button Background",
+        "default": "#111827"
+      },
+      {
+        "type": "color",
+        "id": "color_button_text",
+        "label": "Button Text",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "color_button_hover_bg",
+        "label": "Button Hover Background",
+        "default": "#2A2F35"
+      }
+    ]
+  },
+  {
+    "name": "Cart Drawer & Shipping",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "cart_drawer_enabled",
+        "label": "Enable slide-out Cart Drawer",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "show_free_shipping_bar",
+        "label": "Show Free Shipping Progress Bar",
+        "default": true
+      },
+      {
+        "type": "number",
+        "id": "free_shipping_threshold",
+        "label": "Free Shipping Threshold (EGP)",
+        "default": 1000
+      },
+      {
+        "type": "text",
+        "id": "free_shipping_message",
+        "label": "Free Shipping Unlocked Message",
+        "default": "Congratulations! You qualify for FREE SHIPPING"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_cart_notes",
+        "label": "Enable Order Notes",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Egypt & Cash on Delivery (COD)",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_cod_badge",
+        "label": "Display Cash on Delivery Badge",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "cod_badge_text",
+        "label": "COD Badge Text",
+        "default": "Cash on Delivery Available across Egypt"
+      },
+      {
+        "type": "text",
+        "id": "inspection_badge_text",
+        "label": "Inspection Guarantee Text",
+        "default": "Open & Inspect Package Before Payment"
+      },
+      {
+        "type": "text",
+        "id": "delivery_time_text",
+        "label": "Estimated Delivery Time",
+        "default": "Cairo & Giza: 24-48 hrs | Governorates: 2-4 Days"
+      }
+    ]
+  },
+  {
+    "name": "Floating WhatsApp Contact",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_whatsapp",
+        "label": "Enable Floating WhatsApp Button",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "whatsapp_number",
+        "label": "WhatsApp Phone Number",
+        "default": "201000000000"
+      },
+      {
+        "type": "text",
+        "id": "whatsapp_message",
+        "label": "Default WhatsApp Message",
+        "default": "Hello Never Mind Store, I have an inquiry about my order / sizing."
+      }
+    ]
+  },
+  {
+    "name": "Social Media Links",
+    "settings": [
+      {
+        "type": "text",
+        "id": "social_instagram",
+        "label": "Instagram URL"
+      },
+      {
+        "type": "text",
+        "id": "social_facebook",
+        "label": "Facebook URL"
+      },
+      {
+        "type": "text",
+        "id": "social_tiktok",
+        "label": "TikTok URL"
+      }
+    ]
+  }
+]
