@@ -12,8 +12,9 @@
     "hero_banner": {
       "type": "hero-banner",
       "settings": {
+        "image_desktop": "shopify://shop_images/5863984987890192018.jpg",
         "banner_height": 85,
-        "overlay_opacity": 35,
+        "overlay_opacity": 90,
         "text_alignment": "left",
         "subheading": "NEW LUXURY STREETWEAR COLLECTION",
         "heading": "Minimal Aesthetics. Uncompromising Craft.",
