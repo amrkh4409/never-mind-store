@@ -6,16 +6,9 @@
         "columns_desktop": 4,
         "show_vendor": true
       }
-    },
-    "recently_viewed": {
-      "type": "recently-viewed",
-      "settings": {
-        "heading": "Recently Viewed Styles"
-      }
     }
   },
   "order": [
-    "main_collection",
-    "recently_viewed"
+    "main_collection"
   ]
 }
