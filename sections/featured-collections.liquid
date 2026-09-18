@@ -1,16 +1,37 @@
 <section class="featured-collections-section">
   <div class="container">
-    {%- if section.settings.title != blank -%}
+    {%- assign is_ar = false -%}
+    {%- if request.locale.iso_code == 'ar' -%}
+      {%- assign is_ar = true -%}
+    {%- endif -%}
+
+    {%- assign display_title = section.settings.title -%}
+    {%- assign display_subtitle = section.settings.subtitle -%}
+    {%- assign display_view_all = section.settings.view_all_text | default: "View All Collections" -%}
+
+    {%- if is_ar -%}
+      {%- if section.settings.title == 'CURATED COLLECTIONS' or section.settings.title == 'Shop By Category' -%}
+        {%- assign display_title = 'التشكيلات المختارة' -%}
+      {%- endif -%}
+      {%- if section.settings.subtitle == 'Discover minimalist luxury streetwear made for the Egyptian lifestyle' or section.settings.subtitle == 'Curated modern wardrobe staples' -%}
+        {%- assign display_subtitle = 'اكتشف أرقى أزياء الستريت وير المصممة بنقاء القطن المصري' -%}
+      {%- endif -%}
+      {%- if display_view_all == 'View All Collections' or display_view_all == 'All Categories' -%}
+        {%- assign display_view_all = 'عرض كل التشكيلات' -%}
+      {%- endif -%}
+    {%- endif -%}
+
+    {%- if display_title != blank -%}
       <div class="section-header">
         <div>
-          <h2 class="section-header__title">{{ section.settings.title }}</h2>
-          {%- if section.settings.subtitle != blank -%}
-            <p class="section-header__subtitle">{{ section.settings.subtitle }}</p>
+          <h2 class="section-header__title">{{ display_title }}</h2>
+          {%- if display_subtitle != blank -%}
+            <p class="section-header__subtitle">{{ display_subtitle }}</p>
           {%- endif -%}
         </div>
         {%- if section.settings.view_all_link != blank -%}
           <a href="{{ section.settings.view_all_link }}" class="section-header__link">
-            <span>{{ section.settings.view_all_text | default: "View All Collections" }}</span>
+            <span>{{ display_view_all }}</span>
             {% render 'icon-chevron' %}
           </a>
         {%- endif -%}
@@ -21,8 +42,35 @@
       {%- for block in section.blocks -%}
         {%- assign collection = collections[block.settings.collection] -%}
         {%- assign collection_title = block.settings.title | default: collection.title -%}
+        {%- assign collection_subtitle = block.settings.subtitle -%}
+        {%- assign collection_btn = block.settings.btn_text | default: "Explore Collection" -%}
         {%- assign collection_image = block.settings.image | default: collection.featured_image -%}
         {%- assign collection_url = block.settings.link | default: collection.url -%}
+
+        {%- if is_ar -%}
+          {%- case collection_title -%}
+            {%- when 'MEN' -%}
+              {%- assign collection_title = 'رجالي' -%}
+              {%- assign collection_subtitle = 'تيشيرتات وبناطيل وأطقم' -%}
+              {%- assign collection_btn = 'تسوق الرجالي' -%}
+            {%- when 'WOMEN' -%}
+              {%- assign collection_title = 'حريمي' -%}
+              {%- assign collection_subtitle = 'توبات وفساتين وأطقم' -%}
+              {%- assign collection_btn = 'تسوق الحريمي' -%}
+            {%- when 'KIDS & TEENS' -%}
+              {%- assign collection_title = 'أطفال ومراهقون' -%}
+              {%- assign collection_subtitle = 'أطقم وملابس مريحة' -%}
+              {%- assign collection_btn = 'تسوق الأطفال' -%}
+            {%- when 'NEW ARRIVALS' -%}
+              {%- assign collection_title = 'وصل حديثاً' -%}
+              {%- assign collection_subtitle = 'أحدث التشكيلات الحصرية' -%}
+              {%- assign collection_btn = 'استكشف الجديد' -%}
+            {%- when 'SALE' -%}
+              {%- assign collection_title = 'تخفيضات' -%}
+              {%- assign collection_subtitle = 'خصومات تصل إلى 40%' -%}
+              {%- assign collection_btn = 'تسوق العروض' -%}
+          {%- endcase -%}
+        {%- endif -%}
 
         <a href="{{ collection_url }}" class="collection-card" {{ block.shopify_attributes }}>
           {%- if collection_image != blank -%}
@@ -40,11 +88,11 @@
 
           <div class="collection-card__overlay">
             <h3 class="collection-card__title">{{ collection_title }}</h3>
-            {%- if block.settings.subtitle != blank -%}
-              <span class="collection-card__count">{{ block.settings.subtitle }}</span>
+            {%- if collection_subtitle != blank -%}
+              <span class="collection-card__count">{{ collection_subtitle }}</span>
             {%- endif -%}
             <span class="collection-card__btn">
-              <span>{{ block.settings.btn_text | default: "Explore Collection" }}</span>
+              <span>{{ collection_btn }}</span>
               {% render 'icon-chevron' %}
             </span>
           </div>
@@ -125,10 +173,11 @@
     {
       "name": "Featured Collections",
       "blocks": [
-        { "type": "collection", "settings": { "title": "MEN", "subtitle": "T-Shirts, Pants & Sets" } },
-        { "type": "collection", "settings": { "title": "WOMEN", "subtitle": "Tops, Dresses & Sets" } },
-        { "type": "collection", "settings": { "title": "NEW ARRIVALS", "subtitle": "Just Dropped" } },
-        { "type": "collection", "settings": { "title": "SALE", "subtitle": "Up to 40% Off" } }
+        { "type": "collection", "settings": { "title": "MEN", "subtitle": "T-Shirts, Pants & Sets", "btn_text": "Shop Men" } },
+        { "type": "collection", "settings": { "title": "WOMEN", "subtitle": "Tops, Dresses & Sets", "btn_text": "Shop Women" } },
+        { "type": "collection", "settings": { "title": "KIDS & TEENS", "subtitle": "Sets & Casuals", "btn_text": "Shop Kids" } },
+        { "type": "collection", "settings": { "title": "NEW ARRIVALS", "subtitle": "Fresh Drops", "btn_text": "Explore New" } },
+        { "type": "collection", "settings": { "title": "SALE", "subtitle": "Up to 40% Off", "btn_text": "Shop Sale" } }
       ]
     }
   ]

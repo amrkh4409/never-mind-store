@@ -638,6 +638,34 @@
     }
   }
 
+  // --- Product Sliders Navigation ---
+  function initSliders() {
+    document.addEventListener('click', (e) => {
+      const prevBtn = e.target.closest('[data-slider-prev]');
+      const nextBtn = e.target.closest('[data-slider-next]');
+
+      if (prevBtn) {
+        const sectionId = prevBtn.dataset.sliderPrev;
+        const slider = document.getElementById(`Slider-${sectionId}`);
+        if (slider) {
+          const itemWidth = slider.querySelector('.products-slider__item')?.offsetWidth || 300;
+          const isRtl = document.documentElement.dir === 'rtl';
+          slider.scrollBy({ left: isRtl ? itemWidth : -itemWidth, behavior: 'smooth' });
+        }
+      }
+
+      if (nextBtn) {
+        const sectionId = nextBtn.dataset.sliderNext;
+        const slider = document.getElementById(`Slider-${sectionId}`);
+        if (slider) {
+          const itemWidth = slider.querySelector('.products-slider__item')?.offsetWidth || 300;
+          const isRtl = document.documentElement.dir === 'rtl';
+          slider.scrollBy({ left: isRtl ? -itemWidth : itemWidth, behavior: 'smooth' });
+        }
+      }
+    });
+  }
+
   // --- Initialize All Theme Features on DOM Ready ---
   document.addEventListener('DOMContentLoaded', () => {
     window.NeverMindCart = new CartDrawer();
@@ -647,5 +675,6 @@
     document.querySelectorAll('[data-variant-picker]').forEach(el => new VariantPicker(el));
     initAccordions();
     initModals();
+    initSliders();
   });
 })();

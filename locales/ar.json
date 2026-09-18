@@ -63,6 +63,11 @@
     "footer": {
       "copyright": "جميع الحقوق محفوظة.",
       "payment_cod": "الدفع عند الاستلام متاح"
+    },
+    "testimonials": {
+      "heading": "ماذا يقول عملاؤنا",
+      "subheading": "تجارب وتقييمات حقيقية من عملائنا في جميع محافظات مصر",
+      "verified_buyer": "مشترٍ موثق"
     }
   },
   "products": {
