@@ -29,12 +29,11 @@
             <p class="section-header__subtitle">{{ display_subtitle }}</p>
           {%- endif -%}
         </div>
-        {%- if section.settings.view_all_link != blank -%}
-          <a href="{{ section.settings.view_all_link }}" class="section-header__link">
-            <span>{{ display_view_all }}</span>
-            {% render 'icon-chevron' %}
-          </a>
-        {%- endif -%}
+        {%- assign view_all_target = section.settings.view_all_link | default: routes.collections_url -%}
+        <a href="{{ view_all_target }}" class="section-header__link">
+          <span>{{ display_view_all }}</span>
+          {% render 'icon-chevron' %}
+        </a>
       </div>
     {%- endif -%}
 
@@ -45,7 +44,7 @@
         {%- assign collection_subtitle = block.settings.subtitle -%}
         {%- assign collection_btn = block.settings.btn_text | default: "Explore Collection" -%}
         {%- assign collection_image = block.settings.image | default: collection.featured_image -%}
-        {%- assign collection_url = block.settings.link | default: collection.url -%}
+        {%- assign collection_url = block.settings.link | default: collection.url | default: routes.all_products_collection_url -%}
 
         {%- if is_ar -%}
           {%- case collection_title -%}

@@ -65,13 +65,11 @@
         {%- endif -%}
 
         {%- assign collection = collections[section.settings.collection] -%}
-        {%- if collection != blank or section.settings.view_all_link != blank -%}
-          {%- assign target_url = section.settings.view_all_link | default: collection.url -%}
-          <a href="{{ target_url }}" class="section-header__link">
-            <span>{{ display_view_all }}</span>
-            {% render 'icon-chevron' %}
-          </a>
-        {%- endif -%}
+        {%- assign target_url = section.settings.view_all_link | default: collection.url | default: routes.all_products_collection_url -%}
+        <a href="{{ target_url }}" class="section-header__link">
+          <span>{{ display_view_all }}</span>
+          {% render 'icon-chevron' %}
+        </a>
       </div>
     </div>
 

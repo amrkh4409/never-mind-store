@@ -10,9 +10,7 @@
         "heading": "Minimal Aesthetics. Uncompromising Craft.",
         "text": "Engineered for comfort, precision, and timeless presence in Egypt. Cash on delivery available nationwide.",
         "button_1_label": "SHOP MEN",
-        "button_1_link": "/collections/all",
-        "button_2_label": "SHOP WOMEN",
-        "button_2_link": "/collections/all"
+        "button_2_label": "SHOP WOMEN"
       }
     },
     "trust_badges": {
@@ -63,8 +61,7 @@
           "settings": {
             "title": "MEN",
             "subtitle": "T-Shirts, Pants & Sets",
-            "btn_text": "Shop Men",
-            "link": "/collections/all"
+            "btn_text": "Shop Men"
           }
         },
         "cat_women": {
@@ -72,8 +69,7 @@
           "settings": {
             "title": "WOMEN",
             "subtitle": "Tops, Dresses & Sets",
-            "btn_text": "Shop Women",
-            "link": "/collections/all"
+            "btn_text": "Shop Women"
           }
         },
         "cat_kids": {
@@ -81,8 +77,7 @@
           "settings": {
             "title": "KIDS & TEENS",
             "subtitle": "Sets & Casuals",
-            "btn_text": "Shop Kids",
-            "link": "/collections/all"
+            "btn_text": "Shop Kids"
           }
         },
         "cat_new": {
@@ -90,8 +85,7 @@
           "settings": {
             "title": "NEW ARRIVALS",
             "subtitle": "Fresh Drops",
-            "btn_text": "Explore New",
-            "link": "/collections/all"
+            "btn_text": "Explore New"
           }
         },
         "cat_sale": {
@@ -99,8 +93,7 @@
           "settings": {
             "title": "SALE",
             "subtitle": "Up to 40% Off",
-            "btn_text": "Shop Sale",
-            "link": "/collections/all"
+            "btn_text": "Shop Sale"
           }
         }
       },
@@ -114,8 +107,7 @@
       "settings": {
         "title": "Curated Categories",
         "subtitle": "Explore urban luxury essentials tailored for modern Egypt",
-        "view_all_text": "All Categories",
-        "view_all_link": "/collections"
+        "view_all_text": "All Categories"
       }
     },
     "featured_collection_bestsellers": {
@@ -123,13 +115,11 @@
       "settings": {
         "title": "Best Sellers",
         "subtitle": "Our most wanted pieces right now",
-        "collection": "frontpage",
         "products_to_show": 12,
         "enable_slider": true,
         "columns_desktop": 4,
         "show_vendor": true,
-        "view_all_text": "View All Best Sellers",
-        "view_all_link": "/collections/all"
+        "view_all_text": "View All Best Sellers"
       }
     },
     "featured_collection_men": {
@@ -137,13 +127,11 @@
       "settings": {
         "title": "Men's Collection",
         "subtitle": "Engineered oversized luxury tees, hoodies, and cargo pants",
-        "collection": "frontpage",
         "products_to_show": 12,
         "enable_slider": true,
         "columns_desktop": 4,
         "show_vendor": true,
-        "view_all_text": "Shop All Men",
-        "view_all_link": "/collections/all"
+        "view_all_text": "Shop All Men"
       }
     },
     "featured_collection_women": {
@@ -151,13 +139,11 @@
       "settings": {
         "title": "Women's Collection",
         "subtitle": "Contemporary minimalist silhouettes crafted from premium Egyptian cotton",
-        "collection": "frontpage",
         "products_to_show": 12,
         "enable_slider": true,
         "columns_desktop": 4,
         "show_vendor": true,
-        "view_all_text": "Shop All Women",
-        "view_all_link": "/collections/all"
+        "view_all_text": "Shop All Women"
       }
     },
     "featured_collection_kids": {
@@ -165,13 +151,11 @@
       "settings": {
         "title": "Kids & Teens Collection",
         "subtitle": "Comfortable everyday staples designed for freedom and movement",
-        "collection": "frontpage",
         "products_to_show": 12,
         "enable_slider": true,
         "columns_desktop": 4,
         "show_vendor": true,
-        "view_all_text": "Shop All Kids",
-        "view_all_link": "/collections/all"
+        "view_all_text": "Shop All Kids"
       }
     },
     "testimonials": {

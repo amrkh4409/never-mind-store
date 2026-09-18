@@ -1,3 +1,4 @@
+<!-- TEST HERO COMMIT 2026-09-18-01 -->
 <div class="hero-banner" style="min-height: {{ section.settings.banner_height }}vh;">
   {%- if section.settings.image_desktop != blank -%}
     <img
@@ -25,13 +26,13 @@
 
     <div class="hero-banner__actions" style="justify-content: {% if section.settings.text_alignment == 'center' %}center{% elsif section.settings.text_alignment == 'right' %}flex-end{% else %}flex-start{% endif %};">
       {%- if section.settings.button_1_label != blank -%}
-        <a href="{{ section.settings.button_1_link }}" class="btn btn-white btn-lg">
+        <a href="{{ section.settings.button_1_link | default: routes.all_products_collection_url }}" class="btn btn-white btn-lg">
           {{ section.settings.button_1_label }}
         </a>
       {%- endif -%}
 
       {%- if section.settings.button_2_label != blank -%}
-        <a href="{{ section.settings.button_2_link }}" class="btn btn-secondary btn-lg" style="color: #FFFFFF; border-color: #FFFFFF;">
+        <a href="{{ section.settings.button_2_link | default: routes.all_products_collection_url }}" class="btn btn-secondary btn-lg" style="color: #FFFFFF; border-color: #FFFFFF;">
           {{ section.settings.button_2_label }}
         </a>
       {%- endif -%}
