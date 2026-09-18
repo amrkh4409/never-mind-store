@@ -10,9 +10,9 @@
         "heading": "Minimal Aesthetics. Uncompromising Craft.",
         "text": "Engineered for comfort, precision, and timeless presence in Egypt. Cash on delivery available nationwide.",
         "button_1_label": "SHOP MEN",
-        "button_1_link": "/collections/all",
+        "button_1_link": "",
         "button_2_label": "SHOP WOMEN",
-        "button_2_link": "/collections/all"
+        "button_2_link": ""
       }
     },
     "trust_badges": {
@@ -61,37 +61,41 @@
         "cat_men": {
           "type": "collection",
           "settings": {
+            "collection": "",
             "title": "MEN",
             "subtitle": "T-Shirts, Pants & Sets",
             "btn_text": "Shop Men",
-            "link": "/collections/all"
+            "link": ""
           }
         },
         "cat_women": {
           "type": "collection",
           "settings": {
+            "collection": "",
             "title": "WOMEN",
             "subtitle": "Tops, Dresses & Sets",
             "btn_text": "Shop Women",
-            "link": "/collections/all"
+            "link": ""
           }
         },
         "cat_new": {
           "type": "collection",
           "settings": {
+            "collection": "",
             "title": "NEW ARRIVALS",
             "subtitle": "Fresh Drops",
             "btn_text": "Explore New",
-            "link": "/collections/all"
+            "link": ""
           }
         },
         "cat_sale": {
           "type": "collection",
           "settings": {
+            "collection": "",
             "title": "SALE",
             "subtitle": "Exclusive Offers",
             "btn_text": "Shop Sale",
-            "link": "/collections/all"
+            "link": ""
           }
         }
       },
@@ -105,7 +109,7 @@
         "title": "Curated Categories",
         "subtitle": "Explore urban luxury essentials tailored for modern Egypt",
         "view_all_text": "All Categories",
-        "view_all_link": "/collections/all"
+        "view_all_link": ""
       }
     },
     "featured_collection_bestsellers": {
@@ -113,6 +117,7 @@
       "settings": {
         "title": "Best Sellers",
         "subtitle": "Our most coveted pieces right now",
+        "collection": "",
         "products_to_show": 8,
         "columns_desktop": 4,
         "show_vendor": true,
