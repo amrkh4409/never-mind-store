@@ -1,0 +1,37 @@
+{%- comment -%}
+  Predictive Search Modal & Input
+{%- endcomment -%}
+
+<div id="SearchModal" class="modal-wrapper" role="dialog" aria-modal="true" aria-label="{{ 'general.search.search' | t }}">
+  <div class="modal-content" style="max-width: 720px;">
+    <button type="button" class="modal-close-btn" data-search-close aria-label="{{ 'sections.quick_view.close' | t }}">
+      {% render 'icon-close' %}
+    </button>
+
+    <h3 style="margin-bottom: 20px;">{{ 'general.search.search' | t }}</h3>
+
+    <form action="{{ routes.search_url }}" method="get" role="search" style="position: relative;">
+      <div style="display: flex; align-items: center; border: 1.5px solid var(--color-foreground); border-radius: var(--radius-sm); padding: 0 16px; background-color: var(--color-bg);">
+        {% render 'icon-search' %}
+        <input
+          id="PredictiveSearchInput"
+          type="search"
+          name="q"
+          placeholder="{{ 'general.search.placeholder' | t }}"
+          style="width: 100%; padding: 14px 12px; font-size: 1.05rem;"
+          autocomplete="off"
+        >
+        <button type="submit" class="btn btn-primary btn-sm" style="flex-shrink: 0;">
+          {{ 'general.search.submit' | t }}
+        </button>
+      </div>
+    </form>
+
+    <!-- Dynamic Predictive Search Results -->
+    <div id="PredictiveSearchResults" style="min-height: 120px; max-height: 460px; overflow-y: auto;">
+      <div style="padding: 36px 0; text-align: center; color: var(--color-foreground-secondary);">
+        <p style="font-size: 0.95rem;">Type to discover shirts, sets, pants, shoes, and new arrivals...</p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,88 @@
+{
+  "sections": {
+    "main_product": {
+      "type": "main-product",
+      "settings": {}
+    },
+    "product_recommendations": {
+      "type": "product-recommendations",
+      "settings": {
+        "heading": "Complete The Look",
+        "subheading": "Curated pieces that style perfectly with this item"
+      }
+    },
+    "trust_badges": {
+      "type": "trust-badges",
+      "blocks": {
+        "badge_cod": {
+          "type": "cod",
+          "settings": {
+            "title": "Cash on Delivery",
+            "text": "Pay comfortably upon arrival anywhere in Egypt"
+          }
+        },
+        "badge_inspect": {
+          "type": "inspection",
+          "settings": {
+            "title": "Inspect Before Payment",
+            "text": "Open & check your items at your doorstep"
+          }
+        },
+        "badge_shipping": {
+          "type": "shipping",
+          "settings": {
+            "title": "Express Shipping",
+            "text": "24-48h Cairo & Giza • 2-4 days governorates"
+          }
+        },
+        "badge_exchange": {
+          "type": "exchange",
+          "settings": {
+            "title": "14-Day Exchange",
+            "text": "Hassle-free size replacement at your door"
+          }
+        }
+      },
+      "block_order": [
+        "badge_cod",
+        "badge_inspect",
+        "badge_shipping",
+        "badge_exchange"
+      ],
+      "settings": {}
+    },
+    "product_faq": {
+      "type": "product-faq",
+      "blocks": {
+        "faq_1": {
+          "type": "faq_item",
+          "settings": {
+            "question": "Can I try the size before paying the courier?",
+            "answer": "Yes, our delivery partners allow you to check size and fit on delivery before payment."
+          }
+        },
+        "faq_2": {
+          "type": "faq_item",
+          "settings": {
+            "question": "How do I care for this garment?",
+            "answer": "Machine wash inside-out on a delicate cold cycle. Hang to dry in the shade to preserve rich fabric texture and deep color."
+          }
+        }
+      },
+      "block_order": [
+        "faq_1",
+        "faq_2"
+      ],
+      "settings": {
+        "heading": "Questions About This Piece",
+        "subheading": "Sizing, care & delivery assurance"
+      }
+    }
+  },
+  "order": [
+    "main_product",
+    "product_recommendations",
+    "trust_badges",
+    "product_faq"
+  ]
+}

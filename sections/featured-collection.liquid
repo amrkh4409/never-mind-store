@@ -1,0 +1,104 @@
+<section class="featured-products-section" style="padding: 60px 0;">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <h2 class="section-header__title">{{ section.settings.title | default: "Best Sellers" }}</h2>
+        {%- if section.settings.subtitle != blank -%}
+          <p class="section-header__subtitle">{{ section.settings.subtitle }}</p>
+        {%- endif -%}
+      </div>
+
+      {%- assign collection = collections[section.settings.collection] -%}
+      {%- if collection != blank -%}
+        <a href="{{ collection.url }}" class="section-header__link">
+          <span>{{ section.settings.view_all_text | default: "View All" }}</span>
+          {% render 'icon-chevron' %}
+        </a>
+      {%- endif -%}
+    </div>
+
+    <div class="products-grid" style="grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr);">
+      {%- if collection != blank and collection.products.size > 0 -%}
+        {%- for product in collection.products limit: section.settings.products_to_show -%}
+          {% render 'product-card', product_card_product: product, show_vendor: section.settings.show_vendor %}
+        {%- endfor -%}
+      {%- else -%}
+        {%- for i in (1..section.settings.products_to_show) -%}
+          <div class="product-card">
+            <div class="product-card__media-wrapper">
+              {{ 'product-1' | placeholder_svg_tag: 'product-card__img' }}
+            </div>
+            <div class="product-card__content">
+              <span class="product-card__vendor">Never Mind</span>
+              <h3 class="product-card__title">Classic Oversized Luxury Tee</h3>
+              <div class="product-card__price-wrap">
+                <span class="product-price">599 EGP</span>
+                <s class="product-price product-price--compare">799 EGP</s>
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Featured Products",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Best Sellers"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subheading",
+      "default": "Most wanted pieces right now"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 4,
+      "max": 16,
+      "step": 2,
+      "label": "Products to Show",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 3,
+      "max": 4,
+      "step": 1,
+      "label": "Columns on Desktop",
+      "default": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show Brand / Vendor",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "view_all_text",
+      "label": "View All Text",
+      "default": "View All Best Sellers"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Products"
+    }
+  ]
+}
+{% endschema %}

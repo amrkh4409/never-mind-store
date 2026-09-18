@@ -1,0 +1,50 @@
+{
+  "sections": {
+    "product_faq": {
+      "type": "product-faq",
+      "blocks": {
+        "faq_1": {
+          "type": "faq_item",
+          "settings": {
+            "question": "Can I open and inspect the package before paying the courier?",
+            "answer": "Yes! Our courier policy allows you to inspect your items at your doorstep before paying. If you decide not to take it, you only pay the delivery fee."
+          }
+        },
+        "faq_2": {
+          "type": "faq_item",
+          "settings": {
+            "question": "What payment methods are available?",
+            "answer": "We support Cash on Delivery (COD) across all Egyptian governorates, as well as Visa, Mastercard, Meeza, and ValU at checkout."
+          }
+        },
+        "faq_3": {
+          "type": "faq_item",
+          "settings": {
+            "question": "How long does shipping take to my governorate?",
+            "answer": "Cairo & Giza: 24 to 48 hours. Alexandria & Delta: 2 to 3 days. Upper Egypt and Coastal governorates: 3 to 4 days."
+          }
+        },
+        "faq_4": {
+          "type": "faq_item",
+          "settings": {
+            "question": "What is the 14-day exchange policy?",
+            "answer": "We offer a 14-day size replacement guarantee. Simply contact our WhatsApp customer care, and our courier will bring your new size to your doorstep."
+          }
+        }
+      },
+      "block_order": [
+        "faq_1",
+        "faq_2",
+        "faq_3",
+        "faq_4"
+      ],
+      "settings": {
+        "heading": "Frequently Asked Questions",
+        "subheading": "Everything you need to know about shopping with Never Mind in Egypt"
+      }
+    }
+  },
+  "order": [
+    "product_faq"
+  ]
+}

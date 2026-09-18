@@ -1,0 +1,173 @@
+{
+  "general": {
+    "search": {
+      "search": "Search products, collections...",
+      "placeholder": "What are you looking for?",
+      "submit": "Search",
+      "no_results_html": "No results found for \"<em>{{ terms }}</em>\". Check the spelling or try another term.",
+      "results_with_count": {
+        "one": "{{ count }} result found",
+        "other": "{{ count }} results found"
+      },
+      "view_all": "View all {{ count }} results"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "current_page": "Page {{ current }} of {{ total }}"
+    },
+    "breadcrumbs": {
+      "home": "Home"
+    },
+    "newsletter": {
+      "title": "Subscribe to our VIP list",
+      "subtitle": "Get exclusive discounts, early access to new drops, and fashion news.",
+      "email_placeholder": "Enter your email address",
+      "button_label": "Subscribe",
+      "success": "Thanks for subscribing to Never Mind Store!"
+    }
+  },
+  "sections": {
+    "header": {
+      "menu": "Menu",
+      "account": "Account",
+      "cart": "Cart",
+      "wishlist": "Wishlist",
+      "search": "Search"
+    },
+    "cart_drawer": {
+      "title": "Shopping Bag",
+      "free_shipping_before": "Add",
+      "free_shipping_after": "more to enjoy FREE SHIPPING!",
+      "free_shipping_achieved": "You've unlocked FREE SHIPPING!",
+      "empty": "Your shopping bag is currently empty.",
+      "continue_shopping": "Continue Shopping",
+      "subtotal": "Subtotal",
+      "taxes_included_and_shipping_policy_html": "Taxes included and shipping calculated at checkout.",
+      "checkout": "Proceed to Checkout",
+      "view_cart": "View Bag",
+      "notes_title": "Add order notes / delivery instructions",
+      "notes_placeholder": "Special instructions, delivery landmark, etc."
+    },
+    "quick_view": {
+      "title": "Quick View",
+      "close": "Close Quick View",
+      "view_details": "View Full Details"
+    },
+    "size_guide": {
+      "title": "Size Guide & Measurements",
+      "close": "Close Size Guide",
+      "tips_title": "How to Measure",
+      "tips_body": "Chest: Measure around the fullest part of your chest. Length: Measure from the highest point of the shoulder to the hem."
+    },
+    "footer": {
+      "copyright": "All rights reserved.",
+      "payment_cod": "Cash on Delivery Available"
+    }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Add to Bag",
+      "buy_now": "Buy It Now",
+      "sold_out": "Sold Out",
+      "unavailable": "Unavailable",
+      "sale": "Sale",
+      "on_sale": "Save",
+      "regular_price": "Regular price",
+      "sale_price": "Sale price",
+      "quantity": "Quantity",
+      "choose_options": "Select Options",
+      "quick_add": "Quick Add",
+      "quick_view": "Quick View",
+      "size_guide": "Size Guide",
+      "color": "Color",
+      "size": "Size",
+      "details": "Product Details",
+      "description": "Description",
+      "shipping_info": "Shipping & Governorates",
+      "returns_policy": "Returns & 14-Day Exchange",
+      "faq": "Frequently Asked Questions",
+      "sku": "SKU",
+      "cod_available": "Cash on Delivery available across Egypt",
+      "inspection_notice": "Inspect & try package before payment with courier",
+      "reviews": "Customer Reviews",
+      "no_reviews_yet": "No reviews yet. Be the first to review this product."
+    }
+  },
+  "collections": {
+    "general": {
+      "all_collections": "All Collections",
+      "empty": "No products found in this collection.",
+      "filter_by": "Filter By",
+      "sort_by": "Sort By",
+      "sort_button": "Sort",
+      "filter_button": "Filters",
+      "clear_all": "Clear all filters",
+      "apply": "Apply",
+      "in_stock": "In Stock",
+      "out_of_stock": "Out of Stock",
+      "price_from": "From",
+      "price_to": "To",
+      "product_count": {
+        "one": "{{ count }} product",
+        "other": "{{ count }} products"
+      }
+    },
+    "sorting": {
+      "featured": "Featured",
+      "best_selling": "Best Selling",
+      "az": "Alphabetically, A-Z",
+      "za": "Alphabetically, Z-A",
+      "price_ascending": "Price, low to high",
+      "price_descending": "Price, high to low",
+      "date_descending": "Date, new to old",
+      "date_ascending": "Date, old to new"
+    }
+  },
+  "cart": {
+    "general": {
+      "title": "Your Shopping Cart",
+      "subtotal": "Subtotal",
+      "checkout": "Checkout",
+      "empty": "Your cart is empty",
+      "continue_shopping": "Explore Collections",
+      "remove": "Remove item",
+      "quantity": "Quantity",
+      "price": "Price",
+      "total": "Total",
+      "update": "Update Cart",
+      "note": "Order notes / Delivery instructions"
+    }
+  },
+  "customer": {
+    "login_page": {
+      "title": "Login to your account",
+      "email": "Email Address",
+      "password": "Password",
+      "sign_in": "Sign In",
+      "forgot_password": "Forgot your password?",
+      "create_account": "Create account"
+    },
+    "register": {
+      "title": "Create Account",
+      "first_name": "First Name",
+      "last_name": "Last Name",
+      "email": "Email Address",
+      "password": "Password",
+      "submit": "Create Account",
+      "already_have_account": "Already have an account? Log in"
+    },
+    "account": {
+      "title": "My Account",
+      "details": "Account Details",
+      "orders": "Order History",
+      "no_orders": "You haven't placed any orders yet.",
+      "order_number": "Order",
+      "date": "Date",
+      "payment_status": "Payment Status",
+      "fulfillment_status": "Fulfillment Status",
+      "total": "Total",
+      "log_out": "Log Out"
+    }
+  }
+}

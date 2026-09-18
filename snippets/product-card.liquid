@@ -1,0 +1,147 @@
+{%- comment -%}
+  Renders a luxury fashion product card inspired by Modex
+  Usage:
+  {% render 'product-card', product_card_product: product, show_vendor: true %}
+{%- endcomment -%}
+
+{%- liquid
+  assign product = product_card_product
+  assign current_variant = product.selected_or_first_available_variant
+  assign has_secondary_image = false
+  if product.media.size > 1
+    assign has_secondary_image = true
+  endif
+
+  assign discount_percent = 0
+  if current_variant.compare_at_price > current_variant.price
+    assign discount_percent = current_variant.compare_at_price | minus: current_variant.price | times: 100 | divided_by: current_variant.compare_at_price
+  endif
+-%}
+
+<div class="product-card" data-product-card data-product-id="{{ product.id }}">
+  <div class="product-card__media-wrapper">
+    <a href="{{ product.url }}" aria-label="{{ product.title | escape }}" style="display: block; width: 100%; height: 100%;">
+      {%- if product.featured_media -%}
+        <img
+          src="{{ product.featured_media | image_url: width: 600 }}"
+          alt="{{ product.featured_media.alt | default: product.title | escape }}"
+          loading="lazy"
+          width="600"
+          height="800"
+          class="product-card__img product-card__img--primary"
+        >
+        {%- if has_secondary_image -%}
+          <img
+            src="{{ product.media[1] | image_url: width: 600 }}"
+            alt="{{ product.media[1].alt | default: product.title | escape }}"
+            loading="lazy"
+            width="600"
+            height="800"
+            class="product-card__img product-card__img--secondary"
+          >
+        {%- endif -%}
+      {%- else -%}
+        {{ 'product-1' | placeholder_svg_tag: 'product-card__img' }}
+      {%- endif -%}
+    </a>
+
+    <!-- Product Badges -->
+    <div class="product-card__badges">
+      {%- if current_variant.available == false -%}
+        <span class="badge badge-soldout">{{ 'products.product.sold_out' | t }}</span>
+      {%- elsif discount_percent > 0 -%}
+        <span class="badge badge-sale">-{{ discount_percent }}%</span>
+      {%- endif -%}
+    </div>
+
+    <!-- Wishlist Button -->
+    <button
+      type="button"
+      class="product-card__wishlist"
+      data-wishlist-btn
+      data-product-handle="{{ product.handle }}"
+      aria-label="{{ 'sections.header.wishlist' | t }}"
+    >
+      {% render 'icon-heart' %}
+    </button>
+
+    <!-- Quick Action Hover Bar -->
+    <div class="product-card__quick-actions">
+      {%- if current_variant.available -%}
+        {%- if product.has_only_default_variant -%}
+          <form method="post" action="/cart/add" data-ajax-cart-form style="flex: 1;">
+            <input type="hidden" name="id" value="{{ current_variant.id }}">
+            <input type="hidden" name="quantity" value="1">
+            <button type="submit" class="product-card__quick-btn" style="width: 100%;">
+              {% render 'icon-cart' %}
+              <span>{{ 'products.product.quick_add' | t }}</span>
+            </button>
+          </form>
+        {%- else -%}
+          <a href="{{ product.url }}" class="product-card__quick-btn">
+            <span>{{ 'products.product.choose_options' | t }}</span>
+          </a>
+        {%- endif -%}
+      {%- else -%}
+        <button type="button" class="product-card__quick-btn" disabled style="opacity: 0.6; cursor: not-allowed;">
+          <span>{{ 'products.product.sold_out' | t }}</span>
+        </button>
+      {%- endif -%}
+    </div>
+  </div>
+
+  <!-- Product Info -->
+  <div class="product-card__content">
+    {%- if show_vendor and product.vendor != blank -%}
+      <span class="product-card__vendor">{{ product.vendor }}</span>
+    {%- endif -%}
+
+    <h3 class="product-card__title">
+      <a href="{{ product.url }}">{{ product.title }}</a>
+    </h3>
+
+    {% render 'price', product: product %}
+
+    <!-- Color Swatches Preview if option named Color exists -->
+    {%- for option in product.options_with_values -%}
+      {%- assign downcased_option = option.name | downcase -%}
+      {%- if downcased_option contains 'color' or downcased_option contains 'colour' or downcased_option contains 'لون' -%}
+        <div class="product-card__swatches">
+          {%- for value in option.values limit: 5 -%}
+            {%- liquid
+              assign swatch_color = value | downcase
+              case swatch_color
+                when 'black', 'أسود'
+                  assign bg_color = '#121212'
+                when 'white', 'أبيض'
+                  assign bg_color = '#FFFFFF'
+                when 'grey', 'gray', 'رمادي'
+                  assign bg_color = '#9CA3AF'
+                when 'beige', 'بيج'
+                  assign bg_color = '#D2B48C'
+                when 'navy', 'كحلي'
+                  assign bg_color = '#1E3A8A'
+                when 'green', 'olive', 'زيتي', 'أخضر'
+                  assign bg_color = '#4D5D4E'
+                when 'brown', 'بني'
+                  assign bg_color = '#78350F'
+                when 'red', 'burgundy', 'أحمر'
+                  assign bg_color = '#991B1B'
+                else
+                  assign bg_color = '#E5E7EB'
+              endcase
+            -%}
+            <span
+              class="color-swatch-dot"
+              style="background-color: {{ bg_color }};"
+              title="{{ value }}"
+            ></span>
+          {%- endfor -%}
+          {%- if option.values.size > 5 -%}
+            <span style="font-size: 0.72rem; color: var(--color-foreground-muted);">+{{ option.values.size | minus: 5 }}</span>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</div>

@@ -1,0 +1,259 @@
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign featured_image = current_variant.featured_image | default: product.featured_image
+  assign discount_percent = 0
+  if current_variant.compare_at_price > current_variant.price
+    assign discount_percent = current_variant.compare_at_price | minus: current_variant.price | times: 100 | divided_by: current_variant.compare_at_price
+  endif
+-%}
+
+<section class="product-main-section" data-variant-picker>
+  <div class="container">
+    <div class="product-layout">
+      <!-- Media Gallery -->
+      <div class="product-gallery">
+        <div class="product-gallery__main">
+          {%- if featured_image -%}
+            <img
+              src="{{ featured_image | image_url: width: 1200 }}"
+              alt="{{ featured_image.alt | default: product.title | escape }}"
+              class="product-gallery__main-img"
+              data-product-main-img
+              width="1200"
+              height="1600"
+            >
+          {%- else -%}
+            {{ 'product-1' | placeholder_svg_tag: 'product-gallery__main-img' }}
+          {%- endif -%}
+        </div>
+
+        {%- if product.media.size > 1 -%}
+          <div class="product-gallery__thumbnails">
+            {%- for media in product.media -%}
+              <div
+                class="product-gallery__thumb {% if forloop.first %}is-active{% endif %}"
+                onclick="document.querySelector('[data-product-main-img]').src='{{ media | image_url: width: 1200 }}'; document.querySelectorAll('.product-gallery__thumb').forEach(t => t.classList.remove('is-active')); this.classList.add('is-active');"
+              >
+                <img src="{{ media | image_url: width: 150 }}" alt="{{ media.alt | default: product.title | escape }}" loading="lazy">
+              </div>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+
+      <!-- Product Buy Box & Details -->
+      <div class="product-info">
+        {%- if product.vendor != blank -%}
+          <span style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-foreground-secondary);">
+            {{ product.vendor }}
+          </span>
+        {%- endif -%}
+
+        <h1 class="product-info__title">{{ product.title }}</h1>
+
+        <!-- Rating Stars (App Compatible) -->
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 0.88rem;">
+          <div style="display: inline-flex; gap: 2px;">
+            {% render 'icon-star' %}
+            {% render 'icon-star' %}
+            {% render 'icon-star' %}
+            {% render 'icon-star' %}
+            {% render 'icon-star' %}
+          </div>
+          <span style="color: var(--color-foreground-secondary); font-weight: 500;">4.9 (Verified Customers)</span>
+        </div>
+
+        <!-- Price Display -->
+        <div style="display: flex; align-items: baseline; gap: 12px; margin-top: 4px;">
+          <span class="product-price" style="font-size: 1.5rem;" data-product-price>
+            {{ current_variant.price | money }}
+          </span>
+          {%- if current_variant.compare_at_price > current_variant.price -%}
+            <s class="product-price product-price--compare" style="font-size: 1.15rem;" data-product-compare-price>
+              {{ current_variant.compare_at_price | money }}
+            </s>
+            <span class="badge badge-sale">-{{ discount_percent }}% OFF</span>
+          {%- endif -%}
+        </div>
+
+        <!-- Egyptian Cash on Delivery Trust Reassurance Box -->
+        <div class="product-info__reassurance-box">
+          <div class="reassurance-line">
+            <span style="font-size: 1.1rem;">💵</span>
+            <span><strong>{{ settings.cod_badge_text | default: "Cash on Delivery Available" }}</strong> across all Egyptian governorates</span>
+          </div>
+          <div class="reassurance-line">
+            <span style="font-size: 1.1rem;">📦</span>
+            <span><strong>{{ settings.inspection_badge_text | default: "Open & inspect your package" }}</strong> with courier before paying</span>
+          </div>
+          <div class="reassurance-line">
+            <span style="font-size: 1.1rem;">⚡</span>
+            <span>{{ settings.delivery_time_text | default: "Cairo & Giza: 24-48 hrs | Governorates: 2-4 days" }}</span>
+          </div>
+        </div>
+
+        <!-- Add to Cart Form -->
+        {%- form 'product', product, id: 'MainProductForm', data-ajax-cart-form: '' -%}
+          <input type="hidden" name="id" value="{{ current_variant.id }}">
+
+          <!-- Variant Options (Color, Size) -->
+          {%- unless product.has_only_default_variant -%}
+            {%- for option in product.options_with_values -%}
+              {%- assign downcased_opt = option.name | downcase -%}
+              <div class="variant-option-group">
+                <div class="variant-option-label">
+                  <span>
+                    {{ option.name }}: <strong data-option-selected-label>{{ option.selected_value }}</strong>
+                  </span>
+                  {%- if downcased_opt contains 'size' or downcased_opt contains 'مقاس' -%}
+                    <button type="button" data-size-guide-open style="font-size: 0.82rem; font-weight: 600; text-decoration: underline; color: var(--color-foreground);">
+                      📏 {{ 'products.product.size_guide' | t }}
+                    </button>
+                  {%- endif -%}
+                </div>
+
+                <div class="variant-pill-list">
+                  {%- for value in option.values -%}
+                    {%- assign option_disabled = true -%}
+                    {%- for variant in product.variants -%}
+                      {%- if variant.options[forloop.parentloop.index0] == value and variant.available -%}
+                        {%- assign option_disabled = false -%}
+                      {%- endif -%}
+                    {%- endfor -%}
+
+                    <button
+                      type="button"
+                      class="variant-pill {% if option.selected_value == value %}is-selected{% endif %} {% if option_disabled %}is-unavailable{% endif %}"
+                      data-variant-option
+                      data-option-index="{{ forloop.parentloop.index0 }}"
+                      data-option-value="{{ value | escape }}"
+                    >
+                      {{ value }}
+                    </button>
+                  {%- endfor -%}
+                </div>
+              </div>
+            {%- endfor -%}
+          {%- endunless -%}
+
+          <!-- Quantity & Purchase Action Buttons -->
+          <div style="display: flex; gap: 12px; margin-top: 20px; align-items: stretch;">
+            <div class="quantity-stepper" style="border-radius: var(--radius-sm); padding: 0 4px;">
+              <button type="button" class="quantity-stepper__btn" onclick="const i = this.parentElement.querySelector('input'); i.value = Math.max(1, parseInt(i.value) - 1);">-</button>
+              <input type="number" name="quantity" value="1" min="1" class="quantity-stepper__input" style="width: 44px;">
+              <button type="button" class="quantity-stepper__btn" onclick="const i = this.parentElement.querySelector('input'); i.value = parseInt(i.value) + 1;">+</button>
+            </div>
+
+            <button
+              type="submit"
+              name="add"
+              class="btn btn-primary btn-full"
+              data-add-to-cart
+              {% unless current_variant.available %}disabled{% endunless %}
+              style="padding: 16px; font-size: 1.05rem;"
+            >
+              {% render 'icon-cart' %}
+              <span data-add-to-cart-text>
+                {%- if current_variant.available -%}
+                  {{ 'products.product.add_to_cart' | t }}
+                {%- else -%}
+                  {{ 'products.product.sold_out' | t }}
+                {%- endif -%}
+              </span>
+            </button>
+
+            <!-- Wishlist Button -->
+            <button
+              type="button"
+              class="btn btn-outline"
+              data-wishlist-btn
+              data-product-handle="{{ product.handle }}"
+              style="padding: 0 16px; min-width: 52px;"
+              aria-label="Add to wishlist"
+            >
+              {% render 'icon-heart' %}
+            </button>
+          </div>
+
+          <!-- Dynamic Checkout Button -->
+          <div style="margin-top: 10px;">
+            {{ form | payment_button }}
+          </div>
+        {%- endform -%}
+
+        <!-- Information Tabs / Accordions -->
+        <div class="product-accordion">
+          <!-- Description -->
+          <div class="accordion-item">
+            <button type="button" class="accordion-header">
+              <span>{{ 'products.product.description' | t }}</span>
+              {% render 'icon-chevron' %}
+            </button>
+            <div class="accordion-content is-open" style="max-height: 500px;">
+              {{ product.description }}
+            </div>
+          </div>
+
+          <!-- Fabric & Details -->
+          <div class="accordion-item">
+            <button type="button" class="accordion-header">
+              <span>{{ 'products.product.details' | t }}</span>
+              {% render 'icon-chevron' %}
+            </button>
+            <div class="accordion-content">
+              <ul style="padding-left: 20px; line-height: 1.8;">
+                <li>Premium heavyweight Egyptian combed cotton blend</li>
+                <li>Tailored fit with reinforced drop-shoulder seams</li>
+                <li>Pre-shrunk fabric to prevent post-wash deformation</li>
+                <li>Machine wash cold with like colors; do not tumble dry</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Shipping & Delivery -->
+          <div class="accordion-item">
+            <button type="button" class="accordion-header">
+              <span>{{ 'products.product.shipping_info' | t }}</span>
+              {% render 'icon-chevron' %}
+            </button>
+            <div class="accordion-content">
+              <p><strong>Shipping across all Egyptian Governorates:</strong></p>
+              <ul style="padding-left: 20px; margin-top: 8px; line-height: 1.8;">
+                <li><strong>Cairo & Giza:</strong> Delivered within 24 to 48 hours.</li>
+                <li><strong>Alexandria & Delta:</strong> 2 to 3 business days.</li>
+                <li><strong>Upper Egypt & Coastal:</strong> 3 to 4 business days.</li>
+                <li><strong>Free Shipping:</strong> Automatically applied for orders above 1000 EGP.</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Returns & 14-Day Exchange -->
+          <div class="accordion-item">
+            <button type="button" class="accordion-header">
+              <span>{{ 'products.product.returns_policy' | t }}</span>
+              {% render 'icon-chevron' %}
+            </button>
+            <div class="accordion-content">
+              <p>
+                We offer a hassle-free <strong>14-day exchange and return policy</strong>.
+                If the size is not ideal, simply contact our WhatsApp team, and our courier will deliver the replacement right to your doorstep.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product JSON for Dynamic Variant Updates -->
+  <script type="application/json" data-product-json>
+    {{ product | json }}
+  </script>
+</section>
+
+{% schema %}
+{
+  "name": "Product Main Information",
+  "settings": []
+}
+{% endschema %}

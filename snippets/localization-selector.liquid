@@ -1,0 +1,26 @@
+{%- comment -%}
+  Renders Shopify native language selector form
+{%- endcomment -%}
+
+{%- if localization.available_languages.size > 1 -%}
+  <localization-form>
+    {%- form 'localization', id: 'HeaderLanguageForm' -%}
+      <div style="position: relative; display: inline-flex; align-items: center; gap: 4px;">
+        <select
+          name="locale_code"
+          onchange="this.form.submit()"
+          style="cursor: pointer; font-size: 0.85rem; font-weight: 600; padding: 4px 8px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background-color: transparent;"
+        >
+          {%- for language in localization.available_languages -%}
+            <option
+              value="{{ language.iso_code }}"
+              {% if language.iso_code == localization.language.iso_code %}selected{% endif %}
+            >
+              {{ language.endonym_name | capitalize }}
+            </option>
+          {%- endfor -%}
+        </select>
+      </div>
+    {%- endform -%}
+  </localization-form>
+{%- endif -%}

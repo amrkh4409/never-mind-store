@@ -1,0 +1,31 @@
+{%- comment -%}
+  Renders a list of product prices (regular, sale)
+  Usage:
+  {% render 'price', product: product, price_class: '' %}
+{%- endcomment -%}
+{%- liquid
+  assign target = product.selected_or_first_available_variant | default: product
+  assign compare_at_price = target.compare_at_price
+  assign price = target.price | default: 1999
+  assign available = target.available | default: false
+  assign on_sale = false
+  if compare_at_price > price
+    assign on_sale = true
+  endif
+-%}
+
+<div class="product-card__price-wrap {{ price_class }}">
+  {%- if on_sale -%}
+    <span class="product-price product-price--sale" data-product-price>
+      {{ price | money }}
+    </span>
+    <s class="product-price product-price--compare" data-product-compare-price>
+      {{ compare_at_price | money }}
+    </s>
+  {%- else -%}
+    <span class="product-price" data-product-price>
+      {{ price | money }}
+    </span>
+    <s class="product-price product-price--compare" style="display: none;" data-product-compare-price></s>
+  {%- endif -%}
+</div>

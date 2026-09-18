@@ -1,0 +1,88 @@
+<!doctype html>
+<html
+  class="no-js"
+  {% if localization.language.iso_code == 'ar' or request.locale.iso_code == 'ar' %}
+    lang="ar" dir="rtl"
+  {% else %}
+    lang="{{ localization.language.iso_code | default: 'en' }}" dir="ltr"
+  {% endif %}
+>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="theme-color" content="{{ settings.color_primary | default: '#111827' }}">
+    <link rel="canonical" href="{{ canonical_url }}">
+
+    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <title>
+      {{ page_title }}
+      {%- if current_tags -%} &ndash; tagged "{{ current_tags | join: ', ' }}"{%- endif -%}
+      {%- if current_page != 1 -%} &ndash; Page {{ current_page }}{%- endif -%}
+      {%- unless page_title contains shop.name -%} &ndash; {{ shop.name }}{%- endunless -%}
+    </title>
+
+    {%- if page_description -%}
+      <meta name="description" content="{{ page_description | escape }}">
+    {%- endif -%}
+
+    {%- if settings.favicon != blank -%}
+      <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+    {%- else -%}
+      <link rel="icon" type="image/svg+xml" href="{{ 'logo.svg' | asset_url }}">
+    {%- endif -%}
+
+    <!-- Social Meta Tags -->
+    <meta property="og:site_name" content="{{ shop.name }}">
+    <meta property="og:url" content="{{ canonical_url }}">
+    <meta property="og:title" content="{{ page_title | default: shop.name }}">
+    <meta property="og:type" content="website">
+    {%- if page_description -%}
+      <meta property="og:description" content="{{ page_description | escape }}">
+    {%- endif -%}
+
+    <!-- Global Theme Stylesheet -->
+    {{ 'theme.css' | asset_url | stylesheet_tag }}
+
+    <!-- Dynamic Theme Config -->
+    <script>
+      document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+      window.NeverMindConfig = {
+        freeShippingThreshold: {{ settings.free_shipping_threshold | default: 1000 }},
+        freeShippingUnlockedMsg: {{ settings.free_shipping_message | default: "You've unlocked FREE SHIPPING!" | json }},
+        currency: {{ cart.currency.iso_code | default: 'EGP' | json }},
+        moneyFormat: {{ shop.money_format | json }}
+      };
+    </script>
+
+    {{ content_for_header }}
+  </head>
+
+  <body class="template-{{ template.name | handle }}">
+    <a class="visually-hidden" href="#MainContent">Skip to content</a>
+
+    <!-- Global Header & Announcement -->
+    {% section 'announcement-bar' %}
+    {% section 'header' %}
+
+    <!-- Main View -->
+    <main id="MainContent" role="main">
+      {{ content_for_layout }}
+    </main>
+
+    <!-- Global Footer -->
+    {% section 'footer' %}
+
+    <!-- Global Drawers & Modals -->
+    {% section 'cart-drawer' %}
+    {% section 'floating-whatsapp' %}
+    {% render 'predictive-search' %}
+    {% render 'size-guide-modal' %}
+
+    <!-- Global Theme Script -->
+    <script src="{{ 'theme.js' | asset_url }}" defer="defer"></script>
+  </body>
+</html>

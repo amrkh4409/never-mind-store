@@ -1,0 +1,22 @@
+{
+  "sections": {
+    "main_collection": {
+      "type": "main-collection",
+      "settings": {
+        "products_per_page": 16,
+        "columns_desktop": 4,
+        "show_vendor": true
+      }
+    },
+    "recently_viewed": {
+      "type": "recently-viewed",
+      "settings": {
+        "heading": "Recently Viewed Styles"
+      }
+    }
+  },
+  "order": [
+    "main_collection",
+    "recently_viewed"
+  ]
+}

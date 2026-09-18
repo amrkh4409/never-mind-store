@@ -1,0 +1,51 @@
+<div class="container" style="padding-top: 60px; padding-bottom: 80px; max-width: 480px;">
+  <h1 style="text-align: center; margin-bottom: 24px; font-size: 1.8rem;">
+    {{ 'customer.register.title' | t }}
+  </h1>
+
+  {%- form 'create_customer' -%}
+    {%- if form.errors -%}
+      <div style="padding: 12px; background-color: var(--color-sale-bg); color: var(--color-sale); border-radius: var(--radius-sm); margin-bottom: 20px; font-size: 0.88rem;">
+        {{ form.errors | default_errors }}
+      </div>
+    {%- endif -%}
+
+    <div style="margin-bottom: 16px;">
+      <label for="RegisterFirstName" style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 6px;">
+        {{ 'customer.register.first_name' | t }}
+      </label>
+      <input type="text" name="customer[first_name]" id="RegisterFirstName" style="width: 100%; padding: 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm);">
+    </div>
+
+    <div style="margin-bottom: 16px;">
+      <label for="RegisterLastName" style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 6px;">
+        {{ 'customer.register.last_name' | t }}
+      </label>
+      <input type="text" name="customer[last_name]" id="RegisterLastName" style="width: 100%; padding: 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm);">
+    </div>
+
+    <div style="margin-bottom: 16px;">
+      <label for="RegisterEmail" style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 6px;">
+        {{ 'customer.register.email' | t }}
+      </label>
+      <input type="email" name="customer[email]" id="RegisterEmail" required style="width: 100%; padding: 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm);">
+    </div>
+
+    <div style="margin-bottom: 24px;">
+      <label for="RegisterPassword" style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 6px;">
+        {{ 'customer.register.password' | t }}
+      </label>
+      <input type="password" name="customer[password]" id="RegisterPassword" required style="width: 100%; padding: 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm);">
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-full btn-lg">
+      {{ 'customer.register.submit' | t }}
+    </button>
+
+    <div style="text-align: center; margin-top: 20px;">
+      <a href="{{ routes.account_login_url }}" style="font-size: 0.9rem; color: var(--color-foreground-secondary); text-decoration: underline;">
+        {{ 'customer.register.already_have_account' | t }}
+      </a>
+    </div>
+  {%- endform -%}
+</div>

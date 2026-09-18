@@ -1,0 +1,70 @@
+<div class="container" style="padding-top: 48px; padding-bottom: 80px; max-width: 760px;">
+  <div style="text-align: center; margin-bottom: 36px;">
+    <h1 style="margin-bottom: 12px;">{{ page.title }}</h1>
+    <p style="color: var(--color-foreground-secondary); font-size: 1rem;">
+      We're here to assist you with order status, size inquiries, and 14-day exchange requests.
+    </p>
+  </div>
+
+  {%- form 'contact', id: 'ContactForm' -%}
+    {%- if form.posted_successfully? -%}
+      <div style="padding: 16px; background-color: var(--color-success-bg); color: var(--color-success); border-radius: var(--radius-sm); margin-bottom: 24px; font-weight: 600;">
+        Thank you for reaching out! Our team will contact you shortly via WhatsApp or Phone.
+      </div>
+    {%- elsif form.errors -%}
+      <div style="padding: 16px; background-color: var(--color-sale-bg); color: var(--color-sale); border-radius: var(--radius-sm); margin-bottom: 24px;">
+        {{ form.errors | default_errors }}
+      </div>
+    {%- endif -%}
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+      <div>
+        <label for="ContactFormName" style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 6px;">Name</label>
+        <input type="text" id="ContactFormName" name="contact[name]" style="width: 100%; padding: 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm);" required>
+      </div>
+
+      <div>
+        <label for="ContactFormPhone" style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 6px;">Phone / WhatsApp</label>
+        <input type="tel" id="ContactFormPhone" name="contact[phone]" placeholder="010XXXXXXXX" style="width: 100%; padding: 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm);" required>
+      </div>
+    </div>
+
+    <div style="margin-bottom: 16px;">
+      <label for="ContactFormEmail" style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 6px;">Email Address</label>
+      <input type="email" id="ContactFormEmail" name="contact[email]" style="width: 100%; padding: 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm);" required>
+    </div>
+
+    <div style="margin-bottom: 20px;">
+      <label for="ContactFormMessage" style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 6px;">How can we help you?</label>
+      <textarea id="ContactFormMessage" name="contact[body]" rows="5" style="width: 100%; padding: 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm);" required></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary btn-full btn-lg">
+      Send Message
+    </button>
+  {%- endform -%}
+
+  <!-- WhatsApp Alternative Prompt -->
+  {%- if settings.enable_whatsapp -%}
+    <div style="text-align: center; margin-top: 32px; padding: 20px; background-color: var(--color-bg-secondary); border-radius: var(--radius-sm);">
+      <p style="font-size: 0.95rem; margin-bottom: 12px;">Need instant support for sizing or delivery today?</p>
+      <a
+        href="https://wa.me/{{ settings.whatsapp_number }}?text={{ settings.whatsapp_message | url_encode }}"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn btn-secondary btn-sm"
+        style="background-color: #25D366; color: #FFFFFF; border-color: #25D366;"
+      >
+        {% render 'icon-whatsapp' %}
+        <span>Chat on WhatsApp</span>
+      </a>
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Contact Page",
+  "settings": []
+}
+{% endschema %}

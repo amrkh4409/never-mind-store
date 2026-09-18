@@ -1,0 +1,136 @@
+<section class="featured-collections-section">
+  <div class="container">
+    {%- if section.settings.title != blank -%}
+      <div class="section-header">
+        <div>
+          <h2 class="section-header__title">{{ section.settings.title }}</h2>
+          {%- if section.settings.subtitle != blank -%}
+            <p class="section-header__subtitle">{{ section.settings.subtitle }}</p>
+          {%- endif -%}
+        </div>
+        {%- if section.settings.view_all_link != blank -%}
+          <a href="{{ section.settings.view_all_link }}" class="section-header__link">
+            <span>{{ section.settings.view_all_text | default: "View All Collections" }}</span>
+            {% render 'icon-chevron' %}
+          </a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    <div class="collections-grid">
+      {%- for block in section.blocks -%}
+        {%- assign collection = collections[block.settings.collection] -%}
+        {%- assign collection_title = block.settings.title | default: collection.title -%}
+        {%- assign collection_image = block.settings.image | default: collection.featured_image -%}
+        {%- assign collection_url = block.settings.link | default: collection.url -%}
+
+        <a href="{{ collection_url }}" class="collection-card" {{ block.shopify_attributes }}>
+          {%- if collection_image != blank -%}
+            <img
+              src="{{ collection_image | image_url: width: 800 }}"
+              alt="{{ collection_title | escape }}"
+              class="collection-card__img"
+              loading="lazy"
+              width="800"
+              height="1000"
+            >
+          {%- else -%}
+            {{ 'collection-1' | placeholder_svg_tag: 'collection-card__img' }}
+          {%- endif -%}
+
+          <div class="collection-card__overlay">
+            <h3 class="collection-card__title">{{ collection_title }}</h3>
+            {%- if block.settings.subtitle != blank -%}
+              <span class="collection-card__count">{{ block.settings.subtitle }}</span>
+            {%- endif -%}
+            <span class="collection-card__btn">
+              <span>{{ block.settings.btn_text | default: "Explore Collection" }}</span>
+              {% render 'icon-chevron' %}
+            </span>
+          </div>
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Featured Collections",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Shop By Category"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subheading",
+      "default": "Curated modern wardrobe staples"
+    },
+    {
+      "type": "text",
+      "id": "view_all_text",
+      "label": "View All Text",
+      "default": "All Categories"
+    },
+    {
+      "type": "url",
+      "id": "view_all_link",
+      "label": "View All Link"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "Collection Card",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Custom Image"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title Override"
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Subtitle / Tagline"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Custom Link"
+        },
+        {
+          "type": "text",
+          "id": "btn_text",
+          "label": "Button Text",
+          "default": "Shop Now"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Collections",
+      "blocks": [
+        { "type": "collection", "settings": { "title": "MEN", "subtitle": "T-Shirts, Pants & Sets" } },
+        { "type": "collection", "settings": { "title": "WOMEN", "subtitle": "Tops, Dresses & Sets" } },
+        { "type": "collection", "settings": { "title": "NEW ARRIVALS", "subtitle": "Just Dropped" } },
+        { "type": "collection", "settings": { "title": "SALE", "subtitle": "Up to 40% Off" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

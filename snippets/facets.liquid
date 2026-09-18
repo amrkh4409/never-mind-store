@@ -1,0 +1,31 @@
+{%- comment -%}
+  Renders faceted filters and sorting for Collection and Search templates
+{%- endcomment -%}
+
+<div class="facets-container" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid var(--color-border-light);">
+  <div style="font-size: 0.9rem; color: var(--color-foreground-secondary);">
+    <span>{{ 'collections.general.product_count.other' | t: count: results.products_count }}</span>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 16px;">
+    <!-- Sorting Dropdown -->
+    <form id="FacetSortForm" method="get" style="display: inline-flex; align-items: center; gap: 8px;">
+      <label for="SortBy" style="font-size: 0.88rem; font-weight: 600;">{{ 'collections.general.sort_by' | t }}:</label>
+      <select
+        name="sort_by"
+        id="SortBy"
+        onchange="this.form.submit()"
+        style="padding: 8px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-size: 0.88rem; background-color: var(--color-bg);"
+      >
+        {%- for option in results.sort_options -%}
+          <option
+            value="{{ option.value }}"
+            {% if option.value == results.sort_by %}selected{% endif %}
+          >
+            {{ option.name }}
+          </option>
+        {%- endfor -%}
+      </select>
+    </form>
+  </div>
+</div>

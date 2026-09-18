@@ -1,0 +1,84 @@
+<div class="container" style="padding-top: 36px; padding-bottom: 72px;">
+  <!-- Collection Header -->
+  <div style="text-align: center; max-width: 680px; margin: 0 auto 36px;">
+    <h1 style="margin-bottom: 10px;">{{ collection.title }}</h1>
+    {%- if collection.description != blank -%}
+      <div style="color: var(--color-foreground-secondary); font-size: 0.95rem; line-height: 1.6;">
+        {{ collection.description }}
+      </div>
+    {%- endif -%}
+  </div>
+
+  {%- paginate collection.products by section.settings.products_per_page -%}
+    <!-- Filter & Sort Bar -->
+    {% render 'facets', results: collection %}
+
+    <!-- Product Grid -->
+    {%- if collection.products.size > 0 -%}
+      <div class="products-grid" style="grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr);">
+        {%- for product in collection.products -%}
+          {% render 'product-card', product_card_product: product, show_vendor: section.settings.show_vendor %}
+        {%- endfor -%}
+      </div>
+
+      <!-- Pagination -->
+      {%- if paginate.pages > 1 -%}
+        <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 56px;">
+          {%- if paginate.previous -%}
+            <a href="{{ paginate.previous.url }}" class="btn btn-outline btn-sm">
+              &larr; {{ 'general.pagination.previous' | t }}
+            </a>
+          {%- endif -%}
+
+          <span style="font-size: 0.9rem; font-weight: 600; color: var(--color-foreground-secondary);">
+            {{ 'general.pagination.current_page' | t: current: paginate.current_page, total: paginate.pages }}
+          </span>
+
+          {%- if paginate.next -%}
+            <a href="{{ paginate.next.url }}" class="btn btn-outline btn-sm">
+              {{ 'general.pagination.next' | t }} &rarr;
+            </a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    {%- else -%}
+      <div style="text-align: center; padding: 72px 16px;">
+        <h3 style="margin-bottom: 12px;">{{ 'collections.general.empty' | t }}</h3>
+        <p style="color: var(--color-foreground-secondary); margin-bottom: 24px;">Check back soon for new drops in this category.</p>
+        <a href="/collections/all" class="btn btn-primary">{{ 'collections.general.all_collections' | t }}</a>
+      </div>
+    {%- endif -%}
+  {%- endpaginate -%}
+</div>
+
+{% schema %}
+{
+  "name": "Collection Catalog",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 8,
+      "max": 36,
+      "step": 4,
+      "label": "Products Per Page",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 3,
+      "max": 4,
+      "step": 1,
+      "label": "Columns on Desktop",
+      "default": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show Brand Name",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

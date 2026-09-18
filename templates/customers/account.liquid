@@ -1,0 +1,74 @@
+<div class="container" style="padding-top: 50px; padding-bottom: 80px;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 36px; flex-wrap: wrap; gap: 16px;">
+    <div>
+      <h1>{{ 'customer.account.title' | t }}</h1>
+      <p style="color: var(--color-foreground-secondary); font-size: 0.95rem;">
+        Welcome back, {{ customer.first_name }}!
+      </p>
+    </div>
+    <a href="{{ routes.account_logout_url }}" class="btn btn-outline btn-sm">
+      {{ 'customer.account.log_out' | t }}
+    </a>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 36px;">
+    <!-- Order History -->
+    <div>
+      <h2 style="font-size: 1.3rem; margin-bottom: 20px;">{{ 'customer.account.orders' | t }}</h2>
+      {%- paginate customer.orders by 10 -%}
+        {%- if customer.orders.size > 0 -%}
+          <div style="overflow-x: auto;">
+            <table class="size-guide-table" style="text-align: left;">
+              <thead>
+                <tr>
+                  <th>{{ 'customer.account.order_number' | t }}</th>
+                  <th>{{ 'customer.account.date' | t }}</th>
+                  <th>{{ 'customer.account.payment_status' | t }}</th>
+                  <th>{{ 'customer.account.fulfillment_status' | t }}</th>
+                  <th>{{ 'customer.account.total' | t }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {%- for order in customer.orders -%}
+                  <tr>
+                    <td><a href="{{ order.customer_url }}" style="font-weight: 700; text-decoration: underline;">{{ order.name }}</a></td>
+                    <td>{{ order.created_at | time_tag: format: 'date' }}</td>
+                    <td><span class="badge badge-cod">{{ order.financial_status_label }}</span></td>
+                    <td><span class="badge badge-cod">{{ order.fulfillment_status_label }}</span></td>
+                    <td><strong>{{ order.total_net_amount | money_with_currency }}</strong></td>
+                  </tr>
+                {%- endfor -%}
+              </tbody>
+            </table>
+          </div>
+        {%- else -%}
+          <p style="color: var(--color-foreground-secondary);">{{ 'customer.account.no_orders' | t }}</p>
+          <a href="/collections/all" class="btn btn-primary btn-sm" style="margin-top: 16px;">Explore Collections</a>
+        {%- endif -%}
+      {%- endpaginate -%}
+    </div>
+
+    <!-- Account Details -->
+    <div>
+      <h2 style="font-size: 1.3rem; margin-bottom: 20px;">{{ 'customer.account.details' | t }}</h2>
+      <div style="background-color: var(--color-bg-secondary); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 20px;">
+        <p style="font-weight: 700; font-size: 1.05rem; margin-bottom: 6px;">{{ customer.name }}</p>
+        <p style="color: var(--color-foreground-secondary); font-size: 0.9rem; margin-bottom: 16px;">{{ customer.email }}</p>
+
+        {%- if customer.default_address -%}
+          <p style="font-size: 0.88rem; line-height: 1.6; color: var(--color-foreground-secondary);">
+            {{ customer.default_address.address1 }}<br>
+            {%- if customer.default_address.address2 != blank -%}{{ customer.default_address.address2 }}<br>{%- endif -%}
+            {{ customer.default_address.city }}, {{ customer.default_address.province }}<br>
+            {{ customer.default_address.country }}<br>
+            {%- if customer.default_address.phone != blank -%}{{ customer.default_address.phone }}{%- endif -%}
+          </p>
+        {%- endif -%}
+
+        <a href="{{ routes.account_addresses_url }}" class="btn btn-outline btn-sm btn-full" style="margin-top: 20px;">
+          Manage Addresses
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

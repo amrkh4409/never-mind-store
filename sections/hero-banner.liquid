@@ -1,0 +1,129 @@
+<div class="hero-banner" style="min-height: {{ section.settings.banner_height }}vh;">
+  {%- if section.settings.image_desktop != blank -%}
+    <img
+      src="{{ section.settings.image_desktop | image_url: width: 2000 }}"
+      alt="{{ section.settings.heading | escape }}"
+      class="hero-banner__media"
+      loading="eager"
+      width="2000"
+      height="1100"
+    >
+  {%- endif -%}
+
+  <div class="hero-banner__overlay" style="opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};"></div>
+
+  <div class="container hero-banner__content" style="text-align: {{ section.settings.text_alignment }}; margin-{{ section.settings.text_alignment }}: 0;">
+    {%- if section.settings.subheading != blank -%}
+      <div class="hero-banner__subheading">{{ section.settings.subheading }}</div>
+    {%- endif -%}
+
+    <h1 class="hero-banner__heading">{{ section.settings.heading }}</h1>
+
+    {%- if section.settings.text != blank -%}
+      <p class="hero-banner__text">{{ section.settings.text }}</p>
+    {%- endif -%}
+
+    <div class="hero-banner__actions" style="justify-content: {% if section.settings.text_alignment == 'center' %}center{% elsif section.settings.text_alignment == 'right' %}flex-end{% else %}flex-start{% endif %};">
+      {%- if section.settings.button_1_label != blank -%}
+        <a href="{{ section.settings.button_1_link }}" class="btn btn-white btn-lg">
+          {{ section.settings.button_1_label }}
+        </a>
+      {%- endif -%}
+
+      {%- if section.settings.button_2_label != blank -%}
+        <a href="{{ section.settings.button_2_link }}" class="btn btn-secondary btn-lg" style="color: #FFFFFF; border-color: #FFFFFF;">
+          {{ section.settings.button_2_label }}
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Hero Banner",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image_desktop",
+      "label": "Desktop Image"
+    },
+    {
+      "type": "range",
+      "id": "banner_height",
+      "min": 60,
+      "max": 100,
+      "step": 5,
+      "unit": "vh",
+      "label": "Banner Height",
+      "default": 85
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay Darkness",
+      "default": 35
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "NEW LUXURY STREETWEAR COLLECTION"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Minimal Aesthetics. Uncompromising Craft."
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Body Text",
+      "default": "Engineered for comfort, precision, and timeless presence in Egypt. Cash on delivery available nationwide."
+    },
+    {
+      "type": "text",
+      "id": "button_1_label",
+      "label": "Primary Button Label",
+      "default": "SHOP MEN"
+    },
+    {
+      "type": "url",
+      "id": "button_1_link",
+      "label": "Primary Button Link"
+    },
+    {
+      "type": "text",
+      "id": "button_2_label",
+      "label": "Secondary Button Label",
+      "default": "SHOP WOMEN"
+    },
+    {
+      "type": "url",
+      "id": "button_2_link",
+      "label": "Secondary Button Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Banner"
+    }
+  ]
+}
+{% endschema %}

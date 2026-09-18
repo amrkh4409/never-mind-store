@@ -1,0 +1,20 @@
+{%- if settings.enable_whatsapp -%}
+  {%- assign wa_num = settings.whatsapp_number | default: '201000000000' -%}
+  {%- assign wa_msg = settings.whatsapp_message | url_encode -%}
+  <a
+    href="https://wa.me/{{ wa_num }}?text={{ wa_msg }}"
+    target="_blank"
+    rel="noopener noreferrer"
+    class="floating-whatsapp"
+    aria-label="Contact us on WhatsApp"
+  >
+    {% render 'icon-whatsapp' %}
+  </a>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Floating WhatsApp",
+  "settings": []
+}
+{% endschema %}

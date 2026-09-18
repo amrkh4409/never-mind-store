@@ -1,0 +1,219 @@
+<header class="header-wrapper">
+  <div class="container header">
+    <!-- Mobile Hamburger Toggle -->
+    <div class="header__left">
+      <button
+        type="button"
+        class="header__mobile-toggle"
+        data-mobile-menu-toggle
+        aria-label="{{ 'sections.header.menu' | t }}"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+
+      <!-- Logo -->
+      <a href="{{ routes.root_url }}" class="header__logo">
+        {%- if section.settings.logo != blank -%}
+          <img
+            src="{{ section.settings.logo | image_url: width: 240 }}"
+            alt="{{ shop.name }}"
+            class="header__logo-img"
+            width="{{ section.settings.logo_width }}"
+          >
+        {%- else -%}
+          <img
+            src="{{ 'logo.svg' | asset_url }}"
+            alt="{{ shop.name }}"
+            class="header__logo-img"
+            style="height: {{ section.settings.logo_width | divided_by: 3 | default: 42 }}px;"
+          >
+        {%- endif -%}
+      </a>
+    </div>
+
+    <!-- Desktop Navigation Menu -->
+    <nav class="header__nav" aria-label="Main Navigation">
+      {%- for link in linklists[section.settings.menu].links -%}
+        {%- assign downcased_title = link.title | downcase -%}
+        <div class="header__menu-item {% if downcased_title contains 'sale' or downcased_title contains 'تخفيض' %}header__menu-item--sale{% endif %}">
+          <a href="{{ link.url }}" style="color: inherit; display: inline-flex; align-items: center; gap: 4px;">
+            {{ link.title }}
+            {%- if link.links.size > 0 -%}
+              {% render 'icon-chevron' %}
+            {%- endif -%}
+          </a>
+
+          {%- if link.links.size > 0 -%}
+            <div class="header__dropdown">
+              {%- for child_link in link.links -%}
+                <a href="{{ child_link.url }}" class="header__dropdown-link">
+                  {{ child_link.title }}
+                </a>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+        </div>
+      {%- endfor -%}
+    </nav>
+
+    <!-- Header Actions (Search, Account, Wishlist, Cart) -->
+    <div class="header__right">
+      <!-- Language Switcher -->
+      {% render 'localization-selector' %}
+
+      <!-- Search Trigger -->
+      <button
+        type="button"
+        class="header__icon-btn"
+        data-search-open
+        aria-label="{{ 'sections.header.search' | t }}"
+      >
+        {% render 'icon-search' %}
+      </button>
+
+      <!-- Customer Account -->
+      {%- if shop.customer_accounts_enabled -%}
+        <a
+          href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}"
+          class="header__icon-btn"
+          aria-label="{{ 'sections.header.account' | t }}"
+        >
+          {% render 'icon-account' %}
+        </a>
+      {%- endif -%}
+
+      <!-- Wishlist Counter -->
+      <a
+        href="/pages/wishlist"
+        class="header__icon-btn"
+        aria-label="{{ 'sections.header.wishlist' | t }}"
+      >
+        {% render 'icon-heart' %}
+        <span class="header__wishlist-count" data-wishlist-count style="display: none;">0</span>
+      </a>
+
+      <!-- Cart Drawer Trigger -->
+      <button
+        type="button"
+        class="header__icon-btn"
+        data-cart-open
+        aria-label="{{ 'sections.header.cart' | t }}"
+      >
+        {% render 'icon-cart' %}
+        <span class="header__cart-count" data-cart-count {% if cart.item_count == 0 %}style="display: none;"{% endif %}>
+          {{ cart.item_count }}
+        </span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile Navigation Drawer -->
+<div id="MobileNavDrawer" class="cart-drawer" style="right: auto; left: 0; transform: translateX(-100%);">
+  <div class="cart-drawer__header">
+    <div class="header__logo">
+      <img src="{{ 'logo.svg' | asset_url }}" alt="{{ shop.name }}" style="height: 36px;">
+    </div>
+    <button type="button" class="cart-drawer__close-btn" data-mobile-menu-close aria-label="Close menu">
+      {% render 'icon-close' %}
+    </button>
+  </div>
+
+  <div class="cart-drawer__body" style="padding: 16px 24px;">
+    <!-- Mobile Search Bar -->
+    <div style="margin-bottom: 20px;">
+      <button
+        type="button"
+        class="btn btn-outline btn-full btn-sm"
+        data-search-open
+        style="justify-content: flex-start; gap: 10px; color: var(--color-foreground-secondary);"
+      >
+        {% render 'icon-search' %}
+        <span>{{ 'general.search.placeholder' | t }}</span>
+      </button>
+    </div>
+
+    <!-- Mobile Nav Links -->
+    <div style="display: flex; flex-direction: column; gap: 4px;">
+      {%- for link in linklists[section.settings.menu].links -%}
+        {%- if link.links.size > 0 -%}
+          <div class="accordion-item" style="border-bottom: 1px solid var(--color-border-light);">
+            <button type="button" class="accordion-header" style="font-size: 1.05rem; padding: 14px 0;">
+              <span>{{ link.title }}</span>
+              {% render 'icon-chevron' %}
+            </button>
+            <div class="accordion-content">
+              <div style="display: flex; flex-direction: column; gap: 10px; padding: 4px 16px 12px;">
+                {%- for child_link in link.links -%}
+                  <a href="{{ child_link.url }}" style="font-size: 0.92rem; color: var(--color-foreground-secondary);">
+                    {{ child_link.title }}
+                  </a>
+                {%- endfor -%}
+              </div>
+            </div>
+          </div>
+        {%- else -%}
+          <a
+            href="{{ link.url }}"
+            style="padding: 14px 0; font-family: var(--font-heading); font-size: 1.05rem; font-weight: 600; border-bottom: 1px solid var(--color-border-light);"
+          >
+            {{ link.title }}
+          </a>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    <!-- Mobile Bottom Links (Account, Language, COD notice) -->
+    <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--color-border); display: flex; flex-direction: column; gap: 14px;">
+      {%- if shop.customer_accounts_enabled -%}
+        <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" style="display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.92rem;">
+          {% render 'icon-account' %}
+          <span>{% if customer %}{{ 'customer.account.title' | t }}{% else %}{{ 'customer.login_page.sign_in' | t }}{% endif %}</span>
+        </a>
+      {%- endif -%}
+
+      <a href="/pages/wishlist" style="display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.92rem;">
+        {% render 'icon-heart' %}
+        <span>{{ 'sections.header.wishlist' | t }}</span>
+      </a>
+
+      <div style="margin-top: 12px; padding: 12px; background-color: var(--color-bg-secondary); border-radius: var(--radius-sm); font-size: 0.8rem; line-height: 1.4; color: var(--color-foreground-secondary);">
+        <strong>🇪🇬 Never Mind Egypt</strong><br>
+        Cash on Delivery Available • Inspect Before Paying
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Custom Store Logo"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "min": 80,
+      "max": 240,
+      "step": 10,
+      "unit": "px",
+      "label": "Custom Logo Width",
+      "default": 140
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Main Navigation Menu",
+      "default": "main-menu"
+    }
+  ]
+}
+{% endschema %}

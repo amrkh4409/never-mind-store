@@ -1,0 +1,127 @@
+<div id="CartBackdrop" class="drawer-backdrop" data-cart-close></div>
+
+<div id="CartDrawer" class="cart-drawer" role="dialog" aria-modal="true" aria-label="{{ 'sections.cart_drawer.title' | t }}">
+  <div class="cart-drawer__header">
+    <h3 class="cart-drawer__title">{{ 'sections.cart_drawer.title' | t }}</h3>
+    <button type="button" class="cart-drawer__close-btn" data-cart-close aria-label="Close cart drawer">
+      {% render 'icon-close' %}
+    </button>
+  </div>
+
+  <!-- Free Shipping Goal -->
+  <div class="cart-free-shipping">
+    <div id="FreeShippingProgressText" class="cart-free-shipping__text">
+      {%- assign threshold = settings.free_shipping_threshold | default: 1000 -%}
+      {%- assign total_egp = cart.total_price | divided_by: 100.0 -%}
+      {%- if total_egp >= threshold -%}
+        🎉 <strong>{{ settings.free_shipping_message | default: "You've unlocked FREE SHIPPING!" }}</strong>
+      {%- else -%}
+        {%- assign remaining = threshold | minus: total_egp | round -%}
+        Add <strong>{{ remaining }} EGP</strong> more for <strong>FREE SHIPPING</strong>
+      {%- endif -%}
+    </div>
+    <div class="cart-free-shipping__bar">
+      {%- assign progress = total_egp | times: 100.0 | divided_by: threshold -%}
+      {%- if progress > 100 -%}{%- assign progress = 100 -%}{%- endif -%}
+      <div id="FreeShippingProgressBar" class="cart-free-shipping__progress" style="width: {{ progress }}%;"></div>
+    </div>
+  </div>
+
+  <!-- Items List -->
+  <div id="CartDrawerItems" class="cart-drawer__body">
+    {%- if cart.items.size == 0 -%}
+      <div style="text-align: center; padding: 48px 16px; color: var(--color-foreground-secondary);">
+        <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="margin: 0 auto 16px; opacity: 0.4;">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z"/>
+        </svg>
+        <p style="font-size: 1.05rem; font-weight: 600; margin-bottom: 8px;">{{ 'sections.cart_drawer.empty' | t }}</p>
+        <p style="font-size: 0.9rem; margin-bottom: 24px;">Discover our latest arrivals and luxury fashion essentials.</p>
+        <a href="/collections/all" class="btn btn-primary btn-sm" data-cart-close>{{ 'sections.cart_drawer.continue_shopping' | t }}</a>
+      </div>
+    {%- else -%}
+      {%- for item in cart.items -%}
+        <div class="cart-item" data-item-id="{{ item.id }}">
+          <div class="cart-item__media">
+            {%- if item.image -%}
+              <img class="cart-item__img" src="{{ item.image | image_url: width: 160 }}" alt="{{ item.title | escape }}">
+            {%- endif -%}
+          </div>
+          <div class="cart-item__details">
+            <a href="{{ item.url }}" class="cart-item__title">{{ item.product.title }}</a>
+            {%- unless item.product.has_only_default_variant -%}
+              <span class="cart-item__variant">{{ item.variant.title }}</span>
+            {%- endunless -%}
+            <span style="font-weight: 700; font-size: 0.92rem; margin-top: 2px;">{{ item.final_line_price | money }}</span>
+
+            <div class="cart-item__bottom">
+              <div class="quantity-stepper">
+                <button type="button" class="quantity-stepper__btn" data-cart-action="minus" data-item-key="{{ item.key }}" data-item-qty="{{ item.quantity }}">-</button>
+                <input type="text" class="quantity-stepper__input" value="{{ item.quantity }}" readonly>
+                <button type="button" class="quantity-stepper__btn" data-cart-action="plus" data-item-key="{{ item.key }}" data-item-qty="{{ item.quantity }}">+</button>
+              </div>
+              <button type="button" class="cart-item__remove" data-cart-action="remove" data-item-key="{{ item.key }}">
+                {{ 'cart.general.remove' | t }}
+              </button>
+            </div>
+          </div>
+        </div>
+      {%- endfor -%}
+    {%- endif -%}
+  </div>
+
+  <!-- Cart Footer -->
+  <div class="cart-drawer__footer">
+    <!-- Order Notes Accordion -->
+    {%- if settings.enable_cart_notes -%}
+      <details style="margin-bottom: 16px; font-size: 0.88rem; color: var(--color-foreground-secondary);">
+        <summary style="cursor: pointer; font-weight: 600; color: var(--color-foreground);">
+          {{ 'sections.cart_drawer.notes_title' | t }}
+        </summary>
+        <textarea
+          name="note"
+          id="CartDrawerNote"
+          rows="2"
+          placeholder="{{ 'sections.cart_drawer.notes_placeholder' | t }}"
+          style="width: 100%; margin-top: 8px; padding: 8px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-size: 0.85rem;"
+        >{{ cart.note }}</textarea>
+      </details>
+    {%- endif -%}
+
+    <div class="cart-drawer__subtotal-row">
+      <span>{{ 'sections.cart_drawer.subtotal' | t }}</span>
+      <span id="CartDrawerSubtotal">{{ cart.total_price | money }}</span>
+    </div>
+
+    <!-- COD Guarantee Notice -->
+    {%- if settings.enable_cod_badge -%}
+      <div class="cart-drawer__cod-notice">
+        {% render 'icon-shield' %}
+        <span>{{ settings.cod_badge_text | default: "Cash on Delivery Available Across Egypt" }}</span>
+      </div>
+    {%- endif -%}
+
+    <form action="{{ routes.cart_url }}" method="post" id="CartDrawerForm">
+      <button
+        type="submit"
+        name="checkout"
+        class="btn btn-primary btn-full"
+        style="padding: 15px; font-size: 1rem;"
+      >
+        {{ 'sections.cart_drawer.checkout' | t }}
+      </button>
+    </form>
+
+    <div style="text-align: center; margin-top: 10px;">
+      <a href="{{ routes.cart_url }}" style="font-size: 0.82rem; color: var(--color-foreground-secondary); text-decoration: underline;">
+        {{ 'sections.cart_drawer.view_cart' | t }}
+      </a>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Cart Drawer",
+  "settings": []
+}
+{% endschema %}

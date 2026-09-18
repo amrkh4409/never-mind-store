@@ -1,0 +1,173 @@
+{
+  "general": {
+    "search": {
+      "search": "ابحث عن المنتجات والمجموعات...",
+      "placeholder": "عن ماذا تبحث؟",
+      "submit": "بحث",
+      "no_results_html": "لم نتمكن من العثور على نتائج لـ \"<em>{{ terms }}</em>\". يرجى التحقق من الكلمات أو المحاولة بكلمة أخرى.",
+      "results_with_count": {
+        "one": "نتيجة واحدة",
+        "other": "{{ count }} نتائج"
+      },
+      "view_all": "عرض جميع النتائج ({{ count }})"
+    },
+    "pagination": {
+      "previous": "السابق",
+      "next": "التالي",
+      "current_page": "صفحة {{ current }} من {{ total }}"
+    },
+    "breadcrumbs": {
+      "home": "الرئيسية"
+    },
+    "newsletter": {
+      "title": "انضم لقائمتنا البريدية الخاصة",
+      "subtitle": "احصل على خصومات حصرية، ومعاينة مبكرة لأحدث التشكيلات والعروض.",
+      "email_placeholder": "أدخل بريدك الإلكتروني",
+      "button_label": "اشتراك",
+      "success": "شكراً لاشتراكك في متجر Never Mind!"
+    }
+  },
+  "sections": {
+    "header": {
+      "menu": "القائمة",
+      "account": "حسابي",
+      "cart": "سلة التسوق",
+      "wishlist": "المفضلة",
+      "search": "بحث"
+    },
+    "cart_drawer": {
+      "title": "سلة المشتريات",
+      "free_shipping_before": "أضف بقيمة",
+      "free_shipping_after": "للحصول على شحن مجاني!",
+      "free_shipping_achieved": "تهانينا! لقد حصلت على شحن مجاني!",
+      "empty": "سلة مشترياتك فارغة حالياً.",
+      "continue_shopping": "متابعة التسوق",
+      "subtotal": "المجموع الفرعي",
+      "taxes_included_and_shipping_policy_html": "الضرائب مشمولة والشحن يُحسب عند إتمام الطلب.",
+      "checkout": "إتمام الشراء والطلب",
+      "view_cart": "عرض السلة",
+      "notes_title": "ملاحظات الطلب أو تعليمات التوصيل",
+      "notes_placeholder": "تعليمات التوصيل، علامة مميزة للعنوان، إلخ."
+    },
+    "quick_view": {
+      "title": "نظرة سريعة",
+      "close": "إغلاق",
+      "view_details": "عرض التفاصيل الكاملة"
+    },
+    "size_guide": {
+      "title": "دليل المقاسات والقياسات",
+      "close": "إغلاق دليل المقاسات",
+      "tips_title": "كيف تأخذ قياساتك بشكل صحيح",
+      "tips_body": "الصدر: قم بالقياس حول أعرض نقطة في الصدر. الطول: قس من أعلى نقطة في الكتف حتى الحافة السفلية."
+    },
+    "footer": {
+      "copyright": "جميع الحقوق محفوظة.",
+      "payment_cod": "الدفع عند الاستلام متاح"
+    }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "أضف إلى السلة",
+      "buy_now": "شراء الآن",
+      "sold_out": "نفد من المخزون",
+      "unavailable": "غير متوفر",
+      "sale": "تخفيض",
+      "on_sale": "وفر",
+      "regular_price": "السعر الأصلي",
+      "sale_price": "سعر التخفيض",
+      "quantity": "الكمية",
+      "choose_options": "اختر المقاس واللون",
+      "quick_add": "إضافة سريعة",
+      "quick_view": "نظرة سريعة",
+      "size_guide": "دليل المقاسات",
+      "color": "اللون",
+      "size": "المقاس",
+      "details": "تفاصيل المنتج",
+      "description": "الوصف",
+      "shipping_info": "الشحن والتوصيل للمحافظات",
+      "returns_policy": "الاستبدال والاسترجاع خلال 14 يوم",
+      "faq": "الأسئلة الشائعة",
+      "sku": "رمز المنتج",
+      "cod_available": "الدفع عند الاستلام متاح لجميع محافظات مصر",
+      "inspection_notice": "إمكانية معاينة وقياس الطلب قبل الدفع لمندوب التوصيل",
+      "reviews": "تقييمات العملاء",
+      "no_reviews_yet": "لا توجد تقييمات بعد. كن أول من يقيم هذا المنتج."
+    }
+  },
+  "collections": {
+    "general": {
+      "all_collections": "جميع التشكيلات",
+      "empty": "لا توجد منتجات في هذه التشكيلة.",
+      "filter_by": "تصفية حسب",
+      "sort_by": "ترتيب حسب",
+      "sort_button": "ترتيب",
+      "filter_button": "تصفية",
+      "clear_all": "مسح جميع التصفية",
+      "apply": "تطبيق",
+      "in_stock": "متوفر في المخزون",
+      "out_of_stock": "غير متوفر",
+      "price_from": "من",
+      "price_to": "إلى",
+      "product_count": {
+        "one": "منتج واحد",
+        "other": "{{ count }} منتجات"
+      }
+    },
+    "sorting": {
+      "featured": "المميز",
+      "best_selling": "الأكثر مبيعاً",
+      "az": "أبجدياً، أ-ي",
+      "za": "أبجدياً، ي-أ",
+      "price_ascending": "السعر: من الأقل للأعلى",
+      "price_descending": "السعر: من الأعلى للأقل",
+      "date_descending": "التاريخ: من الأحدث للأقدم",
+      "date_ascending": "التاريخ: من الأقدم للأحدث"
+    }
+  },
+  "cart": {
+    "general": {
+      "title": "سلة المشتريات الخاصة بك",
+      "subtotal": "المجموع الفرعي",
+      "checkout": "إتمام الشراء",
+      "empty": "سلة التسوق فارغة",
+      "continue_shopping": "استكشف التشكيلات",
+      "remove": "حذف المنتج",
+      "quantity": "الكمية",
+      "price": "السعر",
+      "total": "الإجمالي",
+      "update": "تحديث السلة",
+      "note": "ملاحظات التوصيل والطلب"
+    }
+  },
+  "customer": {
+    "login_page": {
+      "title": "تسجيل الدخول إلى حسابك",
+      "email": "البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "sign_in": "دخول",
+      "forgot_password": "نسيت كلمة المرور؟",
+      "create_account": "إنشاء حساب جديد"
+    },
+    "register": {
+      "title": "إنشاء حساب جديد",
+      "first_name": "الاسم الأول",
+      "last_name": "اسم العائلة",
+      "email": "البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "submit": "إنشاء الحساب",
+      "already_have_account": "لديك حساب بالفعل؟ تسجيل الدخول"
+    },
+    "account": {
+      "title": "حسابي",
+      "details": "تفاصيل الحساب",
+      "orders": "سجل الطلبات",
+      "no_orders": "لم تقم بتقديم أي طلبات حتى الآن.",
+      "order_number": "رقم الطلب",
+      "date": "التاريخ",
+      "payment_status": "حالة الدفع",
+      "fulfillment_status": "حالة الشحن",
+      "total": "الإجمالي",
+      "log_out": "تسجيل الخروج"
+    }
+  }
+}

@@ -1,0 +1,99 @@
+<section class="faq-section" style="padding: 60px 0; background-color: var(--color-bg-secondary); border-top: 1px solid var(--color-border);">
+  <div class="container" style="max-width: 860px;">
+    <div style="text-align: center; margin-bottom: 40px;">
+      <h2 style="margin-bottom: 8px;">{{ section.settings.heading | default: "Frequently Asked Questions" }}</h2>
+      <p style="color: var(--color-foreground-secondary); font-size: 0.95rem;">
+        {{ section.settings.subheading | default: "Everything you need to know about our products, sizing, and Egyptian delivery" }}
+      </p>
+    </div>
+
+    <div class="product-accordion" style="background-color: var(--color-bg); border-radius: var(--radius-md); padding: 8px 24px; box-shadow: var(--shadow-sm);">
+      {%- for block in section.blocks -%}
+        <div class="accordion-item" {{ block.shopify_attributes }}>
+          <button type="button" class="accordion-header">
+            <span>{{ block.settings.question }}</span>
+            {% render 'icon-chevron' %}
+          </button>
+          <div class="accordion-content">
+            <p>{{ block.settings.answer }}</p>
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Product / General FAQ",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Frequently Asked Questions"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Everything you need to know about orders, delivery & sizing in Egypt"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq_item",
+      "name": "Question & Answer",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "Can I inspect and try on the package before payment?"
+        },
+        {
+          "type": "textarea",
+          "id": "answer",
+          "label": "Answer",
+          "default": "Yes! Our courier allows you to open and inspect your order at your doorstep before handing over the payment. If anything is not as expected, you only pay the standard courier delivery fee."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product FAQ",
+      "blocks": [
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "Can I inspect and try on the package before paying the courier?",
+            "answer": "Yes! Our courier allows you to inspect your items at your doorstep before paying. If you decide not to take it, you only pay the delivery fee."
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "How long does delivery take across Egypt?",
+            "answer": "Cairo & Giza: 24 to 48 hours. Alexandria & Delta: 2 to 3 days. Upper Egypt and Coastal governorates: 3 to 4 days."
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "What happens if the size does not fit?",
+            "answer": "We offer a 14-day exchange policy. Just message our WhatsApp support, and our courier will bring your replacement size right away."
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "What materials are used for Never Mind clothing?",
+            "answer": "We use 100% premium long-staple Egyptian cotton and high-grade breathable blends for ultimate comfort and enduring shape."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

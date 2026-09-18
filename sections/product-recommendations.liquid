@@ -1,0 +1,45 @@
+<section class="recommendations-section" style="padding: 60px 0; border-top: 1px solid var(--color-border-light);">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <h2 class="section-header__title">{{ section.settings.heading | default: "Complete the Look" }}</h2>
+        <p class="section-header__subtitle">{{ section.settings.subheading | default: "Handpicked recommendations for your style" }}</p>
+      </div>
+    </div>
+
+    {%- if recommendations.performed and recommendations.products_count > 0 -%}
+      <div class="products-grid">
+        {%- for product in recommendations.products -%}
+          {% render 'product-card', product_card_product: product, show_vendor: true %}
+        {%- endfor -%}
+      </div>
+    {%- else -%}
+      <div
+        class="product-recommendations"
+        data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit=4"
+      >
+        {%- comment -%} Dynamically loaded on product page via fetch {%- endcomment -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Product Recommendations",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "You May Also Like"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Curated essentials to complete your outfit"
+    }
+  ]
+}
+{% endschema %}
