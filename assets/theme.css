@@ -960,7 +960,8 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
   visibility: visible;
 }
 
-.cart-drawer {
+.cart-drawer,
+.wishlist-drawer {
   position: fixed;
   top: 0;
   right: 0;
@@ -976,8 +977,21 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
   flex-direction: column;
 }
 
-.cart-drawer.is-open {
-  transform: translateX(0);
+[dir="rtl"] .cart-drawer,
+[dir="rtl"] .wishlist-drawer {
+  right: auto;
+  left: 0;
+  transform: translateX(-100%);
+}
+
+.cart-drawer.is-open,
+.wishlist-drawer.is-open {
+  transform: translateX(0) !important;
+}
+
+.product-card__wishlist.is-active svg {
+  fill: var(--color-sale);
+  stroke: var(--color-sale);
 }
 
 .cart-drawer__header {

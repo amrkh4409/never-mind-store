@@ -87,14 +87,15 @@
       {%- endif -%}
 
       <!-- Wishlist Counter -->
-      <a
-        href="/pages/wishlist"
+      <button
+        type="button"
         class="header__icon-btn"
+        data-wishlist-open
         aria-label="{{ 'sections.header.wishlist' | t }}"
       >
         {% render 'icon-heart' %}
         <span class="header__wishlist-count" data-wishlist-count style="display: none;">0</span>
-      </a>
+      </button>
 
       <!-- Cart Drawer Trigger -->
       <button

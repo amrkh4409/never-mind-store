@@ -1,0 +1,17 @@
+<div class="container" style="padding-top: 48px; padding-bottom: 80px;">
+  <div style="text-align: center; max-width: 640px; margin: 0 auto 40px;">
+    <h1 style="margin-bottom: 8px;">{{ page.title | default: "My Wishlist" }}</h1>
+    <p style="color: var(--color-foreground-secondary); font-size: 1rem;">Your curated favorites saved for later</p>
+  </div>
+
+  <div id="WishlistPageContainer" class="products-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+    <!-- Populated dynamically by theme.js from localStorage -->
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Wishlist Page",
+  "settings": []
+}
+{% endschema %}
