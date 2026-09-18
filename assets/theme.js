@@ -666,6 +666,125 @@
     });
   }
 
+  // --- Recently Viewed Products Manager ---
+  function initRecentlyViewed() {
+    const container = document.getElementById('RecentlyViewedContainer');
+    const storageKey = 'nevermind_recently_viewed';
+
+    if (window.location.pathname.includes('/products/')) {
+      const productTitleEl = document.querySelector('.product-title, .product-single__title, h1');
+      const productPriceEl = document.querySelector('.product-price');
+      const productImgEl = document.querySelector('.product-media img, .product-single__photo img');
+      const pathname = window.location.pathname;
+
+      if (productTitleEl) {
+        const item = {
+          title: productTitleEl.textContent.trim(),
+          url: pathname,
+          price: productPriceEl ? productPriceEl.textContent.trim() : '599 EGP',
+          image: productImgEl ? productImgEl.src : ''
+        };
+
+        try {
+          let items = JSON.parse(localStorage.getItem(storageKey) || '[]');
+          items = items.filter(i => i.url !== pathname);
+          items.unshift(item);
+          if (items.length > 8) items.pop();
+          localStorage.setItem(storageKey, JSON.stringify(items));
+        } catch (e) {}
+      }
+    }
+
+    if (container) {
+      let items = [];
+      try {
+        items = JSON.parse(localStorage.getItem(storageKey) || '[]');
+      } catch (e) {}
+
+      if (items.length > 0) {
+        container.innerHTML = items.map(p => `
+          <div class="product-card">
+            <div class="product-card__media-wrapper">
+              <a href="${p.url}" style="display:block; width:100%; height:100%;">
+                ${p.image ? `<img src="${p.image}" class="product-card__img" loading="lazy" alt="${p.title}">` : '<div style="background:#f3f4f6; aspect-ratio:3/4; display:flex; align-items:center; justify-content:center; color:#9ca3af; font-weight:700;">Never Mind</div>'}
+              </a>
+            </div>
+            <div class="product-card__content">
+              <span class="product-card__vendor">Never Mind</span>
+              <h3 class="product-card__title"><a href="${p.url}">${p.title}</a></h3>
+              <div class="product-card__price-wrap">
+                <span class="product-price">${p.price}</span>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      } else {
+        container.innerHTML = `
+          <div class="product-card">
+            <div class="product-card__media-wrapper">
+              <a href="/products/signature-heavyweight-oversized-tee-mineral-black" style="display:block; width:100%; height:100%;">
+                <div style="background:#1a1a1a; color:#fff; aspect-ratio:3/4; display:flex; align-items:center; justify-content:center; font-weight:700; letter-spacing:0.05em;">NEVER MIND</div>
+              </a>
+            </div>
+            <div class="product-card__content">
+              <span class="product-card__vendor">Never Mind</span>
+              <h3 class="product-card__title"><a href="/products/signature-heavyweight-oversized-tee-mineral-black">Signature Heavyweight Oversized Tee</a></h3>
+              <div class="product-card__price-wrap">
+                <span class="product-price">599 EGP</span>
+                <s class="product-price product-price--compare">799 EGP</s>
+              </div>
+            </div>
+          </div>
+          <div class="product-card">
+            <div class="product-card__media-wrapper">
+              <a href="/products/boxy-french-terry-minimalist-hoodie-charcoal" style="display:block; width:100%; height:100%;">
+                <div style="background:#2a2a2a; color:#fff; aspect-ratio:3/4; display:flex; align-items:center; justify-content:center; font-weight:700; letter-spacing:0.05em;">NEVER MIND</div>
+              </a>
+            </div>
+            <div class="product-card__content">
+              <span class="product-card__vendor">Never Mind</span>
+              <h3 class="product-card__title"><a href="/products/boxy-french-terry-minimalist-hoodie-charcoal">Boxy Minimalist Hoodie</a></h3>
+              <div class="product-card__price-wrap">
+                <span class="product-price">1199 EGP</span>
+                <s class="product-price product-price--compare">1499 EGP</s>
+              </div>
+            </div>
+          </div>
+          <div class="product-card">
+            <div class="product-card__media-wrapper">
+              <a href="/products/tactical-relaxed-cargo-pants-olive-drab" style="display:block; width:100%; height:100%;">
+                <div style="background:#1f2421; color:#fff; aspect-ratio:3/4; display:flex; align-items:center; justify-content:center; font-weight:700; letter-spacing:0.05em;">NEVER MIND</div>
+              </a>
+            </div>
+            <div class="product-card__content">
+              <span class="product-card__vendor">Never Mind</span>
+              <h3 class="product-card__title"><a href="/products/tactical-relaxed-cargo-pants-olive-drab">Tactical Relaxed Cargo Pants</a></h3>
+              <div class="product-card__price-wrap">
+                <span class="product-price">950 EGP</span>
+                <s class="product-price product-price--compare">1250 EGP</s>
+              </div>
+            </div>
+          </div>
+          <div class="product-card">
+            <div class="product-card__media-wrapper">
+              <a href="/products/cropped-structured-heavyweight-tee-bone-ivory" style="display:block; width:100%; height:100%;">
+                <div style="background:#e5e5e5; color:#111; aspect-ratio:3/4; display:flex; align-items:center; justify-content:center; font-weight:700; letter-spacing:0.05em;">NEVER MIND</div>
+              </a>
+            </div>
+            <div class="product-card__content">
+              <span class="product-card__vendor">Never Mind</span>
+              <h3 class="product-card__title"><a href="/products/cropped-structured-heavyweight-tee-bone-ivory">Cropped Structured Heavyweight Tee</a></h3>
+              <div class="product-card__price-wrap">
+                <span class="product-price">549 EGP</span>
+                <s class="product-price product-price--compare">699 EGP</s>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+    }
+  }
+
   // --- Initialize All Theme Features on DOM Ready ---
   document.addEventListener('DOMContentLoaded', () => {
     window.NeverMindCart = new CartDrawer();
@@ -676,5 +795,6 @@
     initAccordions();
     initModals();
     initSliders();
+    initRecentlyViewed();
   });
 })();
