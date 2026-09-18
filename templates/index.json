@@ -100,7 +100,7 @@
       "settings": {
         "title": "Best Sellers",
         "subtitle": "Our most wanted pieces right now",
-        "collection": "",
+        "collection": "best-sellers",
         "products_to_show": 12,
         "enable_slider": true,
         "columns_desktop": 4,
