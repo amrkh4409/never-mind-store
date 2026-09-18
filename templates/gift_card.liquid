@@ -1,0 +1,24 @@
+{% layout none %}
+<!doctype html>
+<html lang="{{ request.locale.iso_code | default: 'en' }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Never Mind Store Gift Card</title>
+    {{ 'theme.css' | asset_url | stylesheet_tag }}
+    {{ content_for_header }}
+  </head>
+  <body style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: var(--color-bg-secondary); padding: 20px;">
+    <div style="max-width: 480px; width: 100%; background: #fff; padding: 40px; border-radius: var(--radius-md); text-align: center; box-shadow: var(--shadow-md);">
+      <h1 style="font-size: 1.8rem; margin-bottom: 8px;">Gift Card</h1>
+      <p style="color: var(--color-foreground-secondary); margin-bottom: 24px;">Never Mind Luxury Fashion</p>
+      <div style="background: var(--color-foreground); color: #fff; padding: 24px; border-radius: var(--radius-sm); margin-bottom: 24px;">
+        <span style="font-size: 2rem; font-weight: 700; font-family: var(--font-heading);">{{ gift_card.initial_value | money_with_currency }}</span>
+      </div>
+      <div style="font-family: monospace; font-size: 1.2rem; letter-spacing: 0.1em; padding: 12px; border: 1px dashed var(--color-border); margin-bottom: 24px;">
+        {{ gift_card.code | format_code }}
+      </div>
+      <a href="{{ shop.url }}" class="btn btn-primary btn-full">Start Shopping</a>
+    </div>
+  </body>
+</html>

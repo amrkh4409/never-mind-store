@@ -1,0 +1,38 @@
+<div class="container" style="padding-top: 48px; padding-bottom: 80px;">
+  <div style="text-align: center; margin-bottom: 40px;">
+    <h1 style="margin-bottom: 8px;">All Collections</h1>
+    <p style="color: var(--color-foreground-secondary); font-size: 1rem;">Browse our complete fashion catalog</p>
+  </div>
+
+  <div class="collections-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+    {%- for collection in collections -%}
+      <a href="{{ collection.url }}" class="collection-card">
+        {%- if collection.featured_image != blank -%}
+          <img
+            src="{{ collection.featured_image | image_url: width: 800 }}"
+            alt="{{ collection.title | escape }}"
+            class="collection-card__img"
+            loading="lazy"
+            width="800"
+            height="1000"
+          >
+        {%- else -%}
+          {{ 'collection-1' | placeholder_svg_tag: 'collection-card__img' }}
+        {%- endif -%}
+
+        <div class="collection-card__overlay">
+          <h3 class="collection-card__title">{{ collection.title }}</h3>
+          <span class="collection-card__count">{{ collection.all_products_count }} Products</span>
+          <span class="collection-card__btn">Explore &rarr;</span>
+        </div>
+      </a>
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Collections List",
+  "settings": []
+}
+{% endschema %}
