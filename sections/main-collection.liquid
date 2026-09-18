@@ -1,23 +1,67 @@
 <div class="container" style="padding-top: 40px; padding-bottom: 80px;">
-  <div style="text-align: center; margin-bottom: 40px;">
+  <div style="text-align: center; margin-bottom: 32px;">
     <h1 style="margin-bottom: 8px;">{{ collection.title | default: "Catalog" }}</h1>
     {%- if collection.description != blank -%}
-      <p style="color: var(--color-foreground-secondary); font-size: 1rem;">{{ collection.description }}</p>
+      <p style="color: var(--color-foreground-secondary); font-size: 1rem; max-width: 600px; margin: 0 auto;">{{ collection.description }}</p>
     {%- endif -%}
   </div>
 
-  {%- if collection.products.size > 0 -%}
-    <div class="products-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
-      {%- for product in collection.products -%}
-        {% render 'product-card', product_card_product: product, show_vendor: true %}
-      {%- endfor -%}
+  {%- paginate collection.products by 24 -%}
+    <!-- Filter & Sort Bar -->
+    <div class="facets-container" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid var(--color-border-light);">
+      <div style="font-size: 0.9rem; color: var(--color-foreground-secondary);">
+        <span>{{ collection.products_count }} {{ 'collections.general.product_count.other' | default: 'products' }}</span>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <form id="FacetSortForm" method="get" style="display: inline-flex; align-items: center; gap: 8px;">
+          <label for="SortBy" style="font-size: 0.88rem; font-weight: 600;">{{ 'collections.general.sort_by' | default: 'Sort by' }}:</label>
+          <select
+            name="sort_by"
+            id="SortBy"
+            onchange="this.form.submit()"
+            style="padding: 8px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-size: 0.88rem; background-color: var(--color-bg);"
+          >
+            {%- for option in collection.sort_options -%}
+              <option
+                value="{{ option.value }}"
+                {% if option.value == collection.sort_by %}selected{% endif %}
+              >
+                {{ option.name }}
+              </option>
+            {%- endfor -%}
+          </select>
+        </form>
+      </div>
     </div>
-  {%- else -%}
-    <div style="text-align: center; padding: 60px 16px;">
-      <h3>No products found</h3>
-      <p style="color: var(--color-foreground-secondary); margin-top: 8px;">Check back soon for new arrivals.</p>
-    </div>
-  {%- endif -%}
+
+    {%- if collection.products.size > 0 -%}
+      <div class="products-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+        {%- for product in collection.products -%}
+          {% render 'product-card', product_card_product: product, show_vendor: true %}
+        {%- endfor -%}
+      </div>
+
+      {%- if paginate.pages > 1 -%}
+        <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 56px;">
+          {%- if paginate.previous -%}
+            <a href="{{ paginate.previous.url }}" class="btn btn-outline btn-sm">&larr; Previous</a>
+          {%- endif -%}
+          <span style="font-size: 0.9rem; font-weight: 600; color: var(--color-foreground-secondary);">
+            Page {{ paginate.current_page }} of {{ paginate.pages }}
+          </span>
+          {%- if paginate.next -%}
+            <a href="{{ paginate.next.url }}" class="btn btn-outline btn-sm">Next &rarr;</a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    {%- else -%}
+      <div style="text-align: center; padding: 60px 16px;">
+        <h3>No products found</h3>
+        <p style="color: var(--color-foreground-secondary); margin-top: 8px;">Check back soon for new arrivals.</p>
+      </div>
+    {%- endif -%}
+  {%- endpaginate -%}
 </div>
 
 {% schema %}
