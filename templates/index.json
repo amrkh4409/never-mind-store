@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero_banner": {
@@ -8,277 +17,192 @@
         "text_alignment": "left",
         "subheading": "NEW LUXURY STREETWEAR COLLECTION",
         "heading": "Minimal Aesthetics. Uncompromising Craft.",
-        "text": "Engineered for comfort, precision, and timeless presence in Egypt. Cash on delivery available nationwide.",
+        "text": "Engineered for comfort, precision, and timeless presence in Egypt.",
         "button_1_label": "SHOP MEN",
-        "button_2_label": "SHOP WOMEN"
+        "button_1_link": "",
+        "button_2_label": "SHOP WOMEN",
+        "button_2_link": ""
       }
     },
-    "trust_badges": {
-      "type": "trust-badges",
-      "blocks": {
-        "badge_cod": {
-          "type": "cod",
-          "settings": {
-            "title": "Cash on Delivery",
-            "text": "Pay comfortably upon receiving your order across all governorates"
-          }
-        },
-        "badge_inspect": {
-          "type": "inspection",
-          "settings": {
-            "title": "Inspect Before Payment",
-            "text": "Open & try your package with the courier before paying"
-          }
-        },
-        "badge_shipping": {
-          "type": "shipping",
-          "settings": {
-            "title": "Fast Shipping Across Egypt",
-            "text": "Cairo & Giza 24-48h | Governorates 2-4 business days"
-          }
-        },
-        "badge_exchange": {
-          "type": "exchange",
-          "settings": {
-            "title": "14-Day Size Exchange",
-            "text": "Instant size replacement assistance via WhatsApp"
-          }
-        }
-      },
-      "block_order": [
-        "badge_cod",
-        "badge_inspect",
-        "badge_shipping",
-        "badge_exchange"
-      ],
-      "settings": {}
-    },
-    "featured_collections": {
+    "featured_collections_AYimP6": {
       "type": "featured-collections",
       "blocks": {
-        "cat_men": {
+        "collection_Ywk3yU": {
           "type": "collection",
           "settings": {
+            "collection": "",
             "title": "MEN",
             "subtitle": "T-Shirts, Pants & Sets",
-            "btn_text": "Shop Men",
-            "collection": "men"
+            "link": "",
+            "btn_text": "Shop Men"
           }
         },
-        "cat_women": {
+        "collection_AjdfBi": {
           "type": "collection",
           "settings": {
+            "collection": "",
             "title": "WOMEN",
             "subtitle": "Tops, Dresses & Sets",
-            "btn_text": "Shop Women",
-            "collection": "women"
+            "link": "",
+            "btn_text": "Shop Women"
           }
         },
-        "cat_kids": {
+        "collection_xhTqN3": {
           "type": "collection",
           "settings": {
+            "collection": "",
             "title": "KIDS & TEENS",
             "subtitle": "Sets & Casuals",
-            "btn_text": "Shop Kids",
-            "collection": "kids"
+            "link": "",
+            "btn_text": "Shop Kids"
           }
         },
-        "cat_new": {
+        "collection_MjeLV8": {
           "type": "collection",
           "settings": {
+            "collection": "",
             "title": "NEW ARRIVALS",
             "subtitle": "Fresh Drops",
-            "btn_text": "Explore New",
-            "collection": "new-arrivals"
+            "link": "",
+            "btn_text": "Explore New"
           }
         },
-        "cat_sale": {
+        "collection_RWmaHM": {
           "type": "collection",
+          "disabled": true,
           "settings": {
+            "collection": "",
             "title": "SALE",
             "subtitle": "Up to 40% Off",
-            "btn_text": "Shop Sale",
-            "collection": "sale"
+            "link": "",
+            "btn_text": "Shop Sale"
           }
         }
       },
       "block_order": [
-        "cat_men",
-        "cat_women",
-        "cat_kids",
-        "cat_new",
-        "cat_sale"
+        "collection_Ywk3yU",
+        "collection_AjdfBi",
+        "collection_xhTqN3",
+        "collection_MjeLV8",
+        "collection_RWmaHM"
       ],
+      "name": "Featured Collections",
       "settings": {
-        "title": "Curated Categories",
-        "subtitle": "Explore urban luxury essentials tailored for modern Egypt",
-        "view_all_text": "All Categories"
+        "title": "Shop By Category",
+        "subtitle": "Curated modern wardrobe staples",
+        "view_all_text": "All Categories",
+        "view_all_link": ""
       }
     },
-    "featured_collection_bestsellers": {
+    "featured_collection_NF7eBj": {
       "type": "featured-collection",
+      "name": "Featured Products Slider",
       "settings": {
         "title": "Best Sellers",
         "subtitle": "Our most wanted pieces right now",
-        "collection": "best-sellers",
+        "collection": "",
         "products_to_show": 12,
         "enable_slider": true,
         "columns_desktop": 4,
         "show_vendor": true,
-        "view_all_text": "View All Best Sellers"
+        "view_all_text": "View All",
+        "view_all_link": ""
       }
     },
-    "featured_collection_men": {
+    "featured_collection_gykm3D": {
       "type": "featured-collection",
+      "name": "Featured Products Slider",
       "settings": {
-        "title": "Men's Collection",
-        "subtitle": "Engineered oversized luxury tees, hoodies, and cargo pants",
+        "title": "Men Collection",
+        "subtitle": "",
         "collection": "men",
         "products_to_show": 12,
         "enable_slider": true,
         "columns_desktop": 4,
         "show_vendor": true,
-        "view_all_text": "Shop All Men"
+        "view_all_text": "View All",
+        "view_all_link": ""
       }
     },
-    "featured_collection_women": {
+    "featured_collection_Rk4AeN": {
       "type": "featured-collection",
+      "name": "Featured Products Slider",
       "settings": {
-        "title": "Women's Collection",
-        "subtitle": "Contemporary minimalist silhouettes crafted from premium Egyptian cotton",
+        "title": "Women Collection",
+        "subtitle": "",
         "collection": "women",
         "products_to_show": 12,
         "enable_slider": true,
         "columns_desktop": 4,
         "show_vendor": true,
-        "view_all_text": "Shop All Women"
+        "view_all_text": "View All",
+        "view_all_link": ""
       }
     },
-    "featured_collection_kids": {
+    "featured_collection_nmWkJn": {
       "type": "featured-collection",
+      "name": "Featured Products Slider",
       "settings": {
-        "title": "Kids & Teens Collection",
-        "subtitle": "Comfortable everyday staples designed for freedom and movement",
+        "title": "Kids Collection",
+        "subtitle": "",
         "collection": "kids",
         "products_to_show": 12,
         "enable_slider": true,
         "columns_desktop": 4,
         "show_vendor": true,
-        "view_all_text": "Shop All Kids"
+        "view_all_text": "View All",
+        "view_all_link": ""
       }
     },
-    "testimonials": {
-      "type": "testimonials",
+    "trust_badges_HgT8PN": {
+      "type": "trust-badges",
       "blocks": {
-        "test_1": {
-          "type": "testimonial",
+        "cod_dETYLP": {
+          "type": "cod",
           "settings": {
-            "rating": 5,
-            "title": "Best Egyptian cotton streetwear",
-            "text": "The oversized fit is exact and the fabric weight is premium. The inspection before payment gave me total confidence.",
-            "author": "Youssef M.",
-            "location": "New Cairo, Cairo",
-            "verified": true
+            "title": "Cash on Delivery",
+            "text": "Pay comfortably upon receiving your order at your doorstep"
           }
         },
-        "test_2": {
-          "type": "testimonial",
+        "inspection_n3VTiA": {
+          "type": "inspection",
           "settings": {
-            "rating": 5,
-            "title": "Delivered in 24 hours to Alex!",
-            "text": "Super fast shipping to Alexandria and very clean luxury packaging. Will definitely order from the new drop.",
-            "author": "Mariam H.",
-            "location": "Roushdy, Alexandria",
-            "verified": true
+            "title": "Inspect Before Payment",
+            "text": "Open and review your package with the courier before paying"
           }
         },
-        "test_3": {
-          "type": "testimonial",
+        "shipping_aPijA9": {
+          "type": "shipping",
           "settings": {
-            "rating": 5,
-            "title": "Easy size exchange via WhatsApp",
-            "text": "I needed to swap for a larger size. Customer support on WhatsApp handled it in minutes and the courier exchanged it at my door.",
-            "author": "Omar K.",
-            "location": "Sheikh Zayed, Giza",
-            "verified": true
+            "title": "Fast Shipping Across Egypt",
+            "text": "Cairo & Giza 24-48 hours | All governorates 2-4 business days"
           }
         },
-        "test_4": {
-          "type": "testimonial",
+        "exchange_nbKa7L": {
+          "type": "exchange",
           "settings": {
-            "rating": 5,
-            "title": "Try on before paying is a game changer",
-            "text": "Being able to open the package while the courier waited was amazing. Top tier Egyptian brand with top customer service.",
-            "author": "Nour E.",
-            "location": "Mansoura, Dakahlia",
-            "verified": true
+            "title": "14-Day Size Exchange",
+            "text": "Effortless size replacement and customer care via WhatsApp"
           }
         }
       },
       "block_order": [
-        "test_1",
-        "test_2",
-        "test_3",
-        "test_4"
+        "cod_dETYLP",
+        "inspection_n3VTiA",
+        "shipping_aPijA9",
+        "exchange_nbKa7L"
       ],
-      "settings": {
-        "heading": "What Our Customers Say",
-        "subheading": "Real reviews from our community across Egyptian governorates"
-      }
-    },
-    "product_faq": {
-      "type": "product-faq",
-      "blocks": {
-        "faq_1": {
-          "type": "faq_item",
-          "settings": {
-            "question": "Can I open and inspect the package before paying?",
-            "answer": "Yes! Our courier policy allows you to inspect your items before handing over cash. If anything doesn't match your expectations, you simply return it with the courier and pay only the delivery fee."
-          }
-        },
-        "faq_2": {
-          "type": "faq_item",
-          "settings": {
-            "question": "How long does shipping take across Egyptian Governorates?",
-            "answer": "Cairo & Giza orders arrive within 24 to 48 hours. Alexandria, Delta, and Canal cities take 2 to 3 days. Upper Egypt and Red Sea take 3 to 4 business days."
-          }
-        },
-        "faq_3": {
-          "type": "faq_item",
-          "settings": {
-            "question": "How does the 14-day exchange policy work?",
-            "answer": "If you need a different size or color, simply message our WhatsApp support with your order number. Our courier will bring the new size and collect the old one directly at your door."
-          }
-        },
-        "faq_4": {
-          "type": "faq_item",
-          "settings": {
-            "question": "How do I choose my size?",
-            "answer": "Click the 'Size Guide' button on any product page to see chest, length, and weight recommendations. All items are true to size unless described as oversized."
-          }
-        }
-      },
-      "block_order": [
-        "faq_1",
-        "faq_2",
-        "faq_3",
-        "faq_4"
-      ],
-      "settings": {
-        "heading": "Frequently Asked Questions",
-        "subheading": "Clear answers about shopping with Never Mind Store in Egypt"
-      }
+      "name": "Trust Badges",
+      "settings": {}
     }
   },
   "order": [
     "hero_banner",
-    "trust_badges",
-    "featured_collections",
-    "featured_collection_bestsellers",
-    "featured_collection_men",
-    "featured_collection_women",
-    "featured_collection_kids",
-    "testimonials",
-    "product_faq"
+    "featured_collections_AYimP6",
+    "featured_collection_NF7eBj",
+    "featured_collection_gykm3D",
+    "featured_collection_Rk4AeN",
+    "featured_collection_nmWkJn",
+    "trust_badges_HgT8PN"
   ]
 }
