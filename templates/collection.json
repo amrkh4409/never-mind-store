@@ -2,10 +2,7 @@
   "sections": {
     "main_collection": {
       "type": "main-collection",
-      "settings": {
-        "columns_desktop": 4,
-        "show_vendor": true
-      }
+      "settings": {}
     }
   },
   "order": [
