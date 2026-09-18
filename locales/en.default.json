@@ -169,5 +169,16 @@
       "total": "Total",
       "log_out": "Log Out"
     }
+  },
+  "collections": {
+    "general": {
+      "all_collections": "All Collections",
+      "empty": "No products found in this collection.",
+      "sort_by": "Sort by",
+      "product_count": {
+        "one": "{{ count }} product",
+        "other": "{{ count }} products"
+      }
+    }
   }
 }

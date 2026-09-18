@@ -3,7 +3,6 @@
     "main_collection": {
       "type": "main-collection",
       "settings": {
-        "products_per_page": 16,
         "columns_desktop": 4,
         "show_vendor": true
       }

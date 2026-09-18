@@ -9,7 +9,7 @@
     {%- endif -%}
   </div>
 
-  {%- paginate collection.products by section.settings.products_per_page -%}
+  {%- paginate collection.products by 16 -%}
     <!-- Filter & Sort Bar -->
     {% render 'facets', results: collection %}
 
@@ -55,15 +55,6 @@
 {
   "name": "Collection Catalog",
   "settings": [
-    {
-      "type": "range",
-      "id": "products_per_page",
-      "min": 8,
-      "max": 36,
-      "step": 4,
-      "label": "Products Per Page",
-      "default": 16
-    },
     {
       "type": "range",
       "id": "columns_desktop",
