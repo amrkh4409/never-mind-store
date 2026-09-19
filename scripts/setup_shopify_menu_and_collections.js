@@ -14,19 +14,47 @@ const https = require('https');
 
 const SHOP = '9mtpvw-kr.myshopify.com';
 const API_VERSION = '2024-07';
-const TOKEN = process.argv[2] || process.env.SHOPIFY_ADMIN_TOKEN;
 
-if (!TOKEN) {
-  console.log('\x1b[33m%s\x1b[0m', '=======================================================');
-  console.log('\x1b[31m%s\x1b[0m', '  Missing Shopify Admin API Access Token');
-  console.log('\x1b[33m%s\x1b[0m', '=======================================================');
-  console.log('To run this script automatically on your live store:');
-  console.log('\x1b[36m  node scripts/setup_shopify_menu_and_collections.js <YOUR_TOKEN>\x1b[0m\n');
-  console.log('Where <YOUR_TOKEN> is the Admin API token (starts with shpat_...)');
-  console.log('from Shopify Admin > Settings > Apps and sales channels > Develop apps.\n');
-  console.log('Below is the EXACT collection & menu shape that will be created:');
-  printMenuHierarchyPreview();
-  process.exit(0);
+let TOKEN = process.argv[2] || process.env.SHOPIFY_ADMIN_TOKEN;
+const ARG_SECRET = process.argv[3] || process.env.SHOPIFY_CLIENT_SECRET;
+
+function exchangeClientCredentials(clientId, clientSecret) {
+  return new Promise((resolve, reject) => {
+    const data = new URLSearchParams({
+      grant_type: 'client_credentials',
+      client_id: clientId,
+      client_secret: clientSecret
+    }).toString();
+
+    const req = https.request({
+      hostname: SHOP,
+      path: '/admin/oauth/access_token',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Length': Buffer.byteLength(data)
+      }
+    }, (res) => {
+      let b = '';
+      res.on('data', d => b += d);
+      res.on('end', () => {
+        try {
+          const parsed = JSON.parse(b);
+          if (res.statusCode >= 200 && res.statusCode < 300) {
+            resolve(parsed);
+          } else {
+            reject({ status: res.statusCode, body: parsed });
+          }
+        } catch (e) {
+          reject({ status: res.statusCode, raw: b });
+        }
+      });
+    });
+
+    req.on('error', reject);
+    req.write(data);
+    req.end();
+  });
 }
 
 // REST Request Helper
@@ -176,6 +204,32 @@ Plus Top-Level Quick Links:
 }
 
 async function main() {
+  if (!TOKEN || !TOKEN.startsWith('shpat_')) {
+    const clientId = (TOKEN && !TOKEN.startsWith('shpss_')) ? TOKEN : (process.env.SHOPIFY_CLIENT_ID || process.argv[2]);
+    const clientSecret = ARG_SECRET || process.env.SHOPIFY_CLIENT_SECRET || (TOKEN && TOKEN.startsWith('shpss_') ? TOKEN : process.argv[3]);
+    
+    if (clientId && clientSecret) {
+      console.log(`Exchanging Client ID & Secret for active access token on ${SHOP}...`);
+      try {
+        const authRes = await exchangeClientCredentials(clientId, clientSecret);
+        if (authRes && authRes.access_token) {
+          TOKEN = authRes.access_token;
+          console.log(`\x1b[32m✔ Received Access Token with scopes: ${authRes.scope}\x1b[0m\n`);
+        }
+      } catch (e) {
+        console.log('Failed to exchange client credentials:', e);
+      }
+    }
+  }
+
+  if (!TOKEN) {
+    console.log('\x1b[33m%s\x1b[0m', '=======================================================');
+    console.log('\x1b[31m%s\x1b[0m', '  Missing Shopify Admin API Access Token or Credentials');
+    console.log('\x1b[33m%s\x1b[0m', '=======================================================');
+    printMenuHierarchyPreview();
+    process.exit(0);
+  }
+
   console.log('\x1b[36m%s\x1b[0m', `Connecting to Shopify Store: ${SHOP}...`);
 
   // Step 0: Test connection
