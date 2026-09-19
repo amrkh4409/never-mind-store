@@ -701,18 +701,49 @@
       });
     }
 
-    // Desktop Mega Menu persistent hover & touch support
+    // Desktop Mega Menu persistent hover, click toggle & Shopify Theme Editor support
     const megaMenuItems = document.querySelectorAll('.header__menu-item--has-mega');
     megaMenuItems.forEach(item => {
+      const link = item.querySelector('.header__menu-link');
+      if (link) {
+        link.addEventListener('click', (e) => {
+          if (window.innerWidth >= 1024) {
+            e.preventDefault();
+            const wasOpen = item.classList.contains('is-open');
+            megaMenuItems.forEach(m => m.classList.remove('is-open'));
+            if (!wasOpen) {
+              item.classList.add('is-open');
+            }
+          }
+        });
+      }
+
       item.addEventListener('mouseenter', () => item.classList.add('is-open'));
       item.addEventListener('mouseleave', () => item.classList.remove('is-open'));
     });
 
     document.addEventListener('click', (e) => {
       const clickedItem = e.target.closest('.header__menu-item--has-mega');
-      megaMenuItems.forEach(item => {
-        if (item !== clickedItem) item.classList.remove('is-open');
-      });
+      if (!clickedItem) {
+        megaMenuItems.forEach(item => item.classList.remove('is-open'));
+      }
+    });
+
+    // Shopify Theme Editor: Automatically open mega menu when block is selected
+    document.addEventListener('shopify:block:select', (e) => {
+      const target = e.target;
+      const megaItem = target.closest('.header__menu-item--has-mega') || document.querySelector('.header__menu-item--has-mega');
+      if (megaItem) {
+        megaItem.classList.add('is-open');
+      }
+    });
+
+    document.addEventListener('shopify:block:deselect', (e) => {
+      const target = e.target;
+      const megaItem = target.closest('.header__menu-item--has-mega') || document.querySelector('.header__menu-item--has-mega');
+      if (megaItem) {
+        megaItem.classList.remove('is-open');
+      }
     });
   }
 
