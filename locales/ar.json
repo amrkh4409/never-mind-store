@@ -183,16 +183,5 @@
       "total": "الإجمالي",
       "log_out": "تسجيل الخروج"
     }
-  },
-  "collections": {
-    "general": {
-      "all_collections": "جميع التشكيلات",
-      "empty": "لا توجد منتجات في هذه التشكيلة حالياً.",
-      "sort_by": "ترتيب حسب",
-      "product_count": {
-        "one": "منتج واحد",
-        "other": "{{ count }} منتجات"
-      }
-    }
   }
 }

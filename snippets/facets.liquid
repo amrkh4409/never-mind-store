@@ -2,15 +2,46 @@
   Renders faceted filters and sorting for Collection and Search templates
 {%- endcomment -%}
 
+{%- assign is_ar = false -%}
+{%- if request.locale.iso_code == 'ar' or localization.language.iso_code == 'ar' -%}
+  {%- assign is_ar = true -%}
+{%- endif -%}
+
+{%- assign sort_by_label = 'collections.general.sort_by' | t -%}
+{%- if sort_by_label contains 'translation missing' or sort_by_label contains 'collections.general' or sort_by_label == blank -%}
+  {%- if is_ar -%}
+    {%- assign sort_by_label = 'ترتيب حسب' -%}
+  {%- else -%}
+    {%- assign sort_by_label = 'Sort by' -%}
+  {%- endif -%}
+{%- endif -%}
+
+{%- assign count_label = 'collections.general.product_count' | t: count: results.products_count -%}
+{%- if count_label contains 'translation missing' or count_label contains 'collections.general' or count_label == blank -%}
+  {%- if is_ar -%}
+    {%- if results.products_count == 1 -%}
+      {%- assign count_label = 'منتج واحد' -%}
+    {%- else -%}
+      {%- assign count_label = results.products_count | append: ' منتجات' -%}
+    {%- endif -%}
+  {%- else -%}
+    {%- if results.products_count == 1 -%}
+      {%- assign count_label = '1 product' -%}
+    {%- else -%}
+      {%- assign count_label = results.products_count | append: ' products' -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endif -%}
+
 <div class="facets-container" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid var(--color-border-light);">
   <div style="font-size: 0.9rem; color: var(--color-foreground-secondary);">
-    <span>{{ 'collections.general.product_count' | t: count: results.products_count }}</span>
+    <span>{{ count_label }}</span>
   </div>
 
   <div style="display: flex; align-items: center; gap: 16px;">
     <!-- Sorting Dropdown -->
     <form id="FacetSortForm" method="get" style="display: inline-flex; align-items: center; gap: 8px;">
-      <label for="SortBy" style="font-size: 0.88rem; font-weight: 600;">{{ 'collections.general.sort_by' | t }}:</label>
+      <label for="SortBy" style="font-size: 0.88rem; font-weight: 600;">{{ sort_by_label }}:</label>
       <select
         name="sort_by"
         id="SortBy"
@@ -18,11 +49,32 @@
         style="padding: 8px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-size: 0.88rem; background-color: var(--color-bg);"
       >
         {%- for option in results.sort_options -%}
+          {%- assign opt_name = option.name -%}
+          {%- if is_ar -%}
+            {%- case option.value -%}
+              {%- when 'manual' -%}
+                {%- assign opt_name = 'المميز' -%}
+              {%- when 'best-selling' -%}
+                {%- assign opt_name = 'الأكثر مبيعاً' -%}
+              {%- when 'title-ascending' -%}
+                {%- assign opt_name = 'أبجدياً، أ-ي' -%}
+              {%- when 'title-descending' -%}
+                {%- assign opt_name = 'أبجدياً، ي-أ' -%}
+              {%- when 'price-ascending' -%}
+                {%- assign opt_name = 'السعر: من الأقل للأعلى' -%}
+              {%- when 'price-descending' -%}
+                {%- assign opt_name = 'السعر: من الأعلى للأقل' -%}
+              {%- when 'created-ascending' -%}
+                {%- assign opt_name = 'التاريخ: من الأقدم للأحدث' -%}
+              {%- when 'created-descending' -%}
+                {%- assign opt_name = 'التاريخ: من الأحدث للأقدم' -%}
+            {%- endcase -%}
+          {%- endif -%}
           <option
             value="{{ option.value }}"
             {% if option.value == results.sort_by %}selected{% endif %}
           >
-            {{ option.name }}
+            {{ opt_name }}
           </option>
         {%- endfor -%}
       </select>
