@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "current": {
     "color_background": "#FFFFFF",
@@ -33,6 +42,103 @@
     "whatsapp_message": "Hello Never Mind Store, I have an inquiry about my order / sizing.",
     "social_instagram": "https://instagram.com",
     "social_facebook": "https://facebook.com",
-    "social_tiktok": "https://tiktok.com"
+    "social_tiktok": "https://tiktok.com",
+    "sections": {
+      "announcement-bar": {
+        "type": "announcement-bar",
+        "blocks": {
+          "announcement-bar-0": {
+            "type": "announcement",
+            "settings": {
+              "text": "FREE SHIPPING ON ORDERS OVER 1000 EGP • CASH ON DELIVERY AVAILABLE • INSPECT PACKAGE BEFORE PAYMENT",
+              "link": ""
+            }
+          }
+        },
+        "block_order": [
+          "announcement-bar-0"
+        ],
+        "settings": {
+          "show_announcement": true,
+          "bg_color": "#111827",
+          "text_color": "#ffffff"
+        }
+      },
+      "header": {
+        "type": "header",
+        "blocks": {
+          "mega_menu_Paq46t": {
+            "type": "mega_menu",
+            "settings": {
+              "trigger_title": "",
+              "promo_title": "New Drop 2026",
+              "promo_button_text": "Shop Now"
+            }
+          }
+        },
+        "block_order": [
+          "mega_menu_Paq46t"
+        ],
+        "settings": {
+          "logo_width": 140,
+          "menu": "main-menu",
+          "enable_mega_menu": true
+        }
+      },
+      "footer": {
+        "type": "footer",
+        "blocks": {
+          "footer-0": {
+            "type": "brand",
+            "settings": {
+              "text": "Contemporary Egyptian luxury streetwear and minimalist fashion designed with premium fabrics and tailored cuts.",
+              "show_social": true
+            }
+          },
+          "footer-1": {
+            "type": "link_list",
+            "settings": {
+              "heading": "Shop Collections",
+              "menu": "collections"
+            }
+          },
+          "footer-2": {
+            "type": "link_list",
+            "settings": {
+              "heading": "Customer Service",
+              "menu": "footer-customer-services"
+            }
+          },
+          "footer-3": {
+            "type": "newsletter",
+            "settings": {
+              "heading": "Subscribe to our VIP list",
+              "subtext": "Get early access to fresh drops and exclusive Egyptian cotton streetwear promotions.",
+              "show_cod_note": true
+            }
+          }
+        },
+        "block_order": [
+          "footer-0",
+          "footer-1",
+          "footer-2",
+          "footer-3"
+        ],
+        "settings": {
+          "show_payment_cod": true,
+          "cod_badge_text": "Cash on Delivery Available",
+          "copyright_text": ""
+        }
+      },
+      "cart-drawer": {
+        "type": "cart-drawer",
+        "settings": {}
+      },
+      "floating-whatsapp": {
+        "type": "floating-whatsapp",
+        "settings": {}
+      }
+    },
+    "content_for_index": []
   }
 }
