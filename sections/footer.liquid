@@ -1,88 +1,205 @@
 <footer class="footer">
   <div class="container">
+    {%- assign is_ar = false -%}
+    {%- if request.locale.iso_code == 'ar' or localization.language.iso_code == 'ar' -%}
+      {%- assign is_ar = true -%}
+    {%- endif -%}
+
     <div class="footer-grid">
-      <!-- Brand & Mission Column -->
-      <div class="footer-col">
-        <div class="header__logo" style="margin-bottom: 14px;">
-          {%- if section.settings.footer_logo != blank -%}
-            <img src="{{ section.settings.footer_logo | image_url: width: 200 }}" alt="{{ shop.name }}" style="height: 38px;">
-          {%- else -%}
+      {%- if section.blocks.size > 0 -%}
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            {%- when 'brand' -%}
+              <div class="footer-col" {{ block.shopify_attributes }}>
+                <div class="header__logo" style="margin-bottom: 14px;">
+                  {%- if block.settings.logo != blank -%}
+                    <img src="{{ block.settings.logo | image_url: width: 240 }}" alt="{{ shop.name }}" style="height: 38px; object-fit: contain;">
+                  {%- else -%}
+                    <img src="{{ 'logo.svg' | asset_url }}" alt="{{ shop.name }}" style="height: 38px;">
+                  {%- endif -%}
+                </div>
+
+                <p style="font-size: 0.9rem; color: var(--color-foreground-secondary); line-height: 1.6; margin-bottom: 20px; max-width: 320px;">
+                  {%- if block.settings.text != blank -%}
+                    {{ block.settings.text }}
+                  {%- else -%}
+                    {%- if is_ar -%}
+                      أزياء ستريت وير مصرية فاخرة وتصاميم مينيمال عصرية مصممة بنقاء خامات القطن المصري الفاخر.
+                    {%- else -%}
+                      Contemporary Egyptian luxury streetwear and minimalist fashion designed with premium fabrics and tailored cuts.
+                    {%- endif -%}
+                  {%- endif -%}
+                </p>
+
+                {%- if block.settings.show_social -%}
+                  <div style="display: flex; align-items: center; gap: 14px;">
+                    {%- if settings.social_instagram != blank -%}
+                      <a href="{{ settings.social_instagram }}" target="_blank" rel="noopener noreferrer" style="color: var(--color-foreground);" aria-label="Instagram">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                      </a>
+                    {%- endif -%}
+                    {%- if settings.social_facebook != blank -%}
+                      <a href="{{ settings.social_facebook }}" target="_blank" rel="noopener noreferrer" style="color: var(--color-foreground);" aria-label="Facebook">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+                      </a>
+                    {%- endif -%}
+                    {%- if settings.social_tiktok != blank -%}
+                      <a href="{{ settings.social_tiktok }}" target="_blank" rel="noopener noreferrer" style="color: var(--color-foreground);" aria-label="TikTok">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.24 1.07-.14 1.61.24 1.64 1.82 2.92 3.5 2.7 1.48-.1 2.71-1.09 3.1-2.52.2-.61.26-1.25.24-1.89l.05-14.86z"/></svg>
+                      </a>
+                    {%- endif -%}
+                  </div>
+                {%- endif -%}
+              </div>
+
+            {%- when 'link_list' -%}
+              <div class="footer-col" {{ block.shopify_attributes }}>
+                <h4 class="footer-col__title">{{ block.settings.heading }}</h4>
+                <ul class="footer-links">
+                  {%- if block.settings.menu != blank and linklists[block.settings.menu].links.size > 0 -%}
+                    {%- for link in linklists[block.settings.menu].links -%}
+                      <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+                    {%- endfor -%}
+                  {%- else -%}
+                    <li><a href="/collections/all">{% if is_ar %}جميع المنتجات{% else %}All Products{% endif %}</a></li>
+                    <li><a href="/collections/men">{% if is_ar %}تشكيلة الرجال{% else %}Men's Collection{% endif %}</a></li>
+                    <li><a href="/collections/women">{% if is_ar %}تشكيلة النساء{% else %}Women's Collection{% endif %}</a></li>
+                    <li><a href="/collections/kids">{% if is_ar %}تشكيلة الأطفال{% else %}Kids & Teens{% endif %}</a></li>
+                    <li><a href="/collections/best-sellers">{% if is_ar %}الأكثر مبيعاً{% else %}Best Sellers{% endif %}</a></li>
+                    <li><a href="/collections/sale">{% if is_ar %}التخفيضات{% else %}Sale & Offers{% endif %}</a></li>
+                  {%- endif -%}
+                </ul>
+              </div>
+
+            {%- when 'text' -%}
+              <div class="footer-col" {{ block.shopify_attributes }}>
+                <h4 class="footer-col__title">{{ block.settings.heading }}</h4>
+                <div style="font-size: 0.9rem; color: var(--color-foreground-secondary); line-height: 1.6;">
+                  {{ block.settings.subtext }}
+                </div>
+              </div>
+
+            {%- when 'newsletter' -%}
+              <div class="footer-col" {{ block.shopify_attributes }}>
+                <h4 class="footer-col__title">{{ block.settings.heading | default: 'general.newsletter.title' | t }}</h4>
+                <p style="font-size: 0.88rem; color: var(--color-foreground-secondary); margin-bottom: 16px;">
+                  {%- if block.settings.subtext != blank -%}
+                    {{ block.settings.subtext }}
+                  {%- else -%}
+                    {%- if is_ar -%}
+                      اشترك في قائمتنا البريدية ليصلك جديد تشكيلاتنا وأحدث العروض الحصرية.
+                    {%- else -%}
+                      {{ 'general.newsletter.subtitle' | t }}
+                    {%- endif -%}
+                  {%- endif -%}
+                </p>
+
+                {%- form 'customer', id: 'FooterNewsletterForm' -%}
+                  <input type="hidden" name="contact[tags]" value="newsletter">
+                  {%- if form.posted_successfully? -%}
+                    <p style="font-size: 0.85rem; color: var(--color-success); font-weight: 600;">{{ 'general.newsletter.success' | t }}</p>
+                  {%- else -%}
+                    <div style="display: flex; gap: 8px;">
+                      <input
+                        type="email"
+                        name="contact[email]"
+                        value="{{ form.email }}"
+                        placeholder="{{ 'general.newsletter.email_placeholder' | t }}"
+                        required
+                        style="flex: 1; padding: 12px 14px; font-size: 0.88rem; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background-color: var(--color-bg);"
+                      >
+                      <button type="submit" class="btn btn-primary btn-sm" style="flex-shrink: 0;">
+                        {{ 'general.newsletter.button_label' | t }}
+                      </button>
+                    </div>
+                  {%- endif -%}
+                {%- endform -%}
+
+                {%- if block.settings.show_cod_note -%}
+                  <div style="margin-top: 20px; display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--color-foreground-secondary);">
+                    {% render 'icon-shield' %}
+                    <span>
+                      {%- if is_ar -%}
+                        الدفع عند الاستلام مع إمكانية المعاينة قبل الدفع لجميع محافظات مصر
+                      {%- else -%}
+                        Cash on Delivery with package inspection across all Egypt
+                      {%- endif -%}
+                    </span>
+                  </div>
+                {%- endif -%}
+              </div>
+
+          {%- endcase -%}
+        {%- endfor -%}
+
+      {%- else -%}
+        <!-- Default 4-Column Layout when no blocks are defined -->
+        <div class="footer-col">
+          <div class="header__logo" style="margin-bottom: 14px;">
             <img src="{{ 'logo.svg' | asset_url }}" alt="{{ shop.name }}" style="height: 38px;">
-          {%- endif -%}
+          </div>
+          <p style="font-size: 0.9rem; color: var(--color-foreground-secondary); line-height: 1.6; margin-bottom: 20px; max-width: 320px;">
+            {%- if is_ar -%}
+              أزياء ستريت وير مصرية فاخرة وتصاميم مينيمال عصرية مصممة بنقاء خامات القطن المصري الفاخر.
+            {%- else -%}
+              Contemporary Egyptian luxury streetwear and minimalist fashion designed with premium fabrics and tailored cuts.
+            {%- endif -%}
+          </p>
+          <div style="display: flex; align-items: center; gap: 14px;">
+            {%- if settings.social_instagram != blank -%}
+              <a href="{{ settings.social_instagram }}" target="_blank" rel="noopener noreferrer" style="color: var(--color-foreground);" aria-label="Instagram">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+              </a>
+            {%- endif -%}
+            {%- if settings.social_facebook != blank -%}
+              <a href="{{ settings.social_facebook }}" target="_blank" rel="noopener noreferrer" style="color: var(--color-foreground);" aria-label="Facebook">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+              </a>
+            {%- endif -%}
+            {%- if settings.social_tiktok != blank -%}
+              <a href="{{ settings.social_tiktok }}" target="_blank" rel="noopener noreferrer" style="color: var(--color-foreground);" aria-label="TikTok">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.24 1.07-.14 1.61.24 1.64 1.82 2.92 3.5 2.7 1.48-.1 2.71-1.09 3.1-2.52.2-.61.26-1.25.24-1.89l.05-14.86z"/></svg>
+              </a>
+            {%- endif -%}
+          </div>
         </div>
-        <p style="font-size: 0.9rem; color: var(--color-foreground-secondary); line-height: 1.6; margin-bottom: 20px; max-width: 320px;">
-          {{ section.settings.brand_text | default: "Contemporary Egyptian luxury streetwear and minimalist fashion designed with premium fabrics and tailored cuts." }}
-        </p>
-        
-        <!-- Social Icons -->
-        <div style="display: flex; align-items: center; gap: 14px;">
-          {%- if settings.social_instagram != blank -%}
-            <a href="{{ settings.social_instagram }}" target="_blank" rel="noopener noreferrer" style="color: var(--color-foreground);" aria-label="Instagram">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-            </a>
-          {%- endif -%}
-          {%- if settings.social_facebook != blank -%}
-            <a href="{{ settings.social_facebook }}" target="_blank" rel="noopener noreferrer" style="color: var(--color-foreground);" aria-label="Facebook">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
-            </a>
-          {%- endif -%}
-          {%- if settings.social_tiktok != blank -%}
-            <a href="{{ settings.social_tiktok }}" target="_blank" rel="noopener noreferrer" style="color: var(--color-foreground);" aria-label="TikTok">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.24 1.07-.14 1.61.24 1.64 1.82 2.92 3.5 2.7 1.48-.1 2.71-1.09 3.1-2.52.2-.61.26-1.25.24-1.89l.05-14.86z"/></svg>
-            </a>
-          {%- endif -%}
+
+        <div class="footer-col">
+          <h4 class="footer-col__title">{% if is_ar %}تشكيلات المتجر{% else %}Shop Collections{% endif %}</h4>
+          <ul class="footer-links">
+            <li><a href="/collections/all">{% if is_ar %}جميع المنتجات{% else %}All Products{% endif %}</a></li>
+            <li><a href="/collections/men">{% if is_ar %}تشكيلة الرجال{% else %}Men's Collection{% endif %}</a></li>
+            <li><a href="/collections/women">{% if is_ar %}تشكيلة النساء{% else %}Women's Collection{% endif %}</a></li>
+            <li><a href="/collections/kids">{% if is_ar %}تشكيلة الأطفال{% else %}Kids & Teens{% endif %}</a></li>
+            <li><a href="/collections/best-sellers">{% if is_ar %}الأكثر مبيعاً{% else %}Best Sellers{% endif %}</a></li>
+            <li><a href="/collections/sale">{% if is_ar %}التخفيضات{% else %}Sale & Offers{% endif %}</a></li>
+          </ul>
         </div>
-      </div>
 
-      <!-- Shop Menu -->
-      <div class="footer-col">
-        <h4 class="footer-col__title">{{ section.settings.shop_menu_title | default: "Shop Collections" }}</h4>
-        <ul class="footer-links">
-          {%- for link in linklists[section.settings.shop_menu].links -%}
-            <li><a href="{{ link.url }}">{{ link.title }}</a></li>
-          {%- else -%}
-            <li><a href="/collections/all">All Products</a></li>
-            <li><a href="/collections/men">Men</a></li>
-            <li><a href="/collections/women">Women</a></li>
-            <li><a href="/collections/new-arrivals">New Arrivals</a></li>
-            <li><a href="/collections/sale">Sale</a></li>
-          {%- endfor -%}
-        </ul>
-      </div>
+        <div class="footer-col">
+          <h4 class="footer-col__title">{% if is_ar %}خدمة العملاء{% else %}Customer Service{% endif %}</h4>
+          <ul class="footer-links">
+            <li><a href="/pages/contact">{% if is_ar %}تواصل معنا{% else %}Contact Us{% endif %}</a></li>
+            <li><a href="/pages/faq">{% if is_ar %}الأسئلة الشائعة{% else %}FAQ{% endif %}</a></li>
+            <li><a href="#" data-size-guide-open>{% if is_ar %}دليل المقاسات{% else %}Size Guide{% endif %}</a></li>
+          </ul>
+        </div>
 
-      <!-- Customer Service Menu -->
-      <div class="footer-col">
-        <h4 class="footer-col__title">{{ section.settings.support_menu_title | default: "Customer Service" }}</h4>
-        <ul class="footer-links">
-          {%- for link in linklists[section.settings.support_menu].links -%}
-            <li><a href="{{ link.url }}">{{ link.title }}</a></li>
-          {%- else -%}
-            <li><a href="/pages/contact">Contact Us</a></li>
-            <li><a href="/pages/faq">FAQ</a></li>
-            <li><a href="/pages/shipping-delivery">Shipping & Governorates</a></li>
-            <li><a href="/pages/returns-exchange">14-Day Exchange & Returns</a></li>
-            <li><a href="#" data-size-guide-open>Size Guide</a></li>
-          {%- endfor -%}
-        </ul>
-      </div>
-
-      <!-- Newsletter Column -->
-      <div class="footer-col">
-        <h4 class="footer-col__title">{{ 'general.newsletter.title' | t }}</h4>
-        <p style="font-size: 0.88rem; color: var(--color-foreground-secondary); margin-bottom: 16px;">
-          {{ 'general.newsletter.subtitle' | t }}
-        </p>
-
-        {%- form 'customer', id: 'FooterNewsletterForm' -%}
-          <input type="hidden" name="contact[tags]" value="newsletter">
-          {%- if form.posted_successfully? -%}
-            <p style="font-size: 0.85rem; color: var(--color-success); font-weight: 600;">{{ 'general.newsletter.success' | t }}</p>
-          {%- else -%}
+        <div class="footer-col">
+          <h4 class="footer-col__title">{{ 'general.newsletter.title' | t }}</h4>
+          <p style="font-size: 0.88rem; color: var(--color-foreground-secondary); margin-bottom: 16px;">
+            {%- if is_ar -%}
+              اشترك في قائمتنا البريدية ليصلك جديد تشكيلاتنا وأحدث العروض الحصرية.
+            {%- else -%}
+              {{ 'general.newsletter.subtitle' | t }}
+            {%- endif -%}
+          </p>
+          {%- form 'customer', id: 'FooterNewsletterFormDefault' -%}
+            <input type="hidden" name="contact[tags]" value="newsletter">
             <div style="display: flex; gap: 8px;">
               <input
                 type="email"
                 name="contact[email]"
-                value="{{ form.email }}"
                 placeholder="{{ 'general.newsletter.email_placeholder' | t }}"
                 required
                 style="flex: 1; padding: 12px 14px; font-size: 0.88rem; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background-color: var(--color-bg);"
@@ -91,27 +208,48 @@
                 {{ 'general.newsletter.button_label' | t }}
               </button>
             </div>
-          {%- endif -%}
-        {%- endform -%}
-
-        <!-- Egyptian Trust Badges in Footer -->
-        <div style="margin-top: 20px; display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--color-foreground-secondary);">
-          {% render 'icon-shield' %}
-          <span>Cash on Delivery Available Across All Egypt</span>
+          {%- endform -%}
+          <div style="margin-top: 20px; display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--color-foreground-secondary);">
+            {% render 'icon-shield' %}
+            <span>
+              {%- if is_ar -%}
+                الدفع عند الاستلام مع إمكانية المعاينة قبل الدفع لجميع محافظات مصر
+              {%- else -%}
+                Cash on Delivery with package inspection across all Egypt
+              {%- endif -%}
+            </span>
+          </div>
         </div>
-      </div>
+      {%- endif -%}
     </div>
 
     <!-- Footer Bottom: Payment & Copyright -->
     <div class="footer-bottom">
       <div>
-        &copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. {{ 'sections.footer.copyright' | t }}
+        &copy; {{ 'now' | date: '%Y' }} {{ shop.name }}.
+        {%- if section.settings.copyright_text != blank -%}
+          {{ section.settings.copyright_text }}
+        {%- else -%}
+          {%- if is_ar -%}
+            جميع الحقوق محفوظة.
+          {%- else -%}
+            {{ 'sections.footer.copyright' | default: 'All rights reserved.' }}
+          {%- endif -%}
+        {%- endif -%}
       </div>
-      <div style="display: flex; align-items: center; gap: 12px; font-size: 0.82rem; font-weight: 600;">
-        <span class="badge badge-cod">💵 Cash on Delivery</span>
-        <span class="badge badge-cod">💳 Visa / Mastercard</span>
-        <span class="badge badge-cod">🇪🇬 Meeza / ValU</span>
-      </div>
+
+      {%- if section.settings.show_payment_cod -%}
+        <div style="display: flex; align-items: center; gap: 12px; font-size: 0.85rem; font-weight: 600;">
+          <span class="badge badge-cod">
+            💵 
+            {%- if is_ar -%}
+              الدفع عند الاستلام متاح بجميع المحافظات
+            {%- else -%}
+              {{ section.settings.cod_badge_text | default: "Cash on Delivery Available" }}
+            {%- endif -%}
+          </span>
+        </div>
+      {%- endif -%}
     </div>
   </div>
 </footer>
@@ -119,41 +257,134 @@
 {% schema %}
 {
   "name": "Footer",
+  "max_blocks": 6,
   "settings": [
     {
-      "type": "image_picker",
-      "id": "footer_logo",
-      "label": "Footer Logo"
-    },
-    {
-      "type": "textarea",
-      "id": "brand_text",
-      "label": "Brand Mission Text",
-      "default": "Contemporary Egyptian luxury streetwear and minimalist fashion designed with premium fabrics and tailored cuts."
+      "type": "checkbox",
+      "id": "show_payment_cod",
+      "label": "Show Cash on Delivery Badge",
+      "default": true
     },
     {
       "type": "text",
-      "id": "shop_menu_title",
-      "label": "Shop Menu Title",
-      "default": "Shop Collections"
-    },
-    {
-      "type": "link_list",
-      "id": "shop_menu",
-      "label": "Shop Menu",
-      "default": "footer"
+      "id": "cod_badge_text",
+      "label": "COD Badge Text",
+      "default": "Cash on Delivery Available"
     },
     {
       "type": "text",
-      "id": "support_menu_title",
-      "label": "Support Menu Title",
-      "default": "Customer Service"
-    },
-    {
-      "type": "link_list",
-      "id": "support_menu",
-      "label": "Support Menu"
+      "id": "copyright_text",
+      "label": "Custom Copyright Text"
     }
-  ]
+  ],
+  "blocks": [
+    {
+      "type": "brand",
+      "name": "Brand & About",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "logo",
+          "label": "Footer Logo"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Brand Description",
+          "default": "Contemporary Egyptian luxury streetwear and minimalist fashion designed with premium fabrics and tailored cuts."
+        },
+        {
+          "type": "checkbox",
+          "id": "show_social",
+          "label": "Show Social Media Icons",
+          "default": true
+        }
+      ]
+    },
+    {
+      "type": "link_list",
+      "name": "Navigation Menu",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Shop Collections"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "Menu",
+          "default": "footer"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Custom Text / Info",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Customer Service"
+        },
+        {
+          "type": "richtext",
+          "id": "subtext",
+          "label": "Text",
+          "default": "<p>Need help with your size or order? Contact our WhatsApp support anytime. Inspection allowed before payment nationwide.</p>"
+        }
+      ]
+    },
+    {
+      "type": "newsletter",
+      "name": "Newsletter",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Subscribe to our VIP list"
+        },
+        {
+          "type": "text",
+          "id": "subtext",
+          "label": "Subtext",
+          "default": "Get early access to fresh drops and exclusive Egyptian cotton streetwear promotions."
+        },
+        {
+          "type": "checkbox",
+          "id": "show_cod_note",
+          "label": "Show Cash on Delivery & Inspection Guarantee",
+          "default": true
+        }
+      ]
+    }
+  ],
+  "default": {
+    "blocks": [
+      {
+        "type": "brand"
+      },
+      {
+        "type": "link_list",
+        "settings": {
+          "heading": "Shop Collections"
+        }
+      },
+      {
+        "type": "link_list",
+        "settings": {
+          "heading": "Customer Service"
+        }
+      },
+      {
+        "type": "newsletter"
+      }
+    ]
+  }
 }
 {% endschema %}
