@@ -350,7 +350,8 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
 @media (min-width: 1024px) {
   .header__nav {
     display: flex;
-    align-items: center;
+    align-items: stretch;
+    height: 100%;
     gap: 32px;
   }
 }
@@ -362,7 +363,10 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  padding: 12px 0;
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 4px;
 }
 
 .header__menu-item--has-mega {
@@ -376,6 +380,7 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
   gap: 6px;
   text-decoration: none;
   transition: color var(--transition-fast);
+  padding: 12px 0;
 }
 
 .header__menu-link:hover {
@@ -513,7 +518,18 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
   z-index: 55;
 }
 
+.mega-menu::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: transparent;
+}
+
 .header__menu-item--has-mega:hover .mega-menu,
+.header__menu-item--has-mega.is-open .mega-menu,
 .header__menu-item--has-mega:focus-within .mega-menu {
   opacity: 1;
   visibility: visible;

@@ -1,0 +1,61 @@
+<!-- Kids' Mega Menu Columns -->
+<div class="mega-menu__col">
+  <a href="/collections/kids" class="mega-menu__heading">
+    {% if request.locale.iso_code == 'ar' %}كولكشن ولادي{% else %}Boys Collection{% endif %}
+  </a>
+  <ul class="mega-menu__list">
+    <li class="mega-menu__item"><a href="/collections/kids" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}تيشيرتات ولادي جرافيك{% else %}Boys Graphic Tees{% endif %}</a></li>
+    <li class="mega-menu__item"><a href="/collections/kids" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}بنطلونات وشورتات ولادي{% else %}Boys Pants & Shorts{% endif %}</a></li>
+    <li class="mega-menu__item"><a href="/collections/kids" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}أطقم ولادي قطعتين{% else %}Boys 2-Piece Sets{% endif %}</a></li>
+    <li class="mega-menu__item"><a href="/collections/kids" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}هوديز وسويت شيرت أولاد{% else %}Boys Hoodies & Sweats{% endif %}</a></li>
+  </ul>
+</div>
+
+<div class="mega-menu__col">
+  <a href="/collections/kids" class="mega-menu__heading">
+    {% if request.locale.iso_code == 'ar' %}كولكشن بناتي{% else %}Girls Collection{% endif %}
+  </a>
+  <ul class="mega-menu__list">
+    <li class="mega-menu__item"><a href="/collections/kids" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}توبات وتيشيرتات بناتي لطيفة{% else %}Girls Tops & Tees{% endif %}</a></li>
+    <li class="mega-menu__item"><a href="/collections/kids" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}هوديز وسويت شيرت بناتي{% else %}Girls Hoodies & Sweats{% endif %}</a></li>
+    <li class="mega-menu__item"><a href="/collections/kids" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}أطقم وليجن خروج ومنزل{% else %}Girls Sets & Leggings{% endif %}</a></li>
+    <li class="mega-menu__item"><a href="/collections/kids" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}فساتين كاجوال للأطفال{% else %}Casual Dresses{% endif %}</a></li>
+  </ul>
+</div>
+
+<div class="mega-menu__col">
+  <a href="/collections/kids" class="mega-menu__heading">
+    {% if request.locale.iso_code == 'ar' %}ناشئين وشباب{% else %}Teens & Youth{% endif %}
+  </a>
+  <ul class="mega-menu__list">
+    <li class="mega-menu__item"><a href="/collections/kids" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}تيشيرتات ستريت وير شبابي{% else %}Youth Streetwear Tees{% endif %}</a></li>
+    <li class="mega-menu__item"><a href="/collections/kids" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}هوديز أوفر سايز للمراهقين{% else %}Teens Oversized Hoodies{% endif %}</a></li>
+    <li class="mega-menu__item"><a href="/collections/kids" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}بنطلونات كارجو ناشئين{% else %}Youth Cargo Pants{% endif %}</a></li>
+    <li class="mega-menu__item"><a href="/collections/kids" class="mega-menu__link" style="font-weight: 700; text-decoration: underline;">{% if request.locale.iso_code == 'ar' %}عرض كل كولكشن الأطفال{% else %}Shop All Kids{% endif %}</a></li>
+  </ul>
+</div>
+
+<!-- Promo Banner Card -->
+<div class="mega-menu__promo-col">
+  <a href="/collections/kids" class="mega-menu__promo">
+    <div class="mega-menu__promo-img-wrap">
+      <img src="https://images.unsplash.com/photo-1503919545889-aef636e10ad4?auto=format&fit=crop&w=500&q=80" alt="Kids Collection" class="mega-menu__promo-img" loading="lazy">
+      <div class="mega-menu__promo-overlay"></div>
+    </div>
+    <div class="mega-menu__promo-content">
+      <span class="mega-menu__promo-tag">
+        {% if request.locale.iso_code == 'ar' %}مميز{% else %}KIDS DROP{% endif %}
+      </span>
+      <h4 class="mega-menu__promo-title">
+        {% if request.locale.iso_code == 'ar' %}كولكشن أطفال وشباب 2026{% else %}Kids Streetwear 2026{% endif %}
+      </h4>
+      <span class="mega-menu__promo-btn">
+        {% if request.locale.iso_code == 'ar' %}تسوق الآن{% else %}Shop Now{% endif %}
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </span>
+    </div>
+  </a>
+</div>

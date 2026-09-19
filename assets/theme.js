@@ -700,6 +700,20 @@
         });
       });
     }
+
+    // Desktop Mega Menu persistent hover & touch support
+    const megaMenuItems = document.querySelectorAll('.header__menu-item--has-mega');
+    megaMenuItems.forEach(item => {
+      item.addEventListener('mouseenter', () => item.classList.add('is-open'));
+      item.addEventListener('mouseleave', () => item.classList.remove('is-open'));
+    });
+
+    document.addEventListener('click', (e) => {
+      const clickedItem = e.target.closest('.header__menu-item--has-mega');
+      megaMenuItems.forEach(item => {
+        if (item !== clickedItem) item.classList.remove('is-open');
+      });
+    });
   }
 
   // --- Product Sliders Navigation ---
