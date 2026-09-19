@@ -1,0 +1,404 @@
+<!-- Snippet: mega-menu.liquid -->
+<!-- Unified, Modular & Fully Customizable Shopify Mega Menu Dropdown -->
+{%- assign current_trigger = link.title | downcase | strip -%}
+{%- assign is_rtl = false -%}
+{%- if request.locale.iso_code == 'ar' -%}{%- assign is_rtl = true -%}{%- endif -%}
+
+<!-- 1. Discover any individual modular blocks for this menu item -->
+{%- assign matched_columns_count = 0 -%}
+{%- assign matched_promo_block = nil -%}
+{%- assign matched_full_block = nil -%}
+
+{%- for block in section.blocks -%}
+  {%- if block.type == 'mega_column' -%}
+    {%- assign b_trig = block.settings.menu_trigger | default: 'Catalog' | downcase | strip -%}
+    {%- if b_trig == current_trigger or b_trig == '' and current_trigger == 'catalog' -%}
+      {%- assign matched_columns_count = matched_columns_count | plus: 1 -%}
+    {%- endif -%}
+  {%- elsif block.type == 'featured_card' -%}
+    {%- assign b_trig = block.settings.menu_trigger | default: 'Catalog' | downcase | strip -%}
+    {%- if b_trig == current_trigger or b_trig == '' and current_trigger == 'catalog' -%}
+      {%- if matched_promo_block == nil -%}
+        {%- assign matched_promo_block = block -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- elsif block.type == 'mega_menu' -%}
+    {%- assign b_trig = block.settings.trigger_title | default: 'Catalog' | downcase | strip -%}
+    {%- if b_trig == current_trigger or b_trig == '' and current_trigger == 'catalog' -%}
+      {%- if matched_full_block == nil -%}
+        {%- assign matched_full_block = block -%}
+      {%- endif -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+
+<div class="mega-menu {% if section.settings.mega_menu_width == 'full' %}mega-menu--full{% else %}mega-menu--container{% endif %}">
+  <div class="container mega-menu__container">
+    <div class="mega-menu__grid">
+
+      {%- if matched_columns_count > 0 -%}
+        <!-- ======================================================= -->
+        <!-- MODE A: MODULAR THEME EDITOR COLUMN BLOCKS (1 TO 6+)   -->
+        <!-- ======================================================= -->
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'mega_column' -%}
+            {%- assign b_trig = block.settings.menu_trigger | default: 'Catalog' | downcase | strip -%}
+            {%- if b_trig == current_trigger or b_trig == '' and current_trigger == 'catalog' -%}
+              {%- assign col_title = block.settings.title -%}
+              {%- assign col_url = block.settings.url -%}
+              {%- if block.settings.collection != blank -%}
+                {%- if col_title == blank -%}{%- assign col_title = block.settings.collection.title -%}{%- endif -%}
+                {%- if col_url == blank -%}{%- assign col_url = block.settings.collection.url -%}{%- endif -%}
+              {%- endif -%}
+              {%- if col_title == blank -%}{%- assign col_title = "Collection" -%}{%- endif -%}
+
+              <div class="mega-menu__col" {{ block.shopify_attributes }}>
+                <!-- Optional Collection / Custom Thumbnail -->
+                {%- if block.settings.show_collection_image -%}
+                  {%- assign thumb_img = nil -%}
+                  {%- if block.settings.custom_image != blank -%}
+                    {%- assign thumb_img = block.settings.custom_image -%}
+                  {%- elsif block.settings.collection != blank and block.settings.collection.image != blank -%}
+                    {%- assign thumb_img = block.settings.collection.image -%}
+                  {%- endif -%}
+
+                  {%- if thumb_img != blank -%}
+                    <a href="{{ col_url | default: '#' }}" class="mega-menu__col-thumb-wrap">
+                      <img
+                        src="{{ thumb_img | image_url: width: 300 }}"
+                        alt="{{ col_title | escape }}"
+                        class="mega-menu__col-thumb"
+                        loading="lazy"
+                        width="300"
+                        height="180"
+                      >
+                    </a>
+                  {%- endif -%}
+                {%- endif -%}
+
+                <!-- Column Heading & Optional Badge -->
+                <div class="mega-menu__heading-wrap">
+                  <a href="{{ col_url | default: '#' }}" class="mega-menu__heading">
+                    {{ col_title }}
+                  </a>
+                  {%- if block.settings.badge_text != blank -%}
+                    <span
+                      class="mega-menu__col-badge"
+                      style="color: {{ block.settings.badge_color | default: '#FFFFFF' }}; background-color: {{ block.settings.badge_bg | default: '#E05A47' }};"
+                    >
+                      {{ block.settings.badge_text }}
+                    </span>
+                  {%- endif -%}
+                </div>
+
+                <!-- Sub-Links -->
+                <ul class="mega-menu__list">
+                  {%- if block.settings.menu != blank and linklists[block.settings.menu].links.size > 0 -%}
+                    <!-- Sub-links from Shopify Navigation Linklist -->
+                    {%- for sub in linklists[block.settings.menu].links -%}
+                      <li class="mega-menu__item">
+                        <a href="{{ sub.url }}" class="mega-menu__link">{{ sub.title }}</a>
+                      </li>
+                    {%- endfor -%}
+                  {%- else -%}
+                    <!-- Manual Sub-Links Slots -->
+                    {%- if block.settings.link_1_title != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.link_1_url | default: col_url }}" class="mega-menu__link">{{ block.settings.link_1_title }}</a></li>{%- endif -%}
+                    {%- if block.settings.link_2_title != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.link_2_url | default: col_url }}" class="mega-menu__link">{{ block.settings.link_2_title }}</a></li>{%- endif -%}
+                    {%- if block.settings.link_3_title != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.link_3_url | default: col_url }}" class="mega-menu__link">{{ block.settings.link_3_title }}</a></li>{%- endif -%}
+                    {%- if block.settings.link_4_title != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.link_4_url | default: col_url }}" class="mega-menu__link">{{ block.settings.link_4_title }}</a></li>{%- endif -%}
+                    {%- if block.settings.link_5_title != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.link_5_url | default: col_url }}" class="mega-menu__link">{{ block.settings.link_5_title }}</a></li>{%- endif -%}
+                    {%- if block.settings.link_6_title != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.link_6_url | default: col_url }}" class="mega-menu__link">{{ block.settings.link_6_title }}</a></li>{%- endif -%}
+                    {%- if block.settings.link_7_title != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.link_7_url | default: col_url }}" class="mega-menu__link">{{ block.settings.link_7_title }}</a></li>{%- endif -%}
+                    {%- if block.settings.link_8_title != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.link_8_url | default: col_url }}" class="mega-menu__link">{{ block.settings.link_8_title }}</a></li>{%- endif -%}
+
+                    <!-- Quick Multi-Line Links (Title | URL) -->
+                    {%- if block.settings.sub_links_text != blank -%}
+                      {%- assign lines = block.settings.sub_links_text | newline_to_br | split: '<br />' -%}
+                      {%- for line in lines -%}
+                        {%- assign clean_line = line | strip -%}
+                        {%- if clean_line != blank -%}
+                          {%- assign parts = clean_line | split: '|' -%}
+                          {%- assign l_title = parts[0] | strip -%}
+                          {%- assign l_url = parts[1] | strip | default: col_url -%}
+                          <li class="mega-menu__item">
+                            <a href="{{ l_url }}" class="mega-menu__link">{{ l_title }}</a>
+                          </li>
+                        {%- endif -%}
+                      {%- endfor -%}
+                    {%- endif -%}
+                  {%- endif -%}
+
+                  <!-- Optional "Shop All" CTA -->
+                  {%- if block.settings.show_shop_all -%}
+                    {%- assign shop_all_url = block.settings.shop_all_url | default: col_url -%}
+                    {%- assign shop_all_label = block.settings.shop_all_text -%}
+                    {%- if shop_all_label == blank -%}
+                      {%- if is_rtl -%}
+                        {%- assign shop_all_label = 'تسوق كل ' | append: col_title -%}
+                      {%- else -%}
+                        {%- assign shop_all_label = 'Shop All ' | append: col_title -%}
+                      {%- endif -%}
+                    {%- endif -%}
+                    <li class="mega-menu__item mega-menu__item--shop-all">
+                      <a href="{{ shop_all_url }}" class="mega-menu__shop-all">
+                        <span>{{ shop_all_label }}</span>
+                        <span class="mega-menu__shop-all-arrow" aria-hidden="true">{% if is_rtl %}&larr;{% else %}&rarr;{% endif %}</span>
+                      </a>
+                    </li>
+                  {%- endif -%}
+                </ul>
+              </div>
+            {%- endif -%}
+          {%- endif -%}
+        {%- endfor -%}
+
+        <!-- Featured Promo Banner Card on the Right -->
+        {%- if matched_promo_block != nil -%}
+          {%- assign p_settings = matched_promo_block.settings -%}
+          <div class="mega-menu__promo-col" style="--promo-width: {{ p_settings.card_width | default: 280 }}px;" {{ matched_promo_block.shopify_attributes }}>
+            <a href="{{ p_settings.button_url | default: '/collections/all' }}" class="mega-menu__promo" style="border-radius: {{ p_settings.border_radius | default: 6 }}px;">
+              <div class="mega-menu__promo-img-wrap" style="aspect-ratio: {{ p_settings.image_aspect_ratio | default: '4/5' }};">
+                {%- if p_settings.image != blank -%}
+                  <img
+                    src="{{ p_settings.image | image_url: width: 600 }}"
+                    alt="{{ p_settings.title | default: 'Drop' | escape }}"
+                    class="mega-menu__promo-img"
+                    loading="lazy"
+                    width="600"
+                    height="750"
+                  >
+                {%- else -%}
+                  <img
+                    src="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?auto=format&fit=crop&w=600&q=80"
+                    alt="Never Mind Drop"
+                    class="mega-menu__promo-img"
+                    loading="lazy"
+                    width="600"
+                    height="750"
+                  >
+                {%- endif -%}
+                <div class="mega-menu__promo-overlay" style="opacity: {{ p_settings.overlay_opacity | default: 60 | divided_by: 100.0 }};"></div>
+              </div>
+              <div class="mega-menu__promo-content">
+                {%- if p_settings.badge != blank -%}
+                  <span class="mega-menu__promo-tag">{{ p_settings.badge }}</span>
+                {%- endif -%}
+                <h4 class="mega-menu__promo-title">{{ p_settings.title | default: 'Never Mind Streetwear Drop' }}</h4>
+                {%- if p_settings.description != blank -%}
+                  <p class="mega-menu__promo-desc">{{ p_settings.description }}</p>
+                {%- endif -%}
+                <span class="mega-menu__promo-btn">
+                  {{ p_settings.button_text | default: 'Shop Now' }}
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    {%- if is_rtl -%}
+                      <line x1="19" y1="12" x2="5" y2="12"></line>
+                      <polyline points="12 19 5 12 12 5"></polyline>
+                    {%- else -%}
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
+                    {%- endif -%}
+                  </svg>
+                </span>
+              </div>
+            </a>
+          </div>
+        {%- elsif section.settings.show_promo_banner -%}
+          <!-- Fallback Section Promo Card -->
+          <div class="mega-menu__promo-col">
+            <a href="{{ section.settings.promo_url | default: '/collections/all' }}" class="mega-menu__promo">
+              <div class="mega-menu__promo-img-wrap">
+                {%- if section.settings.promo_image != blank -%}
+                  <img src="{{ section.settings.promo_image | image_url: width: 600 }}" alt="{{ section.settings.promo_title | default: 'Drop' | escape }}" class="mega-menu__promo-img" loading="lazy" width="600" height="750">
+                {%- else -%}
+                  <img src="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?auto=format&fit=crop&w=600&q=80" alt="Never Mind Drop" class="mega-menu__promo-img" loading="lazy" width="600" height="750">
+                {%- endif -%}
+                <div class="mega-menu__promo-overlay"></div>
+              </div>
+              <div class="mega-menu__promo-content">
+                <span class="mega-menu__promo-tag">{{ section.settings.promo_badge | default: 'NEW DROP 2026' }}</span>
+                <h4 class="mega-menu__promo-title">{{ section.settings.promo_title | default: 'Never Mind Streetwear Drop' }}</h4>
+                <span class="mega-menu__promo-btn">
+                  {{ section.settings.promo_btn | default: 'Shop Now' }}
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    {%- if is_rtl -%}
+                      <line x1="19" y1="12" x2="5" y2="12"></line>
+                      <polyline points="12 19 5 12 12 5"></polyline>
+                    {%- else -%}
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
+                    {%- endif -%}
+                  </svg>
+                </span>
+              </div>
+            </a>
+          </div>
+        {%- endif -%}
+
+      {%- elsif matched_full_block != nil -%}
+        <!-- ======================================================= -->
+        <!-- MODE B: ALL-IN-ONE PRESET BLOCK (BACKWARD COMPATIBLE)   -->
+        <!-- ======================================================= -->
+        {% render 'mega-menu-block', block: matched_full_block %}
+
+      {%- else -%}
+        <!-- ======================================================= -->
+        <!-- MODE C: SHOPIFY NAVIGATION LINKLIST OR SMART FALLBACK   -->
+        <!-- ======================================================= -->
+        {%- assign nav_cols = nil -%}
+        {%- if section.settings.mega_menu_linklist != blank and linklists[section.settings.mega_menu_linklist].links.size > 0 -%}
+          {%- assign nav_cols = linklists[section.settings.mega_menu_linklist].links -%}
+        {%- elsif link.links.size > 0 -%}
+          {%- assign nav_cols = link.links -%}
+        {%- endif -%}
+
+        {%- if nav_cols != nil and nav_cols.size > 0 -%}
+          <!-- Dynamic Shopify Navigation 3-Level Columns -->
+          {%- for col in nav_cols -%}
+            <div class="mega-menu__col">
+              <a href="{{ col.url }}" class="mega-menu__heading">{{ col.title }}</a>
+              <ul class="mega-menu__list">
+                {%- if col.links.size > 0 -%}
+                  {%- for sub in col.links -%}
+                    <li class="mega-menu__item">
+                      <a href="{{ sub.url }}" class="mega-menu__link">{{ sub.title }}</a>
+                    </li>
+                  {%- endfor -%}
+                {%- else -%}
+                  <!-- If column has no children, offer direct links so it's not a blank void -->
+                  <li class="mega-menu__item">
+                    <a href="{{ col.url }}" class="mega-menu__link">
+                      {% if is_rtl %}عرض تشكيلة {{ col.title }}{% else %}Explore {{ col.title }}{% endif %}
+                    </a>
+                  </li>
+                {%- endif -%}
+
+                <!-- Shop All CTA -->
+                <li class="mega-menu__item mega-menu__item--shop-all">
+                  <a href="{{ col.url }}" class="mega-menu__shop-all">
+                    <span>{% if is_rtl %}تسوق كل {{ col.title }}{% else %}Shop All {{ col.title }}{% endif %}</span>
+                    <span class="mega-menu__shop-all-arrow" aria-hidden="true">{% if is_rtl %}&larr;{% else %}&rarr;{% endif %}</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          {%- endfor -%}
+
+        {%- else -%}
+          <!-- Default Curated Streetwear Mega Menu (Never Mind Modex Style) -->
+          <!-- Column 1: MEN -->
+          <div class="mega-menu__col">
+            <a href="/collections/men" class="mega-menu__heading">
+              {% if is_rtl %}رجالي (Men){% else %}Men's Streetwear{% endif %}
+            </a>
+            <ul class="mega-menu__list">
+              <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if is_rtl %}تيشيرتات أوفر سايز{% else %}Oversized T-Shirts{% endif %}</a></li>
+              <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if is_rtl %}تيشيرتات جرافيك وطباعة{% else %}Graphic & Printed Tees{% endif %}</a></li>
+              <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if is_rtl %}هوديز وسويت شيرت سميك{% else %}Heavyweight Hoodies{% endif %}</a></li>
+              <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if is_rtl %}بنطلونات كارجو وسويت بانتس{% else %}Tactical Cargo & Pants{% endif %}</a></li>
+              <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if is_rtl %}أطقم قطعتين وترينجات{% else %}Matching Sets & Tracksuits{% endif %}</a></li>
+              <li class="mega-menu__item mega-menu__item--shop-all">
+                <a href="/collections/men" class="mega-menu__shop-all">
+                  <span>{% if is_rtl %}تسوق كل تشكيلة الرجال{% else %}Shop All Men's{% endif %}</span>
+                  <span class="mega-menu__shop-all-arrow" aria-hidden="true">{% if is_rtl %}&larr;{% else %}&rarr;{% endif %}</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Column 2: WOMEN -->
+          <div class="mega-menu__col">
+            <a href="/collections/women" class="mega-menu__heading">
+              {% if is_rtl %}حريمي (Women){% else %}Women's Collection{% endif %}
+            </a>
+            <ul class="mega-menu__list">
+              <li class="mega-menu__item"><a href="/collections/women" class="mega-menu__link">{% if is_rtl %}توبات وتيشيرتات واسعة{% else %}Cropped & Oversized Tops{% endif %}</a></li>
+              <li class="mega-menu__item"><a href="/collections/women" class="mega-menu__link">{% if is_rtl %}هوديز وسويت شيرت مريح{% else %}Minimalist Lounge Hoodies{% endif %}</a></li>
+              <li class="mega-menu__item"><a href="/collections/women" class="mega-menu__link">{% if is_rtl %}بنطلونات واسعة وكارجو{% else %}Wide-Leg Pants & Cargo{% endif %}</a></li>
+              <li class="mega-menu__item"><a href="/collections/women" class="mega-menu__link">{% if is_rtl %}أطقم ملابس مريحة Loungewear{% else %}Comfort Matching Sets{% endif %}</a></li>
+              <li class="mega-menu__item"><a href="/collections/women" class="mega-menu__link">{% if is_rtl %}إكسسوارات وحقائب كاجوال{% else %}Bags & Accessories{% endif %}</a></li>
+              <li class="mega-menu__item mega-menu__item--shop-all">
+                <a href="/collections/women" class="mega-menu__shop-all">
+                  <span>{% if is_rtl %}تسوق كل تشكيلة النساء{% else %}Shop All Women's{% endif %}</span>
+                  <span class="mega-menu__shop-all-arrow" aria-hidden="true">{% if is_rtl %}&larr;{% else %}&rarr;{% endif %}</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Column 3: KIDS & TEENS -->
+          <div class="mega-menu__col">
+            <a href="/collections/kids" class="mega-menu__heading">
+              {% if is_rtl %}أطفال وناشئين (Kids){% else %}Kids & Teens{% endif %}
+            </a>
+            <ul class="mega-menu__list">
+              <li class="mega-menu__item"><a href="/collections/kids" class="mega-menu__link">{% if is_rtl %}تيشيرتات جرافيك أولاد{% else %}Boys Graphic Tees{% endif %}</a></li>
+              <li class="mega-menu__item"><a href="/collections/kids" class="mega-menu__link">{% if is_rtl %}ملابس كاجوال بنات{% else %}Girls Casual & Tops{% endif %}</a></li>
+              <li class="mega-menu__item"><a href="/collections/kids" class="mega-menu__link">{% if is_rtl %}هوديز وترينجات أطفال{% else %}Kids Hoodies & Sweats{% endif %}</a></li>
+              <li class="mega-menu__item"><a href="/collections/kids" class="mega-menu__link">{% if is_rtl %}شورتات وبنطلونات مريحة{% else %}Comfort Shorts & Pants{% endif %}</a></li>
+              <li class="mega-menu__item"><a href="/collections/kids" class="mega-menu__link">{% if is_rtl %}أساسيات المراهقين والناشئين{% else %}Teen Streetwear Essentials{% endif %}</a></li>
+              <li class="mega-menu__item mega-menu__item--shop-all">
+                <a href="/collections/kids" class="mega-menu__shop-all">
+                  <span>{% if is_rtl %}تسوق كل تشكيلة الأطفال{% else %}Shop All Kids{% endif %}</span>
+                  <span class="mega-menu__shop-all-arrow" aria-hidden="true">{% if is_rtl %}&larr;{% else %}&rarr;{% endif %}</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Column 4: TRENDING & HIGHLIGHTS -->
+          <div class="mega-menu__col">
+            <a href="/collections/best-sellers" class="mega-menu__heading">
+              {% if is_rtl %}الأكثر طلباً والعروض{% else %}Trending & Highlights{% endif %}
+            </a>
+            <ul class="mega-menu__list">
+              <li class="mega-menu__item"><a href="/collections/best-sellers" class="mega-menu__link" style="font-weight: 600;">{% if is_rtl %}الأكثر مبيعاً هذا الأسبوع 🔥{% else %}Top Best Sellers 🔥{% endif %}</a></li>
+              <li class="mega-menu__item"><a href="/collections/all" class="mega-menu__link">{% if is_rtl %}وصل حديثاً صيف 2026{% else %}Summer Drop 2026{% endif %}</a></li>
+              <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if is_rtl %}تشكيلة Heavyweight القطنية{% else %}Heavyweight Essentials{% endif %}</a></li>
+              <li class="mega-menu__item"><a href="/collections/sale" class="mega-menu__link" style="color: var(--color-sale); font-weight: 700;">{% if is_rtl %}تخفيضات تصل إلى 50% 🏷️{% else %}Clearance Sale Up to 50% 🏷️{% endif %}</a></li>
+              <li class="mega-menu__item mega-menu__item--shop-all">
+                <a href="/collections/all" class="mega-menu__shop-all">
+                  <span>{% if is_rtl %}عرض جميع التشكيلات{% else %}Browse All Collections{% endif %}</span>
+                  <span class="mega-menu__shop-all-arrow" aria-hidden="true">{% if is_rtl %}&larr;{% else %}&rarr;{% endif %}</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        {%- endif -%}
+
+        <!-- Promotional Banner Card (Section Fallback) -->
+        {%- if section.settings.show_promo_banner -%}
+          <div class="mega-menu__promo-col">
+            <a href="{{ section.settings.promo_url | default: '/collections/all' }}" class="mega-menu__promo">
+              <div class="mega-menu__promo-img-wrap">
+                {%- if section.settings.promo_image != blank -%}
+                  <img src="{{ section.settings.promo_image | image_url: width: 600 }}" alt="{{ section.settings.promo_title | default: 'Drop' | escape }}" class="mega-menu__promo-img" loading="lazy" width="600" height="750">
+                {%- else -%}
+                  <img src="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?auto=format&fit=crop&w=600&q=80" alt="Never Mind Drop" class="mega-menu__promo-img" loading="lazy" width="600" height="750">
+                {%- endif -%}
+                <div class="mega-menu__promo-overlay"></div>
+              </div>
+              <div class="mega-menu__promo-content">
+                <span class="mega-menu__promo-tag">{{ section.settings.promo_badge | default: 'NEW DROP 2026' }}</span>
+                <h4 class="mega-menu__promo-title">{{ section.settings.promo_title | default: 'Never Mind Streetwear Drop' }}</h4>
+                <span class="mega-menu__promo-btn">
+                  {{ section.settings.promo_btn | default: 'Shop Now' }}
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    {%- if is_rtl -%}
+                      <line x1="19" y1="12" x2="5" y2="12"></line>
+                      <polyline points="12 19 5 12 12 5"></polyline>
+                    {%- else -%}
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
+                    {%- endif -%}
+                  </svg>
+                </span>
+              </div>
+            </a>
+          </div>
+        {%- endif -%}
+
+      {%- endif -%}
+
+    </div>
+  </div>
+</div>

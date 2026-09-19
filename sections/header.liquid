@@ -39,28 +39,7 @@
     <!-- Desktop Navigation Menu -->
     <nav class="header__nav" aria-label="Main Navigation">
       {%- assign nav_links = linklists[section.settings.menu].links -%}
-      {%- assign trigger_name = section.settings.mega_menu_trigger | downcase | strip -%}
-
-      <!-- Identify any custom mega_menu block configured for the primary mega menu -->
-      {%- assign main_mega_block = nil -%}
-      {%- for block in section.blocks -%}
-        {%- if block.type == 'mega_menu' -%}
-          {%- assign b_trigger = block.settings.trigger_title | downcase | strip -%}
-          {%- if b_trigger == '' or b_trigger == 'catalog' or b_trigger == 'shop' or b_trigger == 'collections' or b_trigger == 'المتجر' or b_trigger == 'المنتجات' -%}
-            {%- assign main_mega_block = block -%}
-            {%- break -%}
-          {%- endif -%}
-        {%- endif -%}
-      {%- endfor -%}
-
-      {%- if main_mega_block == nil and section.blocks.size > 0 -%}
-        {%- for block in section.blocks -%}
-          {%- if block.type == 'mega_menu' -%}
-            {%- assign main_mega_block = block -%}
-            {%- break -%}
-          {%- endif -%}
-        {%- endfor -%}
-      {%- endif -%}
+      {%- assign trigger_name = section.settings.mega_menu_trigger | default: 'Catalog' | downcase | strip -%}
 
       {%- if nav_links.size > 0 -%}
         {%- for link in nav_links -%}
@@ -77,20 +56,19 @@
             {%- endif -%}
           {%- endif -%}
 
-          <!-- Find if any custom block matches this specific link -->
-          {%- assign active_block = nil -%}
+          <!-- Check if any block explicitly targets this menu link -->
+          {%- assign has_matching_blocks = false -%}
+          {%- assign first_matched_block = nil -%}
           {%- for block in section.blocks -%}
-            {%- if block.type == 'mega_menu' -%}
-              {%- assign b_trigger = block.settings.trigger_title | downcase | strip -%}
-              {%- if b_trigger != blank and b_trigger == downcased_title -%}
-                {%- assign active_block = block -%}
-                {%- break -%}
-              {%- endif -%}
+            {%- assign b_trig = block.settings.menu_trigger | default: block.settings.trigger_title | default: 'Catalog' | downcase | strip -%}
+            {%- if b_trig == downcased_title or b_trig == '' and downcased_title == 'catalog' -%}
+              {%- assign has_matching_blocks = true -%}
+              {%- if first_matched_block == nil -%}{%- assign first_matched_block = block -%}{%- endif -%}
             {%- endif -%}
           {%- endfor -%}
 
-          {%- if active_block == nil and is_mega and main_mega_block != nil -%}
-            {%- assign active_block = main_mega_block -%}
+          {%- if has_matching_blocks -%}
+            {%- assign is_mega = true -%}
           {%- endif -%}
 
           {%- assign is_sale = false -%}
@@ -105,12 +83,12 @@
           {%- endif -%}
 
           {%- assign has_dropdown = false -%}
-          {%- if link.links.size > 0 and is_mega == false and active_block == nil -%}
+          {%- if link.links.size > 0 and is_mega == false -%}
             {%- assign has_dropdown = true -%}
           {%- endif -%}
 
-          <div class="header__menu-item {% if is_mega or active_block != nil %}header__menu-item--has-mega{% elsif has_dropdown %}header__menu-item--has-dropdown{% endif %} {% if is_sale %}header__menu-item--sale{% endif %}" {% if active_block != nil %}{{ active_block.shopify_attributes }}{% endif %}>
-            <a href="{{ link.url }}" class="header__menu-link">
+          <div class="header__menu-item {% if is_mega %}header__menu-item--has-mega{% elsif has_dropdown %}header__menu-item--has-dropdown{% endif %} {% if is_sale %}header__menu-item--sale{% endif %}" {% if first_matched_block != nil %}{{ first_matched_block.shopify_attributes }}{% endif %}>
+            <a href="{{ link.url }}" class="header__menu-link" {% if is_mega or has_dropdown %}aria-expanded="false" aria-haspopup="true"{% endif %}>
               <span>{{ link.title }}</span>
               {%- if is_sale -%}
                 <span class="nav-badge nav-badge--sale">{{ 'sections.header.sale' | t | default: 'SALE' }}</span>
@@ -119,29 +97,14 @@
               {%- elsif is_new -%}
                 <span class="nav-badge nav-badge--new">{{ 'sections.header.new' | t | default: 'NEW' }}</span>
               {%- endif -%}
-              {%- if is_mega or active_block != nil or has_dropdown -%}
+              {%- if is_mega or has_dropdown -%}
                 <svg class="header__chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
               {%- endif -%}
             </a>
 
-            {%- if active_block != nil -%}
-              <!-- Hand-Controlled Custom Mega Menu from Shopify Customizer Block -->
-              <div class="mega-menu" {{ active_block.shopify_attributes }}>
-                <div class="container mega-menu__container">
-                  <div class="mega-menu__grid">
-                    {% render 'mega-menu-block', block: active_block %}
-                  </div>
-                </div>
-              </div>
-            {%- elsif is_mega -%}
-              <!-- Unified Main Mega Menu Dropdown -->
-              <div class="mega-menu">
-                <div class="container mega-menu__container">
-                  <div class="mega-menu__grid">
-                    {% render 'mega-menu-main', link: link %}
-                  </div>
-                </div>
-              </div>
+            {%- if is_mega -%}
+              <!-- Unified Modular Mega Menu Dropdown -->
+              {% render 'mega-menu', link: link, section: section %}
             {%- elsif has_dropdown -%}
               <!-- Standard Dropdown -->
               <div class="header__dropdown">
@@ -153,7 +116,7 @@
           </div>
         {%- endfor -%}
 
-        <!-- Check if Best Sellers & Sale are already present in nav_links -->
+        <!-- Standalone Best Sellers & Sale if not in menu -->
         {%- assign has_bestsellers_in_menu = false -%}
         {%- assign has_sale_in_menu = false -%}
         {%- for link in nav_links -%}
@@ -266,28 +229,9 @@
     <!-- Mobile Navigation Links with Multi-Level Accordions -->
     <div class="mobile-nav__links">
       {%- assign nav_links = linklists[section.settings.menu].links -%}
-      {%- assign trigger_name = section.settings.mega_menu_trigger | downcase | strip -%}
-
-      <!-- Identify primary mega block -->
-      {%- assign main_mega_block = nil -%}
-      {%- for block in section.blocks -%}
-        {%- if block.type == 'mega_menu' -%}
-          {%- assign b_trigger = block.settings.trigger_title | downcase | strip -%}
-          {%- if b_trigger == '' or b_trigger == 'catalog' or b_trigger == 'shop' or b_trigger == 'collections' or b_trigger == 'المتجر' or b_trigger == 'المنتجات' -%}
-            {%- assign main_mega_block = block -%}
-            {%- break -%}
-          {%- endif -%}
-        {%- endif -%}
-      {%- endfor -%}
-
-      {%- if main_mega_block == nil and section.blocks.size > 0 -%}
-        {%- for block in section.blocks -%}
-          {%- if block.type == 'mega_menu' -%}
-            {%- assign main_mega_block = block -%}
-            {%- break -%}
-          {%- endif -%}
-        {%- endfor -%}
-      {%- endif -%}
+      {%- assign trigger_name = section.settings.mega_menu_trigger | default: 'Catalog' | downcase | strip -%}
+      {%- assign is_rtl = false -%}
+      {%- if request.locale.iso_code == 'ar' -%}{%- assign is_rtl = true -%}{%- endif -%}
 
       {%- for link in nav_links -%}
         {%- assign downcased_title = link.title | downcase | strip -%}
@@ -303,19 +247,36 @@
           {%- endif -%}
         {%- endif -%}
 
-        {%- assign active_block = nil -%}
+        <!-- Check matching blocks for this link -->
+        {%- assign matched_columns_count = 0 -%}
+        {%- assign matched_promo_block = nil -%}
+        {%- assign matched_full_block = nil -%}
+        {%- assign first_matched_block = nil -%}
+
         {%- for block in section.blocks -%}
-          {%- if block.type == 'mega_menu' -%}
-            {%- assign b_trigger = block.settings.trigger_title | downcase | strip -%}
-            {%- if b_trigger != blank and b_trigger == downcased_title -%}
-              {%- assign active_block = block -%}
-              {%- break -%}
+          {%- if block.type == 'mega_column' -%}
+            {%- assign b_trig = block.settings.menu_trigger | default: 'Catalog' | downcase | strip -%}
+            {%- if b_trig == downcased_title or b_trig == '' and downcased_title == 'catalog' -%}
+              {%- assign matched_columns_count = matched_columns_count | plus: 1 -%}
+              {%- if first_matched_block == nil -%}{%- assign first_matched_block = block -%}{%- endif -%}
+            {%- endif -%}
+          {%- elsif block.type == 'featured_card' -%}
+            {%- assign b_trig = block.settings.menu_trigger | default: 'Catalog' | downcase | strip -%}
+            {%- if b_trig == downcased_title or b_trig == '' and downcased_title == 'catalog' -%}
+              {%- if matched_promo_block == nil -%}{%- assign matched_promo_block = block -%}{%- endif -%}
+              {%- if first_matched_block == nil -%}{%- assign first_matched_block = block -%}{%- endif -%}
+            {%- endif -%}
+          {%- elsif block.type == 'mega_menu' -%}
+            {%- assign b_trig = block.settings.trigger_title | default: 'Catalog' | downcase | strip -%}
+            {%- if b_trig == downcased_title or b_trig == '' and downcased_title == 'catalog' -%}
+              {%- if matched_full_block == nil -%}{%- assign matched_full_block = block -%}{%- endif -%}
+              {%- if first_matched_block == nil -%}{%- assign first_matched_block = block -%}{%- endif -%}
             {%- endif -%}
           {%- endif -%}
         {%- endfor -%}
 
-        {%- if active_block == nil and is_mega and main_mega_block != nil -%}
-          {%- assign active_block = main_mega_block -%}
+        {%- if matched_columns_count > 0 or matched_full_block != nil -%}
+          {%- assign is_mega = true -%}
         {%- endif -%}
 
         {%- assign has_children = false -%}
@@ -323,9 +284,9 @@
           {%- assign has_children = true -%}
         {%- endif -%}
 
-        {%- if active_block != nil -%}
-          <!-- Hand-Controlled Custom Mega Menu in Mobile Drawer -->
-          <div class="mobile-nav__item mobile-nav__item--accordion" {{ active_block.shopify_attributes }}>
+        {%- if is_mega -%}
+          <!-- Mobile Mega Menu Accordion -->
+          <div class="mobile-nav__item mobile-nav__item--accordion" {% if first_matched_block != nil %}{{ first_matched_block.shopify_attributes }}{% endif %}>
             <button type="button" class="mobile-nav__accordion-header" data-mobile-accordion-trigger aria-expanded="false">
               <span class="mobile-nav__title-wrap">
                 <span class="mobile-nav__item-title">{{ link.title }}</span>
@@ -335,166 +296,127 @@
             <div class="mobile-nav__accordion-content">
               <a href="{{ link.url }}" class="mobile-nav__shop-all-link">
                 <span>{{ 'sections.header.shop_all' | t | default: 'Shop All' }} {{ link.title }}</span>
-                <span aria-hidden="true">&rarr;</span>
+                <span aria-hidden="true">{% if is_rtl %}&larr;{% else %}&rarr;{% endif %}</span>
               </a>
 
-              <!-- Column 1 Sub-Accordion -->
-              {%- if active_block.settings.col_1_title != blank or active_block.settings.col_1_menu != blank -%}
-                <div class="mobile-nav__sub-accordion">
-                  <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
-                    <span>{{ active_block.settings.col_1_title | default: 'Column 1' }}</span>
-                    <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                  </button>
-                  <div class="mobile-nav__sub-accordion-content">
-                    {%- if active_block.settings.col_1_url != blank -%}
-                      <a href="{{ active_block.settings.col_1_url }}" class="mobile-nav__sub-link" style="font-weight: 700; color: var(--color-primary);">{{ 'sections.header.shop_all' | t | default: 'Shop All' }} {{ active_block.settings.col_1_title }} &rarr;</a>
-                    {%- endif -%}
-                    {%- if active_block.settings.col_1_menu != blank and linklists[active_block.settings.col_1_menu].links.size > 0 -%}
-                      {%- for sub in linklists[active_block.settings.col_1_menu].links -%}
-                        <a href="{{ sub.url }}" class="mobile-nav__sub-link">{{ sub.title }}</a>
-                      {%- endfor -%}
-                    {%- else -%}
-                      {%- if active_block.settings.col_1_link_1_title != blank -%}<a href="{{ active_block.settings.col_1_link_1_url | default: '#' }}" class="mobile-nav__sub-link">{{ active_block.settings.col_1_link_1_title }}</a>{%- endif -%}
-                      {%- if active_block.settings.col_1_link_2_title != blank -%}<a href="{{ active_block.settings.col_1_link_2_url | default: '#' }}" class="mobile-nav__sub-link">{{ active_block.settings.col_1_link_2_title }}</a>{%- endif -%}
-                      {%- if active_block.settings.col_1_link_3_title != blank -%}<a href="{{ active_block.settings.col_1_link_3_url | default: '#' }}" class="mobile-nav__sub-link">{{ active_block.settings.col_1_link_3_title }}</a>{%- endif -%}
-                      {%- if active_block.settings.col_1_link_4_title != blank -%}<a href="{{ active_block.settings.col_1_link_4_url | default: '#' }}" class="mobile-nav__sub-link">{{ active_block.settings.col_1_link_4_title }}</a>{%- endif -%}
-                      {%- if active_block.settings.col_1_link_5_title != blank -%}<a href="{{ active_block.settings.col_1_link_5_url | default: '#' }}" class="mobile-nav__sub-link">{{ active_block.settings.col_1_link_5_title }}</a>{%- endif -%}
-                      {%- if active_block.settings.col_1_link_6_title != blank -%}<a href="{{ active_block.settings.col_1_link_6_url | default: '#' }}" class="mobile-nav__sub-link">{{ active_block.settings.col_1_link_6_title }}</a>{%- endif -%}
-                    {%- endif -%}
-                  </div>
-                </div>
-              {%- endif -%}
+              {%- if matched_columns_count > 0 -%}
+                <!-- Sub-Accordions from mega_column blocks -->
+                {%- for block in section.blocks -%}
+                  {%- if block.type == 'mega_column' -%}
+                    {%- assign b_trig = block.settings.menu_trigger | default: 'Catalog' | downcase | strip -%}
+                    {%- if b_trig == downcased_title or b_trig == '' and downcased_title == 'catalog' -%}
+                      {%- assign c_title = block.settings.title -%}
+                      {%- assign c_url = block.settings.url -%}
+                      {%- if block.settings.collection != blank -%}
+                        {%- if c_title == blank -%}{%- assign c_title = block.settings.collection.title -%}{%- endif -%}
+                        {%- if c_url == blank -%}{%- assign c_url = block.settings.collection.url -%}{%- endif -%}
+                      {%- endif -%}
+                      {%- if c_title == blank -%}{%- assign c_title = "Collection" -%}{%- endif -%}
 
-              <!-- Column 2 Sub-Accordion -->
-              {%- if active_block.settings.col_2_title != blank or active_block.settings.col_2_menu != blank -%}
-                <div class="mobile-nav__sub-accordion">
-                  <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
-                    <span>{{ active_block.settings.col_2_title | default: 'Column 2' }}</span>
-                    <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                  </button>
-                  <div class="mobile-nav__sub-accordion-content">
-                    {%- if active_block.settings.col_2_url != blank -%}
-                      <a href="{{ active_block.settings.col_2_url }}" class="mobile-nav__sub-link" style="font-weight: 700; color: var(--color-primary);">{{ 'sections.header.shop_all' | t | default: 'Shop All' }} {{ active_block.settings.col_2_title }} &rarr;</a>
-                    {%- endif -%}
-                    {%- if active_block.settings.col_2_menu != blank and linklists[active_block.settings.col_2_menu].links.size > 0 -%}
-                      {%- for sub in linklists[active_block.settings.col_2_menu].links -%}
-                        <a href="{{ sub.url }}" class="mobile-nav__sub-link">{{ sub.title }}</a>
-                      {%- endfor -%}
-                    {%- else -%}
-                      {%- if active_block.settings.col_2_link_1_title != blank -%}<a href="{{ active_block.settings.col_2_link_1_url | default: '#' }}" class="mobile-nav__sub-link">{{ active_block.settings.col_2_link_1_title }}</a>{%- endif -%}
-                      {%- if active_block.settings.col_2_link_2_title != blank -%}<a href="{{ active_block.settings.col_2_link_2_url | default: '#' }}" class="mobile-nav__sub-link">{{ active_block.settings.col_2_link_2_title }}</a>{%- endif -%}
-                      {%- if active_block.settings.col_2_link_3_title != blank -%}<a href="{{ active_block.settings.col_2_link_3_url | default: '#' }}" class="mobile-nav__sub-link">{{ active_block.settings.col_2_link_3_title }}</a>{%- endif -%}
-                      {%- if active_block.settings.col_2_link_4_title != blank -%}<a href="{{ active_block.settings.col_2_link_4_url | default: '#' }}" class="mobile-nav__sub-link">{{ active_block.settings.col_2_link_4_title }}</a>{%- endif -%}
-                      {%- if active_block.settings.col_2_link_5_title != blank -%}<a href="{{ active_block.settings.col_2_link_5_url | default: '#' }}" class="mobile-nav__sub-link">{{ active_block.settings.col_2_link_5_title }}</a>{%- endif -%}
-                      {%- if active_block.settings.col_2_link_6_title != blank -%}<a href="{{ active_block.settings.col_2_link_6_url | default: '#' }}" class="mobile-nav__sub-link">{{ active_block.settings.col_2_link_6_title }}</a>{%- endif -%}
-                    {%- endif -%}
-                  </div>
-                </div>
-              {%- endif -%}
+                      <div class="mobile-nav__sub-accordion" {{ block.shopify_attributes }}>
+                        <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
+                          <span>{{ c_title }}</span>
+                          {%- if block.settings.badge_text != blank -%}
+                            <span class="mega-menu__col-badge" style="font-size: 0.6rem; color: {{ block.settings.badge_color | default: '#FFFFFF' }}; background: {{ block.settings.badge_bg | default: '#E05A47' }}; margin-inline-start: 6px;">{{ block.settings.badge_text }}</span>
+                          {%- endif -%}
+                          <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </button>
+                        <div class="mobile-nav__sub-accordion-content">
+                          {%- if block.settings.show_shop_all -%}
+                            <a href="{{ block.settings.shop_all_url | default: c_url | default: '#' }}" class="mobile-nav__sub-link" style="font-weight: 700; color: var(--color-primary);">
+                              {{ block.settings.shop_all_text | default: 'Shop All ' | append: c_title }} {% if is_rtl %}&larr;{% else %}&rarr;{% endif %}
+                            </a>
+                          {%- endif -%}
 
-              <!-- Column 3 Sub-Accordion -->
-              {%- if active_block.settings.col_3_title != blank or active_block.settings.col_3_menu != blank -%}
-                <div class="mobile-nav__sub-accordion">
-                  <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
-                    <span>{{ active_block.settings.col_3_title | default: 'Column 3' }}</span>
-                    <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                  </button>
-                  <div class="mobile-nav__sub-accordion-content">
-                    {%- if active_block.settings.col_3_url != blank -%}
-                      <a href="{{ active_block.settings.col_3_url }}" class="mobile-nav__sub-link" style="font-weight: 700; color: var(--color-primary);">{{ 'sections.header.shop_all' | t | default: 'Shop All' }} {{ active_block.settings.col_3_title }} &rarr;</a>
-                    {%- endif -%}
-                    {%- if active_block.settings.col_3_menu != blank and linklists[active_block.settings.col_3_menu].links.size > 0 -%}
-                      {%- for sub in linklists[active_block.settings.col_3_menu].links -%}
-                        <a href="{{ sub.url }}" class="mobile-nav__sub-link">{{ sub.title }}</a>
-                      {%- endfor -%}
-                    {%- else -%}
-                      {%- if active_block.settings.col_3_link_1_title != blank -%}<a href="{{ active_block.settings.col_3_link_1_url | default: '#' }}" class="mobile-nav__sub-link">{{ active_block.settings.col_3_link_1_title }}</a>{%- endif -%}
-                      {%- if active_block.settings.col_3_link_2_title != blank -%}<a href="{{ active_block.settings.col_3_link_2_url | default: '#' }}" class="mobile-nav__sub-link">{{ active_block.settings.col_3_link_2_title }}</a>{%- endif -%}
-                      {%- if active_block.settings.col_3_link_3_title != blank -%}<a href="{{ active_block.settings.col_3_link_3_url | default: '#' }}" class="mobile-nav__sub-link">{{ active_block.settings.col_3_link_3_title }}</a>{%- endif -%}
-                      {%- if active_block.settings.col_3_link_4_title != blank -%}<a href="{{ active_block.settings.col_3_link_4_url | default: '#' }}" class="mobile-nav__sub-link">{{ active_block.settings.col_3_link_4_title }}</a>{%- endif -%}
-                      {%- if active_block.settings.col_3_link_5_title != blank -%}<a href="{{ active_block.settings.col_3_link_5_url | default: '#' }}" class="mobile-nav__sub-link">{{ active_block.settings.col_3_link_5_title }}</a>{%- endif -%}
-                      {%- if active_block.settings.col_3_link_6_title != blank -%}<a href="{{ active_block.settings.col_3_link_6_url | default: '#' }}" class="mobile-nav__sub-link">{{ active_block.settings.col_3_link_6_title }}</a>{%- endif -%}
-                    {%- endif -%}
-                  </div>
-                </div>
-              {%- endif -%}
-
-              <!-- Column 4 Sub-Accordion -->
-              {%- if active_block.settings.col_4_title != blank or active_block.settings.col_4_menu != blank -%}
-                <div class="mobile-nav__sub-accordion">
-                  <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
-                    <span>{{ active_block.settings.col_4_title | default: 'Column 4' }}</span>
-                    <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                  </button>
-                  <div class="mobile-nav__sub-accordion-content">
-                    {%- if active_block.settings.col_4_url != blank -%}
-                      <a href="{{ active_block.settings.col_4_url }}" class="mobile-nav__sub-link" style="font-weight: 700; color: var(--color-primary);">{{ 'sections.header.shop_all' | t | default: 'Shop All' }} {{ active_block.settings.col_4_title }} &rarr;</a>
-                    {%- endif -%}
-                    {%- if active_block.settings.col_4_menu != blank and linklists[active_block.settings.col_4_menu].links.size > 0 -%}
-                      {%- for sub in linklists[active_block.settings.col_4_menu].links -%}
-                        <a href="{{ sub.url }}" class="mobile-nav__sub-link">{{ sub.title }}</a>
-                      {%- endfor -%}
-                    {%- else -%}
-                      {%- if active_block.settings.col_4_link_1_title != blank -%}<a href="{{ active_block.settings.col_4_link_1_url | default: '#' }}" class="mobile-nav__sub-link">{{ active_block.settings.col_4_link_1_title }}</a>{%- endif -%}
-                      {%- if active_block.settings.col_4_link_2_title != blank -%}<a href="{{ active_block.settings.col_4_link_2_url | default: '#' }}" class="mobile-nav__sub-link">{{ active_block.settings.col_4_link_2_title }}</a>{%- endif -%}
-                      {%- if active_block.settings.col_4_link_3_title != blank -%}<a href="{{ active_block.settings.col_4_link_3_url | default: '#' }}" class="mobile-nav__sub-link">{{ active_block.settings.col_4_link_3_title }}</a>{%- endif -%}
-                      {%- if active_block.settings.col_4_link_4_title != blank -%}<a href="{{ active_block.settings.col_4_link_4_url | default: '#' }}" class="mobile-nav__sub-link">{{ active_block.settings.col_4_link_4_title }}</a>{%- endif -%}
-                      {%- if active_block.settings.col_4_link_5_title != blank -%}<a href="{{ active_block.settings.col_4_link_5_url | default: '#' }}" class="mobile-nav__sub-link">{{ active_block.settings.col_4_link_5_title }}</a>{%- endif -%}
-                    {%- endif -%}
-                  </div>
-                </div>
-              {%- endif -%}
-
-              <!-- Promo Card inside Accordion -->
-              {%- if active_block.settings.show_promo -%}
-                <div style="margin-top: 14px; padding: 14px; background: var(--color-bg-secondary); border-radius: var(--radius-sm); border: 1px solid var(--color-border-light);">
-                  {%- if active_block.settings.promo_badge != blank -%}
-                    <span class="mega-menu__promo-tag" style="margin-bottom: 6px;">{{ active_block.settings.promo_badge }}</span>
-                  {%- endif -%}
-                  <strong style="display: block; font-size: 0.95rem; margin-bottom: 6px; color: var(--color-foreground);">{{ active_block.settings.promo_title | default: 'Never Mind Streetwear Drop' }}</strong>
-                  <a href="{{ active_block.settings.promo_url | default: '/collections/all' }}" class="btn btn-primary btn-sm btn-full" style="margin-top: 8px;">
-                    {{ active_block.settings.promo_button_text | default: 'Shop Now' }} &rarr;
-                  </a>
-                </div>
-              {%- endif -%}
-            </div>
-          </div>
-
-        {%- elsif is_mega -%}
-          <!-- Default Main Mega Menu Accordion in Mobile Drawer -->
-          <div class="mobile-nav__item mobile-nav__item--accordion">
-            <button type="button" class="mobile-nav__accordion-header" data-mobile-accordion-trigger aria-expanded="false">
-              <span class="mobile-nav__title-wrap">
-                <span class="mobile-nav__item-title">{{ link.title }}</span>
-              </span>
-              <svg class="mobile-nav__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-            </button>
-            <div class="mobile-nav__accordion-content">
-              <a href="{{ link.url }}" class="mobile-nav__shop-all-link">
-                <span>{{ 'sections.header.shop_all' | t | default: 'Shop All' }} {{ link.title }}</span>
-                <span aria-hidden="true">&rarr;</span>
-              </a>
-
-              {%- if section.settings.mega_menu_linklist != blank and linklists[section.settings.mega_menu_linklist].links.size > 0 -%}
-                {%- for col in linklists[section.settings.mega_menu_linklist].links -%}
-                  {%- if col.links.size > 0 -%}
-                    <div class="mobile-nav__sub-accordion">
-                      <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
-                        <span>{{ col.title }}</span>
-                        <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                      </button>
-                      <div class="mobile-nav__sub-accordion-content">
-                        {%- for sub in col.links -%}
-                          <a href="{{ sub.url }}" class="mobile-nav__sub-link">{{ sub.title }}</a>
-                        {%- endfor -%}
+                          {%- if block.settings.menu != blank and linklists[block.settings.menu].links.size > 0 -%}
+                            {%- for sub in linklists[block.settings.menu].links -%}
+                              <a href="{{ sub.url }}" class="mobile-nav__sub-link">{{ sub.title }}</a>
+                            {%- endfor -%}
+                          {%- else -%}
+                            {%- if block.settings.link_1_title != blank -%}<a href="{{ block.settings.link_1_url | default: c_url }}" class="mobile-nav__sub-link">{{ block.settings.link_1_title }}</a>{%- endif -%}
+                            {%- if block.settings.link_2_title != blank -%}<a href="{{ block.settings.link_2_url | default: c_url }}" class="mobile-nav__sub-link">{{ block.settings.link_2_title }}</a>{%- endif -%}
+                            {%- if block.settings.link_3_title != blank -%}<a href="{{ block.settings.link_3_url | default: c_url }}" class="mobile-nav__sub-link">{{ block.settings.link_3_title }}</a>{%- endif -%}
+                            {%- if block.settings.link_4_title != blank -%}<a href="{{ block.settings.link_4_url | default: c_url }}" class="mobile-nav__sub-link">{{ block.settings.link_4_title }}</a>{%- endif -%}
+                            {%- if block.settings.link_5_title != blank -%}<a href="{{ block.settings.link_5_url | default: c_url }}" class="mobile-nav__sub-link">{{ block.settings.link_5_title }}</a>{%- endif -%}
+                            {%- if block.settings.link_6_title != blank -%}<a href="{{ block.settings.link_6_url | default: c_url }}" class="mobile-nav__sub-link">{{ block.settings.link_6_title }}</a>{%- endif -%}
+                            {%- if block.settings.link_7_title != blank -%}<a href="{{ block.settings.link_7_url | default: c_url }}" class="mobile-nav__sub-link">{{ block.settings.link_7_title }}</a>{%- endif -%}
+                            {%- if block.settings.link_8_title != blank -%}<a href="{{ block.settings.link_8_url | default: c_url }}" class="mobile-nav__sub-link">{{ block.settings.link_8_title }}</a>{%- endif -%}
+                            {%- if block.settings.sub_links_text != blank -%}
+                              {%- assign lines = block.settings.sub_links_text | newline_to_br | split: '<br />' -%}
+                              {%- for line in lines -%}
+                                {%- assign clean_line = line | strip -%}
+                                {%- if clean_line != blank -%}
+                                  {%- assign parts = clean_line | split: '|' -%}
+                                  <a href="{{ parts[1] | strip | default: c_url }}" class="mobile-nav__sub-link">{{ parts[0] | strip }}</a>
+                                {%- endif -%}
+                              {%- endfor -%}
+                            {%- endif -%}
+                          {%- endif -%}
+                        </div>
                       </div>
-                    </div>
-                  {%- else -%}
-                    <a href="{{ col.url }}" class="mobile-nav__child-link">{{ col.title }}</a>
+                    {%- endif -%}
                   {%- endif -%}
                 {%- endfor -%}
-              {%- elsif link.links.size > 0 -%}
-                {%- for child in link.links -%}
+
+                <!-- Featured Banner in Mobile Accordion -->
+                {%- if matched_promo_block != nil -%}
+                  {%- assign p_settings = matched_promo_block.settings -%}
+                  <div style="margin-top: 14px; padding: 14px; background: var(--color-bg-secondary); border-radius: var(--radius-sm); border: 1px solid var(--color-border-light);" {{ matched_promo_block.shopify_attributes }}>
+                    {%- if p_settings.badge != blank -%}
+                      <span class="mega-menu__promo-tag" style="margin-bottom: 6px; background: rgba(0,0,0,0.6); color: #FFF;">{{ p_settings.badge }}</span>
+                    {%- endif -%}
+                    <strong style="display: block; font-size: 0.95rem; margin-bottom: 6px; color: var(--color-foreground);">{{ p_settings.title | default: 'Never Mind Streetwear Drop' }}</strong>
+                    {%- if p_settings.description != blank -%}
+                      <p style="font-size: 0.8rem; color: var(--color-foreground-secondary); margin-bottom: 8px;">{{ p_settings.description }}</p>
+                    {%- endif -%}
+                    <a href="{{ p_settings.button_url | default: '/collections/all' }}" class="btn btn-primary btn-sm btn-full" style="margin-top: 8px;">
+                      {{ p_settings.button_text | default: 'Shop Now' }} {% if is_rtl %}&larr;{% else %}&rarr;{% endif %}
+                    </a>
+                  </div>
+                {%- endif -%}
+
+              {%- elsif matched_full_block != nil -%}
+                <!-- Backward compatible mega_menu block accordions -->
+                {%- assign b = matched_full_block -%}
+                {%- if b.settings.col_1_title != blank -%}
+                  <div class="mobile-nav__sub-accordion">
+                    <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
+                      <span>{{ b.settings.col_1_title }}</span>
+                      <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div class="mobile-nav__sub-accordion-content">
+                      <a href="{{ b.settings.col_1_url | default: '/collections/men' }}" class="mobile-nav__sub-link" style="font-weight: 700; color: var(--color-primary);">Shop All {{ b.settings.col_1_title }} {% if is_rtl %}&larr;{% else %}&rarr;{% endif %}</a>
+                      {%- if b.settings.col_1_link_1_title != blank -%}<a href="{{ b.settings.col_1_link_1_url | default: '#' }}" class="mobile-nav__sub-link">{{ b.settings.col_1_link_1_title }}</a>{%- endif -%}
+                      {%- if b.settings.col_1_link_2_title != blank -%}<a href="{{ b.settings.col_1_link_2_url | default: '#' }}" class="mobile-nav__sub-link">{{ b.settings.col_1_link_2_title }}</a>{%- endif -%}
+                      {%- if b.settings.col_1_link_3_title != blank -%}<a href="{{ b.settings.col_1_link_3_url | default: '#' }}" class="mobile-nav__sub-link">{{ b.settings.col_1_link_3_title }}</a>{%- endif -%}
+                      {%- if b.settings.col_1_link_4_title != blank -%}<a href="{{ b.settings.col_1_link_4_url | default: '#' }}" class="mobile-nav__sub-link">{{ b.settings.col_1_link_4_title }}</a>{%- endif -%}
+                      {%- if b.settings.col_1_link_5_title != blank -%}<a href="{{ b.settings.col_1_link_5_url | default: '#' }}" class="mobile-nav__sub-link">{{ b.settings.col_1_link_5_title }}</a>{%- endif -%}
+                    </div>
+                  </div>
+                {%- endif -%}
+                {%- if b.settings.col_2_title != blank -%}
+                  <div class="mobile-nav__sub-accordion">
+                    <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
+                      <span>{{ b.settings.col_2_title }}</span>
+                      <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div class="mobile-nav__sub-accordion-content">
+                      <a href="{{ b.settings.col_2_url | default: '/collections/women' }}" class="mobile-nav__sub-link" style="font-weight: 700; color: var(--color-primary);">Shop All {{ b.settings.col_2_title }} {% if is_rtl %}&larr;{% else %}&rarr;{% endif %}</a>
+                      {%- if b.settings.col_2_link_1_title != blank -%}<a href="{{ b.settings.col_2_link_1_url | default: '#' }}" class="mobile-nav__sub-link">{{ b.settings.col_2_link_1_title }}</a>{%- endif -%}
+                      {%- if b.settings.col_2_link_2_title != blank -%}<a href="{{ b.settings.col_2_link_2_url | default: '#' }}" class="mobile-nav__sub-link">{{ b.settings.col_2_link_2_title }}</a>{%- endif -%}
+                      {%- if b.settings.col_2_link_3_title != blank -%}<a href="{{ b.settings.col_2_link_3_url | default: '#' }}" class="mobile-nav__sub-link">{{ b.settings.col_2_link_3_title }}</a>{%- endif -%}
+                      {%- if b.settings.col_2_link_4_title != blank -%}<a href="{{ b.settings.col_2_link_4_url | default: '#' }}" class="mobile-nav__sub-link">{{ b.settings.col_2_link_4_title }}</a>{%- endif -%}
+                    </div>
+                  </div>
+                {%- endif -%}
+
+              {%- elsif link.links.size > 0 or section.settings.mega_menu_linklist != blank -%}
+                <!-- Navigation 3-Level Menu Sub-Accordions -->
+                {%- assign nav_cols = link.links -%}
+                {%- if section.settings.mega_menu_linklist != blank and linklists[section.settings.mega_menu_linklist].links.size > 0 -%}
+                  {%- assign nav_cols = linklists[section.settings.mega_menu_linklist].links -%}
+                {%- endif -%}
+                {%- for child in nav_cols -%}
                   {%- if child.links.size > 0 -%}
                     <div class="mobile-nav__sub-accordion">
                       <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
@@ -502,6 +424,7 @@
                         <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
                       </button>
                       <div class="mobile-nav__sub-accordion-content">
+                        <a href="{{ child.url }}" class="mobile-nav__sub-link" style="font-weight: 700; color: var(--color-primary);">Shop All {{ child.title }} {% if is_rtl %}&larr;{% else %}&rarr;{% endif %}</a>
                         {%- for sub in child.links -%}
                           <a href="{{ sub.url }}" class="mobile-nav__sub-link">{{ sub.title }}</a>
                         {%- endfor -%}
@@ -511,64 +434,62 @@
                     <a href="{{ child.url }}" class="mobile-nav__child-link">{{ child.title }}</a>
                   {%- endif -%}
                 {%- endfor -%}
+
               {%- else -%}
                 <!-- Default Streetwear Categories Sub-Accordions -->
-                <!-- Men -->
                 <div class="mobile-nav__sub-accordion">
                   <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
-                    <span>{% if request.locale.iso_code == 'ar' %}رجالي (Men){% else %}Men's Streetwear{% endif %}</span>
+                    <span>{% if is_rtl %}رجالي (Men){% else %}Men's Streetwear{% endif %}</span>
                     <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
                   </button>
                   <div class="mobile-nav__sub-accordion-content">
-                    <a href="/collections/men" class="mobile-nav__sub-link" style="font-weight: 700; color: var(--color-primary);">{% if request.locale.iso_code == 'ar' %}تسوق كل تشكيلة الرجال &larr;{% else %}Shop All Men &rarr;{% endif %}</a>
-                    <a href="/collections/men" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}تيشيرتات أوفر سايز (Oversized){% else %}Oversized T-Shirts{% endif %}</a>
-                    <a href="/collections/men" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}تيشيرتات جرافيك وطباعة{% else %}Graphic & Printed Tees{% endif %}</a>
-                    <a href="/collections/men" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}هوديز وسويت شيرت سميك{% else %}Heavyweight Hoodies{% endif %}</a>
-                    <a href="/collections/men" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}بنطلونات كارجو وسويت بانتس{% else %}Tactical Cargo & Pants{% endif %}</a>
-                    <a href="/collections/men" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}أطقم قطعتين وترينجات{% else %}Matching Sets & Tracksuits{% endif %}</a>
+                    <a href="/collections/men" class="mobile-nav__sub-link" style="font-weight: 700; color: var(--color-primary);">{% if is_rtl %}تسوق كل تشكيلة الرجال &larr;{% else %}Shop All Men's &rarr;{% endif %}</a>
+                    <a href="/collections/men" class="mobile-nav__sub-link">{% if is_rtl %}تيشيرتات أوفر سايز{% else %}Oversized T-Shirts{% endif %}</a>
+                    <a href="/collections/men" class="mobile-nav__sub-link">{% if is_rtl %}تيشيرتات جرافيك وطباعة{% else %}Graphic & Printed Tees{% endif %}</a>
+                    <a href="/collections/men" class="mobile-nav__sub-link">{% if is_rtl %}هوديز وسويت شيرت سميك{% else %}Heavyweight Hoodies{% endif %}</a>
+                    <a href="/collections/men" class="mobile-nav__sub-link">{% if is_rtl %}بنطلونات كارجو وسويت بانتس{% else %}Tactical Cargo & Pants{% endif %}</a>
+                    <a href="/collections/men" class="mobile-nav__sub-link">{% if is_rtl %}أطقم قطعتين وترينجات{% else %}Matching Sets & Tracksuits{% endif %}</a>
                   </div>
                 </div>
 
-                <!-- Women -->
                 <div class="mobile-nav__sub-accordion">
                   <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
-                    <span>{% if request.locale.iso_code == 'ar' %}حريمي (Women){% else %}Women's Collection{% endif %}</span>
+                    <span>{% if is_rtl %}حريمي (Women){% else %}Women's Collection{% endif %}</span>
                     <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
                   </button>
                   <div class="mobile-nav__sub-accordion-content">
-                    <a href="/collections/women" class="mobile-nav__sub-link" style="font-weight: 700; color: var(--color-primary);">{% if request.locale.iso_code == 'ar' %}تسوق كل تشكيلة النساء &larr;{% else %}Shop All Women &rarr;{% endif %}</a>
-                    <a href="/collections/women" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}توبات وتيشيرتات واسعة{% else %}Cropped & Oversized Tops{% endif %}</a>
-                    <a href="/collections/women" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}هوديز وسويت شيرت مريح{% else %}Minimalist Lounge Hoodies{% endif %}</a>
-                    <a href="/collections/women" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}بنطلونات واسعة وكارجو{% else %}Wide-Leg Pants & Cargo{% endif %}</a>
-                    <a href="/collections/women" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}أطقم ملابس مريحة Loungewear{% else %}Comfort Matching Sets{% endif %}</a>
+                    <a href="/collections/women" class="mobile-nav__sub-link" style="font-weight: 700; color: var(--color-primary);">{% if is_rtl %}تسوق كل تشكيلة النساء &larr;{% else %}Shop All Women's &rarr;{% endif %}</a>
+                    <a href="/collections/women" class="mobile-nav__sub-link">{% if is_rtl %}توبات وتيشيرتات واسعة{% else %}Cropped & Oversized Tops{% endif %}</a>
+                    <a href="/collections/women" class="mobile-nav__sub-link">{% if is_rtl %}هوديز وسويت شيرت مريح{% else %}Minimalist Lounge Hoodies{% endif %}</a>
+                    <a href="/collections/women" class="mobile-nav__sub-link">{% if is_rtl %}بنطلونات واسعة وكارجو{% else %}Wide-Leg Pants & Cargo{% endif %}</a>
+                    <a href="/collections/women" class="mobile-nav__sub-link">{% if is_rtl %}أطقم ملابس مريحة{% else %}Comfort Matching Sets{% endif %}</a>
                   </div>
                 </div>
 
-                <!-- Kids & Teens -->
                 <div class="mobile-nav__sub-accordion">
                   <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
-                    <span>{% if request.locale.iso_code == 'ar' %}أطفال وناشئين (Kids){% else %}Kids & Teens{% endif %}</span>
+                    <span>{% if is_rtl %}أطفال وناشئين (Kids){% else %}Kids & Teens{% endif %}</span>
                     <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
                   </button>
                   <div class="mobile-nav__sub-accordion-content">
-                    <a href="/collections/kids" class="mobile-nav__sub-link" style="font-weight: 700; color: var(--color-primary);">{% if request.locale.iso_code == 'ar' %}تسوق كل تشكيلة الأطفال &larr;{% else %}Shop All Kids &rarr;{% endif %}</a>
-                    <a href="/collections/kids" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}تيشيرتات جرافيك أولاد{% else %}Boys Graphic Tees{% endif %}</a>
-                    <a href="/collections/kids" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}ملابس كاجوال بنات{% else %}Girls Casual & Tops{% endif %}</a>
-                    <a href="/collections/kids" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}هوديز وترينجات أطفال{% else %}Kids Hoodies & Sweats{% endif %}</a>
-                    <a href="/collections/kids" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}أساسيات المراهقين والناشئين{% else %}Teen Streetwear Essentials{% endif %}</a>
+                    <a href="/collections/kids" class="mobile-nav__sub-link" style="font-weight: 700; color: var(--color-primary);">{% if is_rtl %}تسوق كل تشكيلة الأطفال &larr;{% else %}Shop All Kids &rarr;{% endif %}</a>
+                    <a href="/collections/kids" class="mobile-nav__sub-link">{% if is_rtl %}تيشيرتات جرافيك أولاد{% else %}Boys Graphic Tees{% endif %}</a>
+                    <a href="/collections/kids" class="mobile-nav__sub-link">{% if is_rtl %}ملابس كاجوال بنات{% else %}Girls Casual & Tops{% endif %}</a>
+                    <a href="/collections/kids" class="mobile-nav__sub-link">{% if is_rtl %}هوديز وترينجات أطفال{% else %}Kids Hoodies & Sweats{% endif %}</a>
+                    <a href="/collections/kids" class="mobile-nav__sub-link">{% if is_rtl %}أساسيات المراهقين{% else %}Teen Streetwear Essentials{% endif %}</a>
                   </div>
                 </div>
               {%- endif -%}
 
-              <!-- Mobile Promo Card inside Accordion -->
-              {%- if section.settings.show_promo_banner -%}
+              <!-- Mobile Promo Card inside Accordion if enabled on section -->
+              {%- if section.settings.show_promo_banner and matched_promo_block == nil -%}
                 <div style="margin-top: 14px; padding: 14px; background: var(--color-bg-secondary); border-radius: var(--radius-sm); border: 1px solid var(--color-border-light);">
                   {%- if section.settings.promo_badge != blank -%}
-                    <span class="mega-menu__promo-tag" style="margin-bottom: 6px;">{{ section.settings.promo_badge }}</span>
+                    <span class="mega-menu__promo-tag" style="margin-bottom: 6px; background: rgba(0,0,0,0.6); color: #FFF;">{{ section.settings.promo_badge }}</span>
                   {%- endif -%}
                   <strong style="display: block; font-size: 0.95rem; margin-bottom: 6px; color: var(--color-foreground);">{{ section.settings.promo_title | default: 'Never Mind Streetwear Drop' }}</strong>
                   <a href="{{ section.settings.promo_url | default: '/collections/all' }}" class="btn btn-primary btn-sm btn-full" style="margin-top: 8px;">
-                    {{ section.settings.promo_btn | default: 'Shop Now' }} &rarr;
+                    {{ section.settings.promo_btn | default: 'Shop Now' }} {% if is_rtl %}&larr;{% else %}&rarr;{% endif %}
                   </a>
                 </div>
               {%- endif -%}
@@ -705,6 +626,22 @@
       "info": "Name of the link in your Main Menu that opens this mega menu (e.g. Catalog, Shop, Collections, or المتجر)."
     },
     {
+      "type": "select",
+      "id": "mega_menu_width",
+      "label": "Mega Menu Dropdown Width",
+      "options": [
+        {
+          "value": "container",
+          "label": "Container Width (1320px)"
+        },
+        {
+          "value": "full",
+          "label": "Full Screen Width"
+        }
+      ],
+      "default": "container"
+    },
+    {
       "type": "link_list",
       "id": "mega_menu_linklist",
       "label": "Custom Mega Menu Columns Menu (Optional)",
@@ -765,8 +702,318 @@
       "default": true
     }
   ],
-  "max_blocks": 10,
+  "max_blocks": 25,
   "blocks": [
+    {
+      "type": "mega_column",
+      "name": "Mega Menu Column",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Menu Assignment"
+        },
+        {
+          "type": "text",
+          "id": "menu_trigger",
+          "label": "Menu Item to Open Mega Menu",
+          "default": "Catalog",
+          "info": "Name of the link in your Main Menu (e.g. Catalog, Shop, or Collections)"
+        },
+        {
+          "type": "header",
+          "content": "Column Header"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Column Title",
+          "default": "Men's Streetwear",
+          "info": "Leave blank to use Collection title if selected below"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Column Title Link"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Shopify Collection (Optional)",
+          "info": "Automatically supplies Title, Link, and Image if left blank"
+        },
+        {
+          "type": "header",
+          "content": "Column Image (Optional)"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_collection_image",
+          "label": "Show Image Above Column",
+          "default": false
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_image",
+          "label": "Custom Column Thumbnail (Overrides collection image)"
+        },
+        {
+          "type": "header",
+          "content": "Column Badge (Optional)"
+        },
+        {
+          "type": "text",
+          "id": "badge_text",
+          "label": "Badge Text",
+          "info": "e.g. HOT, NEW, SALE"
+        },
+        {
+          "type": "color",
+          "id": "badge_color",
+          "label": "Badge Text Color",
+          "default": "#FFFFFF"
+        },
+        {
+          "type": "color",
+          "id": "badge_bg",
+          "label": "Badge Background Color",
+          "default": "#E05A47"
+        },
+        {
+          "type": "header",
+          "content": "Sub-Links (Navigation Menu or Manual)"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "Sub-Links Menu (Optional)",
+          "info": "Select any navigation menu from Shopify Admin > Navigation"
+        },
+        {
+          "type": "textarea",
+          "id": "sub_links_text",
+          "label": "Quick Links (One per line: Title | URL)",
+          "info": "Example: Oversized Tees | /collections/men"
+        },
+        {
+          "type": "text",
+          "id": "link_1_title",
+          "label": "Sub-link 1 Title",
+          "default": "Oversized T-Shirts"
+        },
+        {
+          "type": "url",
+          "id": "link_1_url",
+          "label": "Sub-link 1 Link"
+        },
+        {
+          "type": "text",
+          "id": "link_2_title",
+          "label": "Sub-link 2 Title",
+          "default": "Graphic & Printed Tees"
+        },
+        {
+          "type": "url",
+          "id": "link_2_url",
+          "label": "Sub-link 2 Link"
+        },
+        {
+          "type": "text",
+          "id": "link_3_title",
+          "label": "Sub-link 3 Title",
+          "default": "Heavyweight Hoodies"
+        },
+        {
+          "type": "url",
+          "id": "link_3_url",
+          "label": "Sub-link 3 Link"
+        },
+        {
+          "type": "text",
+          "id": "link_4_title",
+          "label": "Sub-link 4 Title",
+          "default": "Tactical Cargo & Pants"
+        },
+        {
+          "type": "url",
+          "id": "link_4_url",
+          "label": "Sub-link 4 Link"
+        },
+        {
+          "type": "text",
+          "id": "link_5_title",
+          "label": "Sub-link 5 Title",
+          "default": "Matching Sets & Tracksuits"
+        },
+        {
+          "type": "url",
+          "id": "link_5_url",
+          "label": "Sub-link 5 Link"
+        },
+        {
+          "type": "text",
+          "id": "link_6_title",
+          "label": "Sub-link 6 Title"
+        },
+        {
+          "type": "url",
+          "id": "link_6_url",
+          "label": "Sub-link 6 Link"
+        },
+        {
+          "type": "text",
+          "id": "link_7_title",
+          "label": "Sub-link 7 Title"
+        },
+        {
+          "type": "url",
+          "id": "link_7_url",
+          "label": "Sub-link 7 Link"
+        },
+        {
+          "type": "text",
+          "id": "link_8_title",
+          "label": "Sub-link 8 Title"
+        },
+        {
+          "type": "url",
+          "id": "link_8_url",
+          "label": "Sub-link 8 Link"
+        },
+        {
+          "type": "header",
+          "content": "Shop All CTA Link"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_shop_all",
+          "label": "Show 'Shop All' Link at Bottom",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "shop_all_text",
+          "label": "Shop All Label (Leave blank for auto)",
+          "placeholder": "Shop All Men's →"
+        },
+        {
+          "type": "url",
+          "id": "shop_all_url",
+          "label": "Shop All Destination URL (Leave blank to use column URL)"
+        }
+      ]
+    },
+    {
+      "type": "featured_card",
+      "name": "Mega Menu Featured Banner",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Menu Assignment"
+        },
+        {
+          "type": "text",
+          "id": "menu_trigger",
+          "label": "Menu Item to Open Mega Menu",
+          "default": "Catalog",
+          "info": "Name of the link in your Main Menu (e.g. Catalog, Shop, or Collections)"
+        },
+        {
+          "type": "header",
+          "content": "Banner Content"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Banner Image"
+        },
+        {
+          "type": "select",
+          "id": "image_aspect_ratio",
+          "label": "Image Aspect Ratio",
+          "options": [
+            {
+              "value": "3/4",
+              "label": "3:4 Portrait"
+            },
+            {
+              "value": "4/5",
+              "label": "4:5 Tall"
+            },
+            {
+              "value": "1/1",
+              "label": "1:1 Square"
+            },
+            {
+              "value": "16/9",
+              "label": "16:9 Landscape"
+            }
+          ],
+          "default": "4/5"
+        },
+        {
+          "type": "range",
+          "id": "overlay_opacity",
+          "min": 0,
+          "max": 90,
+          "step": 10,
+          "unit": "%",
+          "label": "Dark Gradient Overlay Opacity",
+          "default": 60
+        },
+        {
+          "type": "text",
+          "id": "badge",
+          "label": "Badge Pill / Small Label",
+          "default": "NEW DROP 2026"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Main Promotional Heading",
+          "default": "Never Mind Streetwear Drop"
+        },
+        {
+          "type": "text",
+          "id": "description",
+          "label": "Short Description / Offer (Optional)"
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Button Label",
+          "default": "Shop Now"
+        },
+        {
+          "type": "url",
+          "id": "button_url",
+          "label": "Button Destination URL"
+        },
+        {
+          "type": "header",
+          "content": "Banner Dimensions & Styling"
+        },
+        {
+          "type": "range",
+          "id": "card_width",
+          "min": 220,
+          "max": 380,
+          "step": 10,
+          "unit": "px",
+          "label": "Desktop Card Width",
+          "default": 280
+        },
+        {
+          "type": "range",
+          "id": "border_radius",
+          "min": 0,
+          "max": 24,
+          "step": 2,
+          "unit": "px",
+          "label": "Card Border Radius",
+          "default": 6
+        }
+      ]
+    },
     {
       "type": "mega_menu",
       "name": "Custom Mega Menu Block",

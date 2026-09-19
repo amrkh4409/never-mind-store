@@ -701,48 +701,109 @@
       });
     }
 
-    // Desktop Mega Menu persistent hover, click toggle & Shopify Theme Editor support
+    // Desktop Mega Menu persistent hover, click toggle, keyboard accessibility & Shopify Theme Editor support
     const megaMenuItems = document.querySelectorAll('.header__menu-item--has-mega');
+    let hoverTimeouts = new Map();
+
     megaMenuItems.forEach(item => {
       const link = item.querySelector('.header__menu-link');
+
+      // Click toggle for desktop
       if (link) {
         link.addEventListener('click', (e) => {
           if (window.innerWidth >= 1024) {
             e.preventDefault();
             const wasOpen = item.classList.contains('is-open');
-            megaMenuItems.forEach(m => m.classList.remove('is-open'));
+            megaMenuItems.forEach(m => {
+              m.classList.remove('is-open');
+              const ml = m.querySelector('.header__menu-link');
+              if (ml) ml.setAttribute('aria-expanded', 'false');
+            });
             if (!wasOpen) {
               item.classList.add('is-open');
+              link.setAttribute('aria-expanded', 'true');
             }
           }
         });
       }
 
-      item.addEventListener('mouseenter', () => item.classList.add('is-open'));
-      item.addEventListener('mouseleave', () => item.classList.remove('is-open'));
+      // Debounced hover bridge (prevents flickering)
+      item.addEventListener('mouseenter', () => {
+        if (hoverTimeouts.has(item)) {
+          clearTimeout(hoverTimeouts.get(item));
+          hoverTimeouts.delete(item);
+        }
+        item.classList.add('is-open');
+        if (link) link.setAttribute('aria-expanded', 'true');
+      });
+
+      item.addEventListener('mouseleave', () => {
+        const timer = setTimeout(() => {
+          item.classList.remove('is-open');
+          if (link) link.setAttribute('aria-expanded', 'false');
+          hoverTimeouts.delete(item);
+        }, 120);
+        hoverTimeouts.set(item, timer);
+      });
     });
 
+    // Close when clicking outside
     document.addEventListener('click', (e) => {
-      const clickedItem = e.target.closest('.header__menu-item--has-mega');
-      if (!clickedItem) {
-        megaMenuItems.forEach(item => item.classList.remove('is-open'));
+      const clickedMega = e.target.closest('.header__menu-item--has-mega');
+      if (!clickedMega) {
+        megaMenuItems.forEach(item => {
+          item.classList.remove('is-open');
+          const l = item.querySelector('.header__menu-link');
+          if (l) l.setAttribute('aria-expanded', 'false');
+        });
       }
     });
 
-    // Shopify Theme Editor: Automatically open mega menu when block is selected
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        megaMenuItems.forEach(item => {
+          if (item.classList.contains('is-open')) {
+            item.classList.remove('is-open');
+            const l = item.querySelector('.header__menu-link');
+            if (l) {
+              l.setAttribute('aria-expanded', 'false');
+              l.focus();
+            }
+          }
+        });
+      }
+    });
+
+    // Shopify Theme Editor: Automatically open mega menu when any related block is selected
     document.addEventListener('shopify:block:select', (e) => {
       const target = e.target;
-      const megaItem = target.closest('.header__menu-item--has-mega') || document.querySelector('.header__menu-item--has-mega');
+      const blockId = e.detail?.blockId;
+      let targetEl = target;
+
+      if (blockId && !target.closest('.header__menu-item--has-mega')) {
+        targetEl = document.querySelector(`[data-shopify-editor-block*="${blockId}"]`) || target;
+      }
+
+      const megaItem = targetEl.closest('.header__menu-item--has-mega') || 
+                       targetEl.closest('.mega-menu')?.closest('.header__menu-item--has-mega') || 
+                       document.querySelector('.header__menu-item--has-mega');
       if (megaItem) {
         megaItem.classList.add('is-open');
+        const l = megaItem.querySelector('.header__menu-link');
+        if (l) l.setAttribute('aria-expanded', 'true');
       }
     });
 
     document.addEventListener('shopify:block:deselect', (e) => {
       const target = e.target;
-      const megaItem = target.closest('.header__menu-item--has-mega') || document.querySelector('.header__menu-item--has-mega');
+      const megaItem = target.closest('.header__menu-item--has-mega') || 
+                       target.closest('.mega-menu')?.closest('.header__menu-item--has-mega') || 
+                       document.querySelector('.header__menu-item--has-mega');
       if (megaItem) {
         megaItem.classList.remove('is-open');
+        const l = megaItem.querySelector('.header__menu-link');
+        if (l) l.setAttribute('aria-expanded', 'false');
       }
     });
   }
