@@ -42,7 +42,19 @@
       "account": "حسابي",
       "cart": "سلة التسوق",
       "wishlist": "المفضلة",
-      "search": "بحث"
+      "search": "بحث",
+      "shop_all": "تسوق الكل",
+      "view_all": "عرض الكل",
+      "categories": "الأقسام",
+      "trending": "الأكثر طلباً",
+      "featured": "مميز",
+      "hot": "مميز",
+      "new": "جديد",
+      "sale": "تخفيضات",
+      "promo_mens_title": "أحدث كولكشن رجالي 2026",
+      "promo_womens_title": "أحدث كولكشن حريمي 2026",
+      "promo_kids_title": "كولكشن أطفال وشباب 2026",
+      "promo_cta": "تسوق الآن"
     },
     "cart_drawer": {
       "title": "سلة المشتريات",

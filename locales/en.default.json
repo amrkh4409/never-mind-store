@@ -42,7 +42,19 @@
       "account": "Account",
       "cart": "Cart",
       "wishlist": "Wishlist",
-      "search": "Search"
+      "search": "Search",
+      "shop_all": "Shop All",
+      "view_all": "View All",
+      "categories": "Categories",
+      "trending": "Trending Now",
+      "featured": "Featured",
+      "hot": "HOT",
+      "new": "NEW",
+      "sale": "SALE",
+      "promo_mens_title": "Men's New Drop 2026",
+      "promo_womens_title": "Women's Collection 2026",
+      "promo_kids_title": "Kids Streetwear 2026",
+      "promo_cta": "Shop Now"
     },
     "cart_drawer": {
       "title": "Shopping Bag",

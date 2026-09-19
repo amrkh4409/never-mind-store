@@ -618,22 +618,86 @@
       document.body.style.overflow = '';
     }));
 
-    // Mobile Navigation Drawer
+    // Mobile Navigation Drawer & Multi-Level Accordions
     const mobileToggle = document.querySelector('[data-mobile-menu-toggle]');
     const mobileDrawer = document.getElementById('MobileNavDrawer');
-    const mobileClose = document.querySelector('[data-mobile-menu-close]');
+    const mobileBackdrop = document.getElementById('MobileNavBackdrop');
+    const mobileCloseBtns = document.querySelectorAll('[data-mobile-menu-close]');
 
-    if (mobileToggle && mobileDrawer) {
-      mobileToggle.addEventListener('click', () => {
-        mobileDrawer.classList.add('is-open');
-        document.body.style.overflow = 'hidden';
+    function openMobileNav() {
+      if (mobileDrawer) mobileDrawer.classList.add('is-open');
+      if (mobileBackdrop) mobileBackdrop.classList.add('is-active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileNav() {
+      if (mobileDrawer) mobileDrawer.classList.remove('is-open');
+      if (mobileBackdrop) mobileBackdrop.classList.remove('is-active');
+      document.body.style.overflow = '';
+    }
+
+    if (mobileToggle) {
+      mobileToggle.addEventListener('click', (e) => {
+        e.preventDefault();
+        openMobileNav();
       });
     }
 
-    if (mobileClose && mobileDrawer) {
-      mobileClose.addEventListener('click', () => {
-        mobileDrawer.classList.remove('is-open');
-        document.body.style.overflow = '';
+    mobileCloseBtns.forEach(btn => btn.addEventListener('click', closeMobileNav));
+    if (mobileBackdrop) mobileBackdrop.addEventListener('click', closeMobileNav);
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && mobileDrawer && mobileDrawer.classList.contains('is-open')) {
+        closeMobileNav();
+      }
+    });
+
+    // Level 1 Accordions Toggle
+    document.querySelectorAll('[data-mobile-accordion-trigger]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const isOpen = btn.classList.contains('is-open');
+        const content = btn.nextElementSibling;
+        
+        // Toggle current accordion
+        if (isOpen) {
+          btn.classList.remove('is-open');
+          btn.setAttribute('aria-expanded', 'false');
+          if (content) content.classList.remove('is-open');
+        } else {
+          btn.classList.add('is-open');
+          btn.setAttribute('aria-expanded', 'true');
+          if (content) content.classList.add('is-open');
+        }
+      });
+    });
+
+    // Level 2 / Level 3 Sub-Accordions Toggle
+    document.querySelectorAll('[data-mobile-sub-accordion-trigger]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const isOpen = btn.classList.contains('is-open');
+        const content = btn.nextElementSibling;
+
+        if (isOpen) {
+          btn.classList.remove('is-open');
+          btn.setAttribute('aria-expanded', 'false');
+          if (content) content.classList.remove('is-open');
+        } else {
+          btn.classList.add('is-open');
+          btn.setAttribute('aria-expanded', 'true');
+          if (content) content.classList.add('is-open');
+        }
+      });
+    });
+
+    // Auto-close mobile drawer when tapping an internal link
+    if (mobileDrawer) {
+      mobileDrawer.querySelectorAll('a').forEach(a => {
+        a.addEventListener('click', () => {
+          closeMobileNav();
+        });
       });
     }
   }
