@@ -1,0 +1,173 @@
+<!-- Mega Menu Block: Full Manual Control over Titles, Sub-links, and Promo Card -->
+{%- if block != nil -%}
+  <!-- Column 1 -->
+  {%- if block.settings.col_1_title != blank or block.settings.col_1_menu != blank -%}
+    <div class="mega-menu__col">
+      <a href="{{ block.settings.col_1_url | default: '#' }}" class="mega-menu__heading">
+        {{ block.settings.col_1_title | default: 'Column 1' }}
+      </a>
+      <ul class="mega-menu__list">
+        {%- if block.settings.col_1_menu != blank and linklists[block.settings.col_1_menu].links.size > 0 -%}
+          {%- for sub in linklists[block.settings.col_1_menu].links -%}
+            <li class="mega-menu__item"><a href="{{ sub.url }}" class="mega-menu__link">{{ sub.title }}</a></li>
+          {%- endfor -%}
+        {%- else -%}
+          {%- if block.settings.col_1_link_1_title != blank -%}
+            <li class="mega-menu__item"><a href="{{ block.settings.col_1_link_1_url | default: '#' }}" class="mega-menu__link">{{ block.settings.col_1_link_1_title }}</a></li>
+          {%- endif -%}
+          {%- if block.settings.col_1_link_2_title != blank -%}
+            <li class="mega-menu__item"><a href="{{ block.settings.col_1_link_2_url | default: '#' }}" class="mega-menu__link">{{ block.settings.col_1_link_2_title }}</a></li>
+          {%- endif -%}
+          {%- if block.settings.col_1_link_3_title != blank -%}
+            <li class="mega-menu__item"><a href="{{ block.settings.col_1_link_3_url | default: '#' }}" class="mega-menu__link">{{ block.settings.col_1_link_3_title }}</a></li>
+          {%- endif -%}
+          {%- if block.settings.col_1_link_4_title != blank -%}
+            <li class="mega-menu__item"><a href="{{ block.settings.col_1_link_4_url | default: '#' }}" class="mega-menu__link">{{ block.settings.col_1_link_4_title }}</a></li>
+          {%- endif -%}
+          {%- if block.settings.col_1_link_5_title != blank -%}
+            <li class="mega-menu__item"><a href="{{ block.settings.col_1_link_5_url | default: '#' }}" class="mega-menu__link">{{ block.settings.col_1_link_5_title }}</a></li>
+          {%- endif -%}
+          {%- if block.settings.col_1_link_6_title != blank -%}
+            <li class="mega-menu__item"><a href="{{ block.settings.col_1_link_6_url | default: '#' }}" class="mega-menu__link" style="color: var(--color-primary); font-weight: 700;">{{ block.settings.col_1_link_6_title }}</a></li>
+          {%- endif -%}
+        {%- endif -%}
+      </ul>
+    </div>
+  {%- endif -%}
+
+  <!-- Column 2 -->
+  {%- if block.settings.col_2_title != blank or block.settings.col_2_menu != blank -%}
+    <div class="mega-menu__col">
+      <a href="{{ block.settings.col_2_url | default: '#' }}" class="mega-menu__heading">
+        {{ block.settings.col_2_title | default: 'Column 2' }}
+      </a>
+      <ul class="mega-menu__list">
+        {%- if block.settings.col_2_menu != blank and linklists[block.settings.col_2_menu].links.size > 0 -%}
+          {%- for sub in linklists[block.settings.col_2_menu].links -%}
+            <li class="mega-menu__item"><a href="{{ sub.url }}" class="mega-menu__link">{{ sub.title }}</a></li>
+          {%- endfor -%}
+        {%- else -%}
+          {%- if block.settings.col_2_link_1_title != blank -%}
+            <li class="mega-menu__item"><a href="{{ block.settings.col_2_link_1_url | default: '#' }}" class="mega-menu__link">{{ block.settings.col_2_link_1_title }}</a></li>
+          {%- endif -%}
+          {%- if block.settings.col_2_link_2_title != blank -%}
+            <li class="mega-menu__item"><a href="{{ block.settings.col_2_link_2_url | default: '#' }}" class="mega-menu__link">{{ block.settings.col_2_link_2_title }}</a></li>
+          {%- endif -%}
+          {%- if block.settings.col_2_link_3_title != blank -%}
+            <li class="mega-menu__item"><a href="{{ block.settings.col_2_link_3_url | default: '#' }}" class="mega-menu__link">{{ block.settings.col_2_link_3_title }}</a></li>
+          {%- endif -%}
+          {%- if block.settings.col_2_link_4_title != blank -%}
+            <li class="mega-menu__item"><a href="{{ block.settings.col_2_link_4_url | default: '#' }}" class="mega-menu__link">{{ block.settings.col_2_link_4_title }}</a></li>
+          {%- endif -%}
+          {%- if block.settings.col_2_link_5_title != blank -%}
+            <li class="mega-menu__item"><a href="{{ block.settings.col_2_link_5_url | default: '#' }}" class="mega-menu__link">{{ block.settings.col_2_link_5_title }}</a></li>
+          {%- endif -%}
+          {%- if block.settings.col_2_link_6_title != blank -%}
+            <li class="mega-menu__item"><a href="{{ block.settings.col_2_link_6_url | default: '#' }}" class="mega-menu__link" style="color: var(--color-primary); font-weight: 700;">{{ block.settings.col_2_link_6_title }}</a></li>
+          {%- endif -%}
+        {%- endif -%}
+      </ul>
+    </div>
+  {%- endif -%}
+
+  <!-- Column 3 -->
+  {%- if block.settings.col_3_title != blank or block.settings.col_3_menu != blank -%}
+    <div class="mega-menu__col">
+      <a href="{{ block.settings.col_3_url | default: '#' }}" class="mega-menu__heading">
+        {{ block.settings.col_3_title | default: 'Column 3' }}
+      </a>
+      <ul class="mega-menu__list">
+        {%- if block.settings.col_3_menu != blank and linklists[block.settings.col_3_menu].links.size > 0 -%}
+          {%- for sub in linklists[block.settings.col_3_menu].links -%}
+            <li class="mega-menu__item"><a href="{{ sub.url }}" class="mega-menu__link">{{ sub.title }}</a></li>
+          {%- endfor -%}
+        {%- else -%}
+          {%- if block.settings.col_3_link_1_title != blank -%}
+            <li class="mega-menu__item"><a href="{{ block.settings.col_3_link_1_url | default: '#' }}" class="mega-menu__link">{{ block.settings.col_3_link_1_title }}</a></li>
+          {%- endif -%}
+          {%- if block.settings.col_3_link_2_title != blank -%}
+            <li class="mega-menu__item"><a href="{{ block.settings.col_3_link_2_url | default: '#' }}" class="mega-menu__link">{{ block.settings.col_3_link_2_title }}</a></li>
+          {%- endif -%}
+          {%- if block.settings.col_3_link_3_title != blank -%}
+            <li class="mega-menu__item"><a href="{{ block.settings.col_3_link_3_url | default: '#' }}" class="mega-menu__link">{{ block.settings.col_3_link_3_title }}</a></li>
+          {%- endif -%}
+          {%- if block.settings.col_3_link_4_title != blank -%}
+            <li class="mega-menu__item"><a href="{{ block.settings.col_3_link_4_url | default: '#' }}" class="mega-menu__link">{{ block.settings.col_3_link_4_title }}</a></li>
+          {%- endif -%}
+          {%- if block.settings.col_3_link_5_title != blank -%}
+            <li class="mega-menu__item"><a href="{{ block.settings.col_3_link_5_url | default: '#' }}" class="mega-menu__link">{{ block.settings.col_3_link_5_title }}</a></li>
+          {%- endif -%}
+          {%- if block.settings.col_3_link_6_title != blank -%}
+            <li class="mega-menu__item"><a href="{{ block.settings.col_3_link_6_url | default: '#' }}" class="mega-menu__link" style="color: var(--color-primary); font-weight: 700;">{{ block.settings.col_3_link_6_title }}</a></li>
+          {%- endif -%}
+        {%- endif -%}
+      </ul>
+    </div>
+  {%- endif -%}
+
+  <!-- Column 4 -->
+  {%- if block.settings.col_4_title != blank or block.settings.col_4_menu != blank -%}
+    <div class="mega-menu__col">
+      <a href="{{ block.settings.col_4_url | default: '#' }}" class="mega-menu__heading">
+        {{ block.settings.col_4_title | default: 'Column 4' }}
+      </a>
+      <ul class="mega-menu__list">
+        {%- if block.settings.col_4_menu != blank and linklists[block.settings.col_4_menu].links.size > 0 -%}
+          {%- for sub in linklists[block.settings.col_4_menu].links -%}
+            <li class="mega-menu__item"><a href="{{ sub.url }}" class="mega-menu__link">{{ sub.title }}</a></li>
+          {%- endfor -%}
+        {%- else -%}
+          {%- if block.settings.col_4_link_1_title != blank -%}
+            <li class="mega-menu__item"><a href="{{ block.settings.col_4_link_1_url | default: '#' }}" class="mega-menu__link">{{ block.settings.col_4_link_1_title }}</a></li>
+          {%- endif -%}
+          {%- if block.settings.col_4_link_2_title != blank -%}
+            <li class="mega-menu__item"><a href="{{ block.settings.col_4_link_2_url | default: '#' }}" class="mega-menu__link">{{ block.settings.col_4_link_2_title }}</a></li>
+          {%- endif -%}
+          {%- if block.settings.col_4_link_3_title != blank -%}
+            <li class="mega-menu__item"><a href="{{ block.settings.col_4_link_3_url | default: '#' }}" class="mega-menu__link">{{ block.settings.col_4_link_3_title }}</a></li>
+          {%- endif -%}
+          {%- if block.settings.col_4_link_4_title != blank -%}
+            <li class="mega-menu__item"><a href="{{ block.settings.col_4_link_4_url | default: '#' }}" class="mega-menu__link">{{ block.settings.col_4_link_4_title }}</a></li>
+          {%- endif -%}
+          {%- if block.settings.col_4_link_5_title != blank -%}
+            <li class="mega-menu__item"><a href="{{ block.settings.col_4_link_5_url | default: '#' }}" class="mega-menu__link">{{ block.settings.col_4_link_5_title }}</a></li>
+          {%- endif -%}
+          {%- if block.settings.col_4_link_6_title != blank -%}
+            <li class="mega-menu__item"><a href="{{ block.settings.col_4_link_6_url | default: '#' }}" class="mega-menu__link" style="color: var(--color-primary); font-weight: 700;">{{ block.settings.col_4_link_6_title }}</a></li>
+          {%- endif -%}
+        {%- endif -%}
+      </ul>
+    </div>
+  {%- endif -%}
+
+  <!-- Promotional Banner Card -->
+  {%- if block.settings.show_promo -%}
+    <div class="mega-menu__promo-col">
+      <a href="{{ block.settings.promo_url | default: '/collections/all' }}" class="mega-menu__promo">
+        <div class="mega-menu__promo-img-wrap">
+          {%- if block.settings.promo_image != blank -%}
+            <img src="{{ block.settings.promo_image | image_url: width: 600 }}" alt="{{ block.settings.promo_title | default: 'Drop' | escape }}" class="mega-menu__promo-img" loading="lazy">
+          {%- else -%}
+            <img src="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?auto=format&fit=crop&w=600&q=80" alt="Never Mind Drop" class="mega-menu__promo-img" loading="lazy">
+          {%- endif -%}
+          <div class="mega-menu__promo-overlay"></div>
+        </div>
+        <div class="mega-menu__promo-content">
+          {%- if block.settings.promo_badge != blank -%}
+            <span class="mega-menu__promo-tag">{{ block.settings.promo_badge }}</span>
+          {%- endif -%}
+          <h4 class="mega-menu__promo-title">{{ block.settings.promo_title | default: 'Never Mind Streetwear Drop' }}</h4>
+          {%- if block.settings.promo_button_text != blank -%}
+            <span class="mega-menu__promo-btn">
+              {{ block.settings.promo_button_text }}
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </span>
+          {%- endif -%}
+        </div>
+      </a>
+    </div>
+  {%- endif -%}
+{%- endif -%}
