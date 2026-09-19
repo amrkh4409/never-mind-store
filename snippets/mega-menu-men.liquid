@@ -1,68 +1,112 @@
-<!-- Men's Mega Menu Columns -->
-<div class="mega-menu__col">
-  <a href="/collections/men" class="mega-menu__heading">
-    {% if request.locale.iso_code == 'ar' %}تيشيرتات وتوبات{% else %}T-Shirts & Tops{% endif %}
-  </a>
-  <ul class="mega-menu__list">
-    <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}تيشيرتات أوفر سايز (Oversized){% else %}Oversized T-Shirts{% endif %}</a></li>
-    <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}تيشيرتات جرافيك وطباعة{% else %}Graphic & Printed Tees{% endif %}</a></li>
-    <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}تيشيرتات قطن سادة أساسية{% else %}Basic Heavyweight Tees{% endif %}</a></li>
-    <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}قمصان وبولو كاجوال{% else %}Casual Shirts & Polos{% endif %}</a></li>
-  </ul>
-</div>
+<!-- Men's Mega Menu Columns (Customizable via Shopify Theme Editor) -->
+{%- if section.settings.men_menu != blank and linklists[section.settings.men_menu].links.size > 0 -%}
+  {%- for child_link in linklists[section.settings.men_menu].links -%}
+    <div class="mega-menu__col">
+      <a href="{{ child_link.url }}" class="mega-menu__heading">{{ child_link.title }}</a>
+      {%- if child_link.links.size > 0 -%}
+        <ul class="mega-menu__list">
+          {%- for grandchild in child_link.links -%}
+            <li class="mega-menu__item"><a href="{{ grandchild.url }}" class="mega-menu__link">{{ grandchild.title }}</a></li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+  {%- endfor -%}
+{%- else -%}
+  <!-- Default Curated Men's Streetwear Categories -->
+  <div class="mega-menu__col">
+    <a href="/collections/men" class="mega-menu__heading">
+      {% if request.locale.iso_code == 'ar' %}تيشيرتات وتوبات{% else %}T-Shirts & Tops{% endif %}
+    </a>
+    <ul class="mega-menu__list">
+      <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}تيشيرتات أوفر سايز (Oversized){% else %}Oversized T-Shirts{% endif %}</a></li>
+      <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}تيشيرتات جرافيك وطباعة{% else %}Graphic & Printed Tees{% endif %}</a></li>
+      <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}تيشيرتات قطن سادة أساسية{% else %}Basic Heavyweight Tees{% endif %}</a></li>
+      <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}قمصان وبولو كاجوال{% else %}Casual Shirts & Polos{% endif %}</a></li>
+    </ul>
+  </div>
 
-<div class="mega-menu__col">
-  <a href="/collections/men" class="mega-menu__heading">
-    {% if request.locale.iso_code == 'ar' %}هوديز وسويت شيرت{% else %}Hoodies & Sweats{% endif %}
-  </a>
-  <ul class="mega-menu__list">
-    <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}هوديز أوفر سايز سميك{% else %}Oversized Hoodies{% endif %}</a></li>
-    <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}هوديز بسحاب كامل (Zip-Up){% else %}Zip-Up Hoodies{% endif %}</a></li>
-    <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}سويت شيرت كلاسيك رقبة دائرية{% else %}Crewneck Sweatshirts{% endif %}</a></li>
-    <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}سويت شيرت خفيف صيفي{% else %}Lightweight Sweaters{% endif %}</a></li>
-  </ul>
-</div>
+  <div class="mega-menu__col">
+    <a href="/collections/men" class="mega-menu__heading">
+      {% if request.locale.iso_code == 'ar' %}هوديز وسويت شيرت{% else %}Hoodies & Sweats{% endif %}
+    </a>
+    <ul class="mega-menu__list">
+      <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}هوديز أوفر سايز سميك{% else %}Oversized Hoodies{% endif %}</a></li>
+      <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}هوديز بسحاب كامل (Zip-Up){% else %}Zip-Up Hoodies{% endif %}</a></li>
+      <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}سويت شيرت كلاسيك رقبة دائرية{% else %}Crewneck Sweatshirts{% endif %}</a></li>
+      <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}سويت شيرت خفيف صيفي{% else %}Lightweight Sweaters{% endif %}</a></li>
+    </ul>
+  </div>
 
-<div class="mega-menu__col">
-  <a href="/collections/men" class="mega-menu__heading">
-    {% if request.locale.iso_code == 'ar' %}بنطلونات وشورتات{% else %}Pants & Shorts{% endif %}
-  </a>
-  <ul class="mega-menu__list">
-    <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}بنطلونات كارجو بجيوب متعددة{% else %}Tactical Cargo Pants{% endif %}</a></li>
-    <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}سويت بانتس قطن مريح{% else %}Relaxed Sweatpants{% endif %}</a></li>
-    <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}جينز واسع ستريت وير{% else %}Wide-Leg Denim Jeans{% endif %}</a></li>
-    <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}شورتات صيفية كاجوال{% else %}Summer Casual Shorts{% endif %}</a></li>
-  </ul>
-</div>
+  <div class="mega-menu__col">
+    <a href="/collections/men" class="mega-menu__heading">
+      {% if request.locale.iso_code == 'ar' %}بنطلونات وشورتات{% else %}Pants & Shorts{% endif %}
+    </a>
+    <ul class="mega-menu__list">
+      <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}بنطلونات كارجو بجيوب متعددة{% else %}Tactical Cargo Pants{% endif %}</a></li>
+      <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}سويت بانتس قطن مريح{% else %}Relaxed Sweatpants{% endif %}</a></li>
+      <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}جينز واسع ستريت وير{% else %}Wide-Leg Denim Jeans{% endif %}</a></li>
+      <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}شورتات صيفية كاجوال{% else %}Summer Casual Shorts{% endif %}</a></li>
+    </ul>
+  </div>
 
-<div class="mega-menu__col">
-  <a href="/collections/men" class="mega-menu__heading">
-    {% if request.locale.iso_code == 'ar' %}أطقم وترينجات{% else %}Sets & Tracksuits{% endif %}
-  </a>
-  <ul class="mega-menu__list">
-    <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}أطقم صيفية قطعتين (Set){% else %}Summer 2-Piece Sets{% endif %}</a></li>
-    <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}ترينجات رياضية كاملة{% else %}Full Tracksuits{% endif %}</a></li>
-    <li class="mega-menu__item"><a href="/collections/best-sellers" class="mega-menu__link" style="color: var(--color-primary); font-weight: 600;">{% if request.locale.iso_code == 'ar' %}الأكثر مبيعاً رجالي &larr;{% else %}Men's Best Sellers &rarr;{% endif %}</a></li>
-    <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link" style="font-weight: 700; text-decoration: underline;">{% if request.locale.iso_code == 'ar' %}عرض كل منتجات الرجال{% else %}Shop All Men's Collection{% endif %}</a></li>
-  </ul>
-</div>
+  <div class="mega-menu__col">
+    <a href="/collections/men" class="mega-menu__heading">
+      {% if request.locale.iso_code == 'ar' %}أطقم وترينجات{% else %}Sets & Tracksuits{% endif %}
+    </a>
+    <ul class="mega-menu__list">
+      <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}أطقم صيفية قطعتين (Set){% else %}Summer 2-Piece Sets{% endif %}</a></li>
+      <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link">{% if request.locale.iso_code == 'ar' %}ترينجات رياضية كاملة{% else %}Full Tracksuits{% endif %}</a></li>
+      <li class="mega-menu__item"><a href="/collections/best-sellers" class="mega-menu__link" style="color: var(--color-primary); font-weight: 600;">{% if request.locale.iso_code == 'ar' %}الأكثر مبيعاً رجالي &larr;{% else %}Men's Best Sellers &rarr;{% endif %}</a></li>
+      <li class="mega-menu__item"><a href="/collections/men" class="mega-menu__link" style="font-weight: 700; text-decoration: underline;">{% if request.locale.iso_code == 'ar' %}عرض كل منتجات الرجال{% else %}Shop All Men's Collection{% endif %}</a></li>
+    </ul>
+  </div>
+{%- endif -%}
 
-<!-- Promo Banner Card -->
+<!-- Customizable Men Promo Banner Card -->
+{%- assign men_img = section.settings.men_promo_image -%}
+{%- assign men_url = section.settings.men_promo_url | default: '/collections/men' -%}
+{%- assign men_title = section.settings.men_promo_title -%}
+{%- assign men_badge = section.settings.men_promo_badge -%}
+{%- assign men_btn = section.settings.men_promo_btn -%}
+
 <div class="mega-menu__promo-col">
-  <a href="/collections/men" class="mega-menu__promo">
+  <a href="{{ men_url }}" class="mega-menu__promo">
     <div class="mega-menu__promo-img-wrap">
-      <img src="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?auto=format&fit=crop&w=500&q=80" alt="Men Streetwear Collection" class="mega-menu__promo-img" loading="lazy">
+      {%- if men_img != blank -%}
+        <img src="{{ men_img | image_url: width: 600 }}" alt="{{ men_title | default: 'Men Collection' }}" class="mega-menu__promo-img" loading="lazy">
+      {%- else -%}
+        <img src="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?auto=format&fit=crop&w=500&q=80" alt="Men Streetwear Collection" class="mega-menu__promo-img" loading="lazy">
+      {%- endif -%}
       <div class="mega-menu__promo-overlay"></div>
     </div>
     <div class="mega-menu__promo-content">
       <span class="mega-menu__promo-tag">
-        {% if request.locale.iso_code == 'ar' %}كولكشن جديد{% else %}NEW DROP{% endif %}
+        {%- if men_badge != blank -%}
+          {{ men_badge }}
+        {%- elsif request.locale.iso_code == 'ar' -%}
+          كولكشن جديد
+        {%- else -%}
+          NEW DROP
+        {%- endif -%}
       </span>
       <h4 class="mega-menu__promo-title">
-        {% if request.locale.iso_code == 'ar' %}أحدث كولكشن رجالي 2026{% else %}Men's New Drop 2026{% endif %}
+        {%- if men_title != blank -%}
+          {{ men_title }}
+        {%- elsif request.locale.iso_code == 'ar' -%}
+          أحدث كولكشن رجالي 2026
+        {%- else -%}
+          Men's New Drop 2026
+        {%- endif -%}
       </h4>
       <span class="mega-menu__promo-btn">
-        {% if request.locale.iso_code == 'ar' %}تسوق الآن{% else %}Shop Now{% endif %}
+        {%- if men_btn != blank -%}
+          {{ men_btn }}
+        {%- elsif request.locale.iso_code == 'ar' -%}
+          تسوق الآن
+        {%- else -%}
+          Shop Now
+        {%- endif -%}
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="5" y1="12" x2="19" y2="12"></line>
           <polyline points="12 5 19 12 12 19"></polyline>
