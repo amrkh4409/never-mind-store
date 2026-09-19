@@ -36,27 +36,42 @@
       </a>
     </div>
 
-    <!-- Check if Shopify menu already has fashion collections -->
-    {%- assign raw_links = linklists[section.settings.menu].links -%}
-    {%- assign has_fashion_in_menu = false -%}
-    {%- for link in raw_links -%}
-      {%- assign dt = link.title | downcase -%}
-      {%- if dt contains 'men' or dt contains 'رجالي' or dt contains 'women' or dt contains 'حريمي' or dt contains 'kid' or dt contains 'أطفال' -%}
-        {%- assign has_fashion_in_menu = true -%}
-        {%- break -%}
-      {%- endif -%}
-    {%- endfor -%}
-
     <!-- Desktop Navigation Menu -->
     <nav class="header__nav" aria-label="Main Navigation">
-      {%- if has_fashion_in_menu -%}
-        <!-- Render merchant's custom menu from Navigation > Main menu -->
-        {%- for link in raw_links -%}
-          {%- assign downcased_title = link.title | downcase -%}
+      {%- assign nav_links = linklists[section.settings.menu].links -%}
+      {%- assign trigger_name = section.settings.mega_menu_trigger | downcase | strip -%}
+
+      {%- if nav_links.size > 0 -%}
+        {%- for link in nav_links -%}
+          {%- assign downcased_title = link.title | downcase | strip -%}
+          
+          {%- assign is_mega = false -%}
+          {%- if section.settings.enable_mega_menu -%}
+            {%- if trigger_name != blank and downcased_title == trigger_name -%}
+              {%- assign is_mega = true -%}
+            {%- elsif trigger_name == blank or trigger_name == 'catalog' -%}
+              {%- if downcased_title contains 'catalog' or downcased_title contains 'shop' or downcased_title contains 'collection' or downcased_title contains 'متجر' or downcased_title contains 'منتجات' or downcased_title contains 'تشكيلات' -%}
+                {%- assign is_mega = true -%}
+              {%- endif -%}
+            {%- endif -%}
+          {%- endif -%}
+
+          {%- assign has_block_mega = false -%}
+          {%- assign block_mega_block = nil -%}
+          {%- for block in section.blocks -%}
+            {%- if block.type == 'mega_menu' and block.settings.trigger_title != blank -%}
+              {%- assign block_trigger = block.settings.trigger_title | downcase | strip -%}
+              {%- if block_trigger == downcased_title -%}
+                {%- assign has_block_mega = true -%}
+                {%- assign block_mega_block = block -%}
+                {%- break -%}
+              {%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
+
           {%- assign is_sale = false -%}
           {%- assign is_hot = false -%}
           {%- assign is_new = false -%}
-
           {%- if downcased_title contains 'sale' or downcased_title contains 'تخفيض' or downcased_title contains 'عروض' -%}
             {%- assign is_sale = true -%}
           {%- elsif downcased_title contains 'best' or downcased_title contains 'الأكثر' or downcased_title contains 'top' -%}
@@ -65,35 +80,12 @@
             {%- assign is_new = true -%}
           {%- endif -%}
 
-          {%- assign has_grandchildren = false -%}
-          {%- if link.links.size > 0 -%}
-            {%- for child_link in link.links -%}
-              {%- if child_link.links.size > 0 -%}
-                {%- assign has_grandchildren = true -%}
-                {%- break -%}
-              {%- endif -%}
-            {%- endfor -%}
+          {%- assign has_dropdown = false -%}
+          {%- if link.links.size > 0 and is_mega == false and has_block_mega == false -%}
+            {%- assign has_dropdown = true -%}
           {%- endif -%}
 
-          {%- assign is_men = false -%}
-          {%- assign is_women = false -%}
-          {%- assign is_kids = false -%}
-          {%- if downcased_title contains 'men' or downcased_title contains 'رجالي' -%}
-            {%- assign is_men = true -%}
-          {%- elsif downcased_title contains 'women' or downcased_title contains 'حريمي' or downcased_title contains 'نسائي' -%}
-            {%- assign is_women = true -%}
-          {%- elsif downcased_title contains 'kid' or downcased_title contains 'أطفال' or downcased_title contains 'ناشئين' -%}
-            {%- assign is_kids = true -%}
-          {%- endif -%}
-
-          {%- assign show_mega = false -%}
-          {%- if section.settings.enable_mega_menu -%}
-            {%- if has_grandchildren or is_men or is_women or is_kids -%}
-              {%- assign show_mega = true -%}
-            {%- endif -%}
-          {%- endif -%}
-
-          <div class="header__menu-item {% if show_mega %}header__menu-item--has-mega{% elsif link.links.size > 0 %}header__menu-item--has-dropdown{% endif %} {% if is_sale %}header__menu-item--sale{% endif %}">
+          <div class="header__menu-item {% if is_mega or has_block_mega %}header__menu-item--has-mega{% elsif has_dropdown %}header__menu-item--has-dropdown{% endif %} {% if is_sale %}header__menu-item--sale{% endif %}">
             <a href="{{ link.url }}" class="header__menu-link">
               <span>{{ link.title }}</span>
               {%- if is_sale -%}
@@ -103,152 +95,27 @@
               {%- elsif is_new -%}
                 <span class="nav-badge nav-badge--new">{{ 'sections.header.new' | t | default: 'NEW' }}</span>
               {%- endif -%}
-              {%- if show_mega or link.links.size > 0 -%}
+              {%- if is_mega or has_block_mega or has_dropdown -%}
                 <svg class="header__chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
               {%- endif -%}
             </a>
 
-            {%- if show_mega -%}
+            {%- if is_mega -%}
+              <!-- Main Mega Menu Dropdown -->
               <div class="mega-menu">
                 <div class="container mega-menu__container">
                   <div class="mega-menu__grid">
-                    {%- if has_grandchildren -%}
-                      {%- for child_link in link.links -%}
-                        <div class="mega-menu__col">
-                          <a href="{{ child_link.url }}" class="mega-menu__heading">{{ child_link.title }}</a>
-                          {%- if child_link.links.size > 0 -%}
-                            <ul class="mega-menu__list">
-                              {%- for grandchild_link in child_link.links -%}
-                                <li class="mega-menu__item">
-                                  <a href="{{ grandchild_link.url }}" class="mega-menu__link">{{ grandchild_link.title }}</a>
-                                </li>
-                              {%- endfor -%}
-                            </ul>
-                          {%- endif -%}
-                        </div>
-                      {%- endfor -%}
-                    {%- elsif is_men -%}
-                      {% render 'mega-menu-men' %}
-                    {%- elsif is_women -%}
-                      {% render 'mega-menu-women' %}
-                    {%- elsif is_kids -%}
-                      {% render 'mega-menu-kids' %}
-                    {%- endif -%}
+                    {% render 'mega-menu-main', link: link %}
                   </div>
                 </div>
               </div>
-            {%- elsif link.links.size > 0 -%}
-              <div class="header__dropdown">
-                {%- for child_link in link.links -%}
-                  <a href="{{ child_link.url }}" class="header__dropdown-link">{{ child_link.title }}</a>
-                {%- endfor -%}
-              </div>
-            {%- endif -%}
-          </div>
-        {%- endfor -%}
-
-      {%- else -%}
-        <!-- Modex Streetwear Navigation (Customizable from Shopify Theme Editor) -->
-
-        <!-- 1. MEN -->
-        {%- if section.settings.show_men -%}
-          <div class="header__menu-item {% if section.settings.enable_mega_menu %}header__menu-item--has-mega{% endif %}">
-            <a href="/collections/men" class="header__menu-link">
-              <span>{% if request.locale.iso_code == 'ar' %}رجالي{% else %}MEN{% endif %}</span>
-              {%- if section.settings.enable_mega_menu -%}
-                <svg class="header__chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-              {%- endif -%}
-            </a>
-            {%- if section.settings.enable_mega_menu -%}
-              <div class="mega-menu">
+            {%- elsif has_block_mega -%}
+              <!-- Custom Block Mega Menu -->
+              <div class="mega-menu" {{ block_mega_block.shopify_attributes }}>
                 <div class="container mega-menu__container">
                   <div class="mega-menu__grid">
-                    {% render 'mega-menu-men' %}
-                  </div>
-                </div>
-              </div>
-            {%- endif -%}
-          </div>
-        {%- endif -%}
-
-        <!-- 2. WOMEN -->
-        {%- if section.settings.show_women -%}
-          <div class="header__menu-item {% if section.settings.enable_mega_menu %}header__menu-item--has-mega{% endif %}">
-            <a href="/collections/women" class="header__menu-link">
-              <span>{% if request.locale.iso_code == 'ar' %}حريمي{% else %}WOMEN{% endif %}</span>
-              {%- if section.settings.enable_mega_menu -%}
-                <svg class="header__chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-              {%- endif -%}
-            </a>
-            {%- if section.settings.enable_mega_menu -%}
-              <div class="mega-menu">
-                <div class="container mega-menu__container">
-                  <div class="mega-menu__grid">
-                    {% render 'mega-menu-women' %}
-                  </div>
-                </div>
-              </div>
-            {%- endif -%}
-          </div>
-        {%- endif -%}
-
-        <!-- 3. KIDS & TEENS -->
-        {%- if section.settings.show_kids -%}
-          <div class="header__menu-item {% if section.settings.enable_mega_menu %}header__menu-item--has-mega{% endif %}">
-            <a href="/collections/kids" class="header__menu-link">
-              <span>{% if request.locale.iso_code == 'ar' %}أطفال وناشئين{% else %}KIDS & TEENS{% endif %}</span>
-              {%- if section.settings.enable_mega_menu -%}
-                <svg class="header__chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-              {%- endif -%}
-            </a>
-            {%- if section.settings.enable_mega_menu -%}
-              <div class="mega-menu">
-                <div class="container mega-menu__container">
-                  <div class="mega-menu__grid">
-                    {% render 'mega-menu-kids' %}
-                  </div>
-                </div>
-              </div>
-            {%- endif -%}
-          </div>
-        {%- endif -%}
-
-        <!-- 4. BEST SELLERS -->
-        {%- if section.settings.show_best_sellers -%}
-          <div class="header__menu-item">
-            <a href="/collections/best-sellers" class="header__menu-link">
-              <span>{% if request.locale.iso_code == 'ar' %}الأكثر مبيعاً{% else %}BEST SELLERS{% endif %}</span>
-              <span class="nav-badge nav-badge--hot">{{ 'sections.header.hot' | t | default: 'HOT' }}</span>
-            </a>
-          </div>
-        {%- endif -%}
-
-        <!-- 5. SALE -->
-        {%- if section.settings.show_sale -%}
-          <div class="header__menu-item header__menu-item--sale">
-            <a href="/collections/sale" class="header__menu-link">
-              <span>{% if request.locale.iso_code == 'ar' %}تخفيضات{% else %}SALE{% endif %}</span>
-              <span class="nav-badge nav-badge--sale">{{ 'sections.header.sale' | t | default: 'SALE' }}</span>
-            </a>
-          </div>
-        {%- endif -%}
-
-        <!-- Custom Additional Mega-Menu Blocks from Theme Editor -->
-        {%- for block in section.blocks -%}
-          {%- if block.type == 'mega_menu' and block.settings.trigger_title != blank -%}
-            <div class="header__menu-item header__menu-item--has-mega" {{ block.shopify_attributes }}>
-              <a href="{{ block.settings.promo_url | default: '#' }}" class="header__menu-link">
-                <span>{{ block.settings.trigger_title }}</span>
-                {%- if block.settings.promo_badge != blank -%}
-                  <span class="nav-badge nav-badge--hot">{{ block.settings.promo_badge }}</span>
-                {%- endif -%}
-                <svg class="header__chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-              </a>
-              <div class="mega-menu">
-                <div class="container mega-menu__container">
-                  <div class="mega-menu__grid">
-                    {%- if block.settings.menu != blank and linklists[block.settings.menu].links.size > 0 -%}
-                      {%- for col_link in linklists[block.settings.menu].links -%}
+                    {%- if block_mega_block.settings.menu != blank and linklists[block_mega_block.settings.menu].links.size > 0 -%}
+                      {%- for col_link in linklists[block_mega_block.settings.menu].links -%}
                         <div class="mega-menu__col">
                           <a href="{{ col_link.url }}" class="mega-menu__heading">{{ col_link.title }}</a>
                           {%- if col_link.links.size > 0 -%}
@@ -262,23 +129,23 @@
                       {%- endfor -%}
                     {%- endif -%}
 
-                    {%- if block.settings.promo_image != blank or block.settings.promo_title != blank -%}
+                    {%- if block_mega_block.settings.promo_image != blank or block_mega_block.settings.promo_title != blank -%}
                       <div class="mega-menu__promo-col">
-                        <a href="{{ block.settings.promo_url | default: '#' }}" class="mega-menu__promo">
-                          {%- if block.settings.promo_image != blank -%}
+                        <a href="{{ block_mega_block.settings.promo_url | default: '#' }}" class="mega-menu__promo">
+                          {%- if block_mega_block.settings.promo_image != blank -%}
                             <div class="mega-menu__promo-img-wrap">
-                              <img src="{{ block.settings.promo_image | image_url: width: 600 }}" alt="{{ block.settings.promo_title }}" class="mega-menu__promo-img" loading="lazy">
+                              <img src="{{ block_mega_block.settings.promo_image | image_url: width: 600 }}" alt="{{ block_mega_block.settings.promo_title }}" class="mega-menu__promo-img" loading="lazy">
                               <div class="mega-menu__promo-overlay"></div>
                             </div>
                           {%- endif -%}
                           <div class="mega-menu__promo-content">
-                            {%- if block.settings.promo_badge != blank -%}
-                              <span class="mega-menu__promo-tag">{{ block.settings.promo_badge }}</span>
+                            {%- if block_mega_block.settings.promo_badge != blank -%}
+                              <span class="mega-menu__promo-tag">{{ block_mega_block.settings.promo_badge }}</span>
                             {%- endif -%}
-                            <h4 class="mega-menu__promo-title">{{ block.settings.promo_title }}</h4>
-                            {%- if block.settings.promo_button_text != blank -%}
+                            <h4 class="mega-menu__promo-title">{{ block_mega_block.settings.promo_title }}</h4>
+                            {%- if block_mega_block.settings.promo_button_text != blank -%}
                               <span class="mega-menu__promo-btn">
-                                {{ block.settings.promo_button_text }}
+                                {{ block_mega_block.settings.promo_button_text }}
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                               </span>
                             {%- endif -%}
@@ -289,21 +156,43 @@
                   </div>
                 </div>
               </div>
-            </div>
-          {%- endif -%}
+            {%- elsif has_dropdown -%}
+              <!-- Standard Dropdown -->
+              <div class="header__dropdown">
+                {%- for child_link in link.links -%}
+                  <a href="{{ child_link.url }}" class="header__dropdown-link">{{ child_link.title }}</a>
+                {%- endfor -%}
+              </div>
+            {%- endif -%}
+          </div>
         {%- endfor -%}
 
-        <!-- Additional non-catalog links from user's Shopify navigation (e.g. Contact, About) -->
-        {%- for link in raw_links -%}
+        <!-- Check if Best Sellers & Sale are already present in nav_links -->
+        {%- assign has_bestsellers_in_menu = false -%}
+        {%- assign has_sale_in_menu = false -%}
+        {%- for link in nav_links -%}
           {%- assign dt = link.title | downcase -%}
-          {%- unless dt contains 'home' or dt contains 'الرئيسية' or dt contains 'catalog' or dt contains 'المنتجات' -%}
-            <div class="header__menu-item">
-              <a href="{{ link.url }}" class="header__menu-link">
-                <span>{{ link.title }}</span>
-              </a>
-            </div>
-          {%- endunless -%}
+          {%- if dt contains 'best' or dt contains 'الأكثر' -%}{%- assign has_bestsellers_in_menu = true -%}{%- endif -%}
+          {%- if dt contains 'sale' or dt contains 'تخفيض' or dt contains 'عروض' -%}{%- assign has_sale_in_menu = true -%}{%- endif -%}
         {%- endfor -%}
+
+        {%- if section.settings.show_best_sellers and has_bestsellers_in_menu == false -%}
+          <div class="header__menu-item">
+            <a href="/collections/best-sellers" class="header__menu-link">
+              <span>{% if request.locale.iso_code == 'ar' %}الأكثر مبيعاً{% else %}BEST SELLERS{% endif %}</span>
+              <span class="nav-badge nav-badge--hot">{{ 'sections.header.hot' | t | default: 'HOT' }}</span>
+            </a>
+          </div>
+        {%- endif -%}
+
+        {%- if section.settings.show_sale and has_sale_in_menu == false -%}
+          <div class="header__menu-item header__menu-item--sale">
+            <a href="/collections/sale" class="header__menu-link">
+              <span>{% if request.locale.iso_code == 'ar' %}تخفيضات{% else %}SALE{% endif %}</span>
+              <span class="nav-badge nav-badge--sale">{{ 'sections.header.sale' | t | default: 'SALE' }}</span>
+            </a>
+          </div>
+        {%- endif -%}
       {%- endif -%}
     </nav>
 
@@ -363,7 +252,7 @@
 <!-- Mobile Navigation Drawer Backdrop -->
 <div id="MobileNavBackdrop" class="drawer-backdrop" data-mobile-menu-close></div>
 
-<!-- Mobile Navigation Drawer (Modex Style 3-Tier Multi-Level Accordions) -->
+<!-- Mobile Navigation Drawer (Synchronized with Main Mega Menu & Multi-Level Accordions) -->
 <div id="MobileNavDrawer" class="mobile-nav-drawer" role="dialog" aria-modal="true" aria-label="{{ 'sections.header.menu' | t | default: 'Menu' }}">
   <div class="mobile-nav-drawer__header">
     <div class="header__logo">
@@ -390,264 +279,186 @@
 
     <!-- Mobile Navigation Links with Multi-Level Accordions -->
     <div class="mobile-nav__links">
-      <!-- 1. MEN ACCORDION -->
-      {%- if section.settings.show_men -%}
-        <div class="mobile-nav__item mobile-nav__item--accordion">
-          <button type="button" class="mobile-nav__accordion-header" data-mobile-accordion-trigger aria-expanded="false">
-            <span class="mobile-nav__title-wrap">
-              <span class="mobile-nav__item-title">{% if request.locale.iso_code == 'ar' %}رجالي{% else %}MEN{% endif %}</span>
-            </span>
-            <svg class="mobile-nav__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-          </button>
-          <div class="mobile-nav__accordion-content">
-            <a href="/collections/men" class="mobile-nav__shop-all-link">
-              <span>{{ 'sections.header.shop_all' | t | default: 'Shop All' }} {% if request.locale.iso_code == 'ar' %}رجالي{% else %}MEN{% endif %}</span>
-              <span aria-hidden="true">&rarr;</span>
-            </a>
+      {%- assign nav_links = linklists[section.settings.menu].links -%}
+      {%- assign trigger_name = section.settings.mega_menu_trigger | downcase | strip -%}
 
-            {%- if section.settings.men_menu != blank and linklists[section.settings.men_menu].links.size > 0 -%}
-              {%- for child in linklists[section.settings.men_menu].links -%}
-                {%- if child.links.size > 0 -%}
-                  <div class="mobile-nav__sub-accordion">
-                    <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
-                      <span>{{ child.title }}</span>
-                      <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                    </button>
-                    <div class="mobile-nav__sub-accordion-content">
-                      {%- for grandchild in child.links -%}
-                        <a href="{{ grandchild.url }}" class="mobile-nav__sub-link">{{ grandchild.title }}</a>
-                      {%- endfor -%}
-                    </div>
-                  </div>
-                {%- else -%}
-                  <a href="{{ child.url }}" class="mobile-nav__child-link">{{ child.title }}</a>
-                {%- endif -%}
-              {%- endfor -%}
-            {%- else -%}
-              <div class="mobile-nav__sub-accordion">
-                <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
-                  <span>{% if request.locale.iso_code == 'ar' %}تيشيرتات وتوبات{% else %}T-Shirts & Tops{% endif %}</span>
-                  <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                </button>
-                <div class="mobile-nav__sub-accordion-content">
-                  <a href="/collections/men" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}تيشيرتات أوفر سايز (Oversized){% else %}Oversized T-Shirts{% endif %}</a>
-                  <a href="/collections/men" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}تيشيرتات جرافيك مطبوعة{% else %}Graphic & Printed Tees{% endif %}</a>
-                  <a href="/collections/men" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}تيشيرتات بيسك سادة{% else %}Basic Plain Tees{% endif %}</a>
-                  <a href="/collections/men" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}قمصان وبولو كاجوال{% else %}Casual Shirts & Polos{% endif %}</a>
-                </div>
-              </div>
-
-              <div class="mobile-nav__sub-accordion">
-                <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
-                  <span>{% if request.locale.iso_code == 'ar' %}هوديز وسويت شيرت{% else %}Hoodies & Sweats{% endif %}</span>
-                  <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                </button>
-                <div class="mobile-nav__sub-accordion-content">
-                  <a href="/collections/men" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}هوديز أوفر سايز سميك{% else %}Oversized Hoodies{% endif %}</a>
-                  <a href="/collections/men" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}هوديز بسحاب Zip-Up{% else %}Zip-Up Hoodies{% endif %}</a>
-                  <a href="/collections/men" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}سويت شيرت كلاسيك{% else %}Crewneck Sweatshirts{% endif %}</a>
-                </div>
-              </div>
-
-              <div class="mobile-nav__sub-accordion">
-                <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
-                  <span>{% if request.locale.iso_code == 'ar' %}بنطلونات وشورتات{% else %}Pants & Shorts{% endif %}</span>
-                  <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                </button>
-                <div class="mobile-nav__sub-accordion-content">
-                  <a href="/collections/men" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}بنطلونات كارجو بجيوب{% else %}Tactical Cargo Pants{% endif %}</a>
-                  <a href="/collections/men" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}سويت بانتس مريح{% else %}Relaxed Sweatpants{% endif %}</a>
-                  <a href="/collections/men" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}جينز واسع عصري{% else %}Wide-Leg Jeans{% endif %}</a>
-                  <a href="/collections/men" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}شورتات صيفية كاجوال{% else %}Summer Casual Shorts{% endif %}</a>
-                </div>
-              </div>
-
-              <div class="mobile-nav__sub-accordion">
-                <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
-                  <span>{% if request.locale.iso_code == 'ar' %}أطقم وترينجات{% else %}Sets & Tracksuits{% endif %}</span>
-                  <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                </button>
-                <div class="mobile-nav__sub-accordion-content">
-                  <a href="/collections/men" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}أطقم صيفية قطعتين (Set){% else %}Summer 2-Piece Sets{% endif %}</a>
-                  <a href="/collections/men" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}ترينجات رياضية كاملة{% else %}Full Tracksuits{% endif %}</a>
-                </div>
-              </div>
+      {%- for link in nav_links -%}
+        {%- assign downcased_title = link.title | downcase | strip -%}
+        
+        {%- assign is_mega = false -%}
+        {%- if section.settings.enable_mega_menu -%}
+          {%- if trigger_name != blank and downcased_title == trigger_name -%}
+            {%- assign is_mega = true -%}
+          {%- elsif trigger_name == blank or trigger_name == 'catalog' -%}
+            {%- if downcased_title contains 'catalog' or downcased_title contains 'shop' or downcased_title contains 'collection' or downcased_title contains 'متجر' or downcased_title contains 'منتجات' or downcased_title contains 'تشكيلات' -%}
+              {%- assign is_mega = true -%}
             {%- endif -%}
-          </div>
-        </div>
-      {%- endif -%}
+          {%- endif -%}
+        {%- endif -%}
 
-      <!-- 2. WOMEN ACCORDION -->
-      {%- if section.settings.show_women -%}
-        <div class="mobile-nav__item mobile-nav__item--accordion">
-          <button type="button" class="mobile-nav__accordion-header" data-mobile-accordion-trigger aria-expanded="false">
-            <span class="mobile-nav__title-wrap">
-              <span class="mobile-nav__item-title">{% if request.locale.iso_code == 'ar' %}حريمي{% else %}WOMEN{% endif %}</span>
-            </span>
-            <svg class="mobile-nav__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-          </button>
-          <div class="mobile-nav__accordion-content">
-            <a href="/collections/women" class="mobile-nav__shop-all-link">
-              <span>{{ 'sections.header.shop_all' | t | default: 'Shop All' }} {% if request.locale.iso_code == 'ar' %}حريمي{% else %}WOMEN{% endif %}</span>
-              <span aria-hidden="true">&rarr;</span>
-            </a>
+        {%- assign has_children = false -%}
+        {%- if link.links.size > 0 -%}
+          {%- assign has_children = true -%}
+        {%- endif -%}
 
-            {%- if section.settings.women_menu != blank and linklists[section.settings.women_menu].links.size > 0 -%}
-              {%- for child in linklists[section.settings.women_menu].links -%}
-                {%- if child.links.size > 0 -%}
-                  <div class="mobile-nav__sub-accordion">
-                    <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
-                      <span>{{ child.title }}</span>
-                      <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                    </button>
-                    <div class="mobile-nav__sub-accordion-content">
-                      {%- for grandchild in child.links -%}
-                        <a href="{{ grandchild.url }}" class="mobile-nav__sub-link">{{ grandchild.title }}</a>
-                      {%- endfor -%}
+        {%- if is_mega -%}
+          <!-- Main Mega Menu Accordion in Mobile Drawer -->
+          <div class="mobile-nav__item mobile-nav__item--accordion">
+            <button type="button" class="mobile-nav__accordion-header" data-mobile-accordion-trigger aria-expanded="false">
+              <span class="mobile-nav__title-wrap">
+                <span class="mobile-nav__item-title">{{ link.title }}</span>
+              </span>
+              <svg class="mobile-nav__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="mobile-nav__accordion-content">
+              <a href="{{ link.url }}" class="mobile-nav__shop-all-link">
+                <span>{{ 'sections.header.shop_all' | t | default: 'Shop All' }} {{ link.title }}</span>
+                <span aria-hidden="true">&rarr;</span>
+              </a>
+
+              {%- if section.settings.mega_menu_linklist != blank and linklists[section.settings.mega_menu_linklist].links.size > 0 -%}
+                {%- for col in linklists[section.settings.mega_menu_linklist].links -%}
+                  {%- if col.links.size > 0 -%}
+                    <div class="mobile-nav__sub-accordion">
+                      <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
+                        <span>{{ col.title }}</span>
+                        <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                      </button>
+                      <div class="mobile-nav__sub-accordion-content">
+                        {%- for sub in col.links -%}
+                          <a href="{{ sub.url }}" class="mobile-nav__sub-link">{{ sub.title }}</a>
+                        {%- endfor -%}
+                      </div>
                     </div>
-                  </div>
-                {%- else -%}
-                  <a href="{{ child.url }}" class="mobile-nav__child-link">{{ child.title }}</a>
-                {%- endif -%}
-              {%- endfor -%}
-            {%- else -%}
-              <div class="mobile-nav__sub-accordion">
-                <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
-                  <span>{% if request.locale.iso_code == 'ar' %}توبات وتيشيرتات{% else %}Tops & T-Shirts{% endif %}</span>
-                  <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                </button>
-                <div class="mobile-nav__sub-accordion-content">
-                  <a href="/collections/women" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}كروب توب قطن عصري{% else %}Cropped Heavyweight Tees{% endif %}</a>
-                  <a href="/collections/women" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}تيشيرتات أوفر سايز بناتي{% else %}Oversized Graphic Tees{% endif %}</a>
-                  <a href="/collections/women" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}توبات بيسك كاجوال{% else %}Basic Ribbed Tank Tops{% endif %}</a>
-                </div>
-              </div>
-
-              <div class="mobile-nav__sub-accordion">
-                <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
-                  <span>{% if request.locale.iso_code == 'ar' %}هوديز وسويت شيرت{% else %}Hoodies & Sweats{% endif %}</span>
-                  <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                </button>
-                <div class="mobile-nav__sub-accordion-content">
-                  <a href="/collections/women" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}هوديز لاونج مريح فاخر{% else %}Minimalist Lounge Hoodies{% endif %}</a>
-                  <a href="/collections/women" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}كروب هوديز وسويتر عصري{% else %}Cropped Sweaters{% endif %}</a>
-                </div>
-              </div>
-
-              <div class="mobile-nav__sub-accordion">
-                <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
-                  <span>{% if request.locale.iso_code == 'ar' %}بنطلونات وليجن{% else %}Pants & Leggings{% endif %}</span>
-                  <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                </button>
-                <div class="mobile-nav__sub-accordion-content">
-                  <a href="/collections/women" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}بنطلونات فلير واسعة (Wide Leg){% else %}Wide-Leg Comfort Pants{% endif %}</a>
-                  <a href="/collections/women" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}بنطلونات كارجو خصر عالي{% else %}High-Waist Cargo Pants{% endif %}</a>
-                  <a href="/collections/women" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}سويت بانتس مريح للمنزل والشارع{% else %}Relaxed Fit Sweatpants{% endif %}</a>
-                </div>
-              </div>
-
-              <div class="mobile-nav__sub-accordion">
-                <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
-                  <span>{% if request.locale.iso_code == 'ar' %}أطقم وبيجامات{% else %}Sets & Loungewear{% endif %}</span>
-                  <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                </button>
-                <div class="mobile-nav__sub-accordion-content">
-                  <a href="/collections/women" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}أطقم قطعتين متناسقة (Co-ord){% else %}Matching 2-Piece Sets{% endif %}</a>
-                  <a href="/collections/women" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}بيجامات وملابس منزلية مريحة{% else %}Comfort Loungewear{% endif %}</a>
-                </div>
-              </div>
-            {%- endif -%}
-          </div>
-        </div>
-      {%- endif -%}
-
-      <!-- 3. KIDS ACCORDION -->
-      {%- if section.settings.show_kids -%}
-        <div class="mobile-nav__item mobile-nav__item--accordion">
-          <button type="button" class="mobile-nav__accordion-header" data-mobile-accordion-trigger aria-expanded="false">
-            <span class="mobile-nav__title-wrap">
-              <span class="mobile-nav__item-title">{% if request.locale.iso_code == 'ar' %}أطفال وناشئين{% else %}KIDS & TEENS{% endif %}</span>
-            </span>
-            <svg class="mobile-nav__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-          </button>
-          <div class="mobile-nav__accordion-content">
-            <a href="/collections/kids" class="mobile-nav__shop-all-link">
-              <span>{{ 'sections.header.shop_all' | t | default: 'Shop All' }} {% if request.locale.iso_code == 'ar' %}أطفال{% else %}KIDS{% endif %}</span>
-              <span aria-hidden="true">&rarr;</span>
-            </a>
-
-            {%- if section.settings.kids_menu != blank and linklists[section.settings.kids_menu].links.size > 0 -%}
-              {%- for child in linklists[section.settings.kids_menu].links -%}
-                {%- if child.links.size > 0 -%}
-                  <div class="mobile-nav__sub-accordion">
-                    <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
-                      <span>{{ child.title }}</span>
-                      <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                    </button>
-                    <div class="mobile-nav__sub-accordion-content">
-                      {%- for grandchild in child.links -%}
-                        <a href="{{ grandchild.url }}" class="mobile-nav__sub-link">{{ grandchild.title }}</a>
-                      {%- endfor -%}
+                  {%- else -%}
+                    <a href="{{ col.url }}" class="mobile-nav__child-link">{{ col.title }}</a>
+                  {%- endif -%}
+                {%- endfor -%}
+              {%- elsif link.links.size > 0 -%}
+                {%- for child in link.links -%}
+                  {%- if child.links.size > 0 -%}
+                    <div class="mobile-nav__sub-accordion">
+                      <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
+                        <span>{{ child.title }}</span>
+                        <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                      </button>
+                      <div class="mobile-nav__sub-accordion-content">
+                        {%- for sub in child.links -%}
+                          <a href="{{ sub.url }}" class="mobile-nav__sub-link">{{ sub.title }}</a>
+                        {%- endfor -%}
+                      </div>
                     </div>
+                  {%- else -%}
+                    <a href="{{ child.url }}" class="mobile-nav__child-link">{{ child.title }}</a>
+                  {%- endif -%}
+                {%- endfor -%}
+              {%- else -%}
+                <!-- Default Streetwear Categories Sub-Accordions -->
+                <!-- Men -->
+                <div class="mobile-nav__sub-accordion">
+                  <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
+                    <span>{% if request.locale.iso_code == 'ar' %}رجالي (Men){% else %}Men's Streetwear{% endif %}</span>
+                    <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                  </button>
+                  <div class="mobile-nav__sub-accordion-content">
+                    <a href="/collections/men" class="mobile-nav__sub-link" style="font-weight: 700; color: var(--color-primary);">{% if request.locale.iso_code == 'ar' %}تسوق كل تشكيلة الرجال &larr;{% else %}Shop All Men &rarr;{% endif %}</a>
+                    <a href="/collections/men" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}تيشيرتات أوفر سايز (Oversized){% else %}Oversized T-Shirts{% endif %}</a>
+                    <a href="/collections/men" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}تيشيرتات جرافيك وطباعة{% else %}Graphic & Printed Tees{% endif %}</a>
+                    <a href="/collections/men" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}هوديز وسويت شيرت سميك{% else %}Heavyweight Hoodies{% endif %}</a>
+                    <a href="/collections/men" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}بنطلونات كارجو وسويت بانتس{% else %}Tactical Cargo & Pants{% endif %}</a>
+                    <a href="/collections/men" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}أطقم قطعتين وترينجات{% else %}Matching Sets & Tracksuits{% endif %}</a>
                   </div>
-                {%- else -%}
-                  <a href="{{ child.url }}" class="mobile-nav__child-link">{{ child.title }}</a>
-                {%- endif -%}
-              {%- endfor -%}
-            {%- else -%}
-              <div class="mobile-nav__sub-accordion">
-                <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
-                  <span>{% if request.locale.iso_code == 'ar' %}كولكشن ولادي{% else %}Boys Collection{% endif %}</span>
-                  <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                </button>
-                <div class="mobile-nav__sub-accordion-content">
-                  <a href="/collections/kids" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}تيشيرتات ولادي مطبوعة{% else %}Boys Graphic Tees{% endif %}</a>
-                  <a href="/collections/kids" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}بنطلونات وشورتات ولادي{% else %}Boys Pants & Shorts{% endif %}</a>
-                  <a href="/collections/kids" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}أطقم ولادي قطعتين{% else %}Boys 2-Piece Sets{% endif %}</a>
                 </div>
-              </div>
 
-              <div class="mobile-nav__sub-accordion">
-                <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
-                  <span>{% if request.locale.iso_code == 'ar' %}كولكشن بناتي{% else %}Girls Collection{% endif %}</span>
-                  <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                </button>
-                <div class="mobile-nav__sub-accordion-content">
-                  <a href="/collections/kids" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}توبات وتيشيرتات بناتي لطيفة{% else %}Girls Tops & Tees{% endif %}</a>
-                  <a href="/collections/kids" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}هوديز وسويت شيرت بناتي{% else %}Girls Hoodies & Sweats{% endif %}</a>
-                  <a href="/collections/kids" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}أطقم وليجن خروج ومنزل{% else %}Girls Sets & Leggings{% endif %}</a>
+                <!-- Women -->
+                <div class="mobile-nav__sub-accordion">
+                  <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
+                    <span>{% if request.locale.iso_code == 'ar' %}حريمي (Women){% else %}Women's Collection{% endif %}</span>
+                    <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                  </button>
+                  <div class="mobile-nav__sub-accordion-content">
+                    <a href="/collections/women" class="mobile-nav__sub-link" style="font-weight: 700; color: var(--color-primary);">{% if request.locale.iso_code == 'ar' %}تسوق كل تشكيلة النساء &larr;{% else %}Shop All Women &rarr;{% endif %}</a>
+                    <a href="/collections/women" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}توبات وتيشيرتات واسعة{% else %}Cropped & Oversized Tops{% endif %}</a>
+                    <a href="/collections/women" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}هوديز وسويت شيرت مريح{% else %}Minimalist Lounge Hoodies{% endif %}</a>
+                    <a href="/collections/women" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}بنطلونات واسعة وكارجو{% else %}Wide-Leg Pants & Cargo{% endif %}</a>
+                    <a href="/collections/women" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}أطقم ملابس مريحة Loungewear{% else %}Comfort Matching Sets{% endif %}</a>
+                  </div>
                 </div>
-              </div>
-            {%- endif -%}
+
+                <!-- Kids & Teens -->
+                <div class="mobile-nav__sub-accordion">
+                  <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
+                    <span>{% if request.locale.iso_code == 'ar' %}أطفال وناشئين (Kids){% else %}Kids & Teens{% endif %}</span>
+                    <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                  </button>
+                  <div class="mobile-nav__sub-accordion-content">
+                    <a href="/collections/kids" class="mobile-nav__sub-link" style="font-weight: 700; color: var(--color-primary);">{% if request.locale.iso_code == 'ar' %}تسوق كل تشكيلة الأطفال &larr;{% else %}Shop All Kids &rarr;{% endif %}</a>
+                    <a href="/collections/kids" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}تيشيرتات جرافيك أولاد{% else %}Boys Graphic Tees{% endif %}</a>
+                    <a href="/collections/kids" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}ملابس كاجوال بنات{% else %}Girls Casual & Tops{% endif %}</a>
+                    <a href="/collections/kids" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}هوديز وترينجات أطفال{% else %}Kids Hoodies & Sweats{% endif %}</a>
+                    <a href="/collections/kids" class="mobile-nav__sub-link">{% if request.locale.iso_code == 'ar' %}أساسيات المراهقين والناشئين{% else %}Teen Streetwear Essentials{% endif %}</a>
+                  </div>
+                </div>
+              {%- endif -%}
+
+              <!-- Mobile Promo Card inside Accordion -->
+              {%- if section.settings.show_promo_banner -%}
+                <div style="margin-top: 14px; padding: 14px; background: var(--color-bg-secondary); border-radius: var(--radius-sm); border: 1px solid var(--color-border-light);">
+                  {%- if section.settings.promo_badge != blank -%}
+                    <span class="mega-menu__promo-tag" style="margin-bottom: 6px;">{{ section.settings.promo_badge }}</span>
+                  {%- endif -%}
+                  <strong style="display: block; font-size: 0.95rem; margin-bottom: 6px; color: var(--color-foreground);">{{ section.settings.promo_title | default: 'Never Mind Streetwear Drop' }}</strong>
+                  <a href="{{ section.settings.promo_url | default: '/collections/all' }}" class="btn btn-primary btn-sm btn-full" style="margin-top: 8px;">
+                    {{ section.settings.promo_btn | default: 'Shop Now' }} &rarr;
+                  </a>
+                </div>
+              {%- endif -%}
+            </div>
           </div>
-        </div>
-      {%- endif -%}
 
-      <!-- 4. BEST SELLERS LINK -->
-      {%- if section.settings.show_best_sellers -%}
-        <a href="/collections/best-sellers" class="mobile-nav__single-link">
-          <span>{% if request.locale.iso_code == 'ar' %}الأكثر مبيعاً{% else %}BEST SELLERS{% endif %}</span>
-          <span class="nav-badge nav-badge--hot">{{ 'sections.header.hot' | t | default: 'HOT' }}</span>
-        </a>
-      {%- endif -%}
-
-      <!-- 5. SALE LINK -->
-      {%- if section.settings.show_sale -%}
-        <a href="/collections/sale" class="mobile-nav__single-link mobile-nav__single-link--sale">
-          <span>{% if request.locale.iso_code == 'ar' %}تخفيضات{% else %}SALE{% endif %}</span>
-          <span class="nav-badge nav-badge--sale">{{ 'sections.header.sale' | t | default: 'SALE' }}</span>
-        </a>
-      {%- endif -%}
-
-      <!-- Additional links -->
-      {%- for link in raw_links -%}
-        {%- assign dt = link.title | downcase -%}
-        {%- unless dt contains 'home' or dt contains 'الرئيسية' or dt contains 'catalog' or dt contains 'المنتجات' -%}
-          <a href="{{ link.url }}" class="mobile-nav__single-link">
-            <span>{{ link.title }}</span>
-          </a>
-        {%- endunless -%}
+        {%- elsif has_children -%}
+          <!-- Regular Dropdown Accordion -->
+          <div class="mobile-nav__item mobile-nav__item--accordion">
+            <button type="button" class="mobile-nav__accordion-header" data-mobile-accordion-trigger aria-expanded="false">
+              <span class="mobile-nav__title-wrap">
+                <span class="mobile-nav__item-title">{{ link.title }}</span>
+              </span>
+              <svg class="mobile-nav__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="mobile-nav__accordion-content">
+              {%- for child in link.links -%}
+                <a href="{{ child.url }}" class="mobile-nav__child-link">{{ child.title }}</a>
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- else -%}
+          <!-- Direct Single Link -->
+          <div class="mobile-nav__item">
+            <a href="{{ link.url }}" class="mobile-nav__item-link">
+              <span>{{ link.title }}</span>
+            </a>
+          </div>
+        {%- endif -%}
       {%- endfor -%}
+
+      <!-- Standalone Best Sellers & Sale if not in menu -->
+      {%- if section.settings.show_best_sellers and has_bestsellers_in_menu == false -%}
+        <div class="mobile-nav__item">
+          <a href="/collections/best-sellers" class="mobile-nav__item-link">
+            <span>{% if request.locale.iso_code == 'ar' %}الأكثر مبيعاً{% else %}BEST SELLERS{% endif %}</span>
+            <span class="nav-badge nav-badge--hot">{{ 'sections.header.hot' | t | default: 'HOT' }}</span>
+          </a>
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.show_sale and has_sale_in_menu == false -%}
+        <div class="mobile-nav__item">
+          <a href="/collections/sale" class="mobile-nav__item-link" style="color: var(--color-sale);">
+            <span>{% if request.locale.iso_code == 'ar' %}تخفيضات{% else %}SALE{% endif %}</span>
+            <span class="nav-badge nav-badge--sale">{{ 'sections.header.sale' | t | default: 'SALE' }}</span>
+          </a>
+        </div>
+      {%- endif -%}
     </div>
 
     <!-- Mobile Bottom Utilities (Account, Wishlist, Egypt COD Guarantee) -->
@@ -688,7 +499,7 @@
   "settings": [
     {
       "type": "header",
-      "content": "Logo & Main Settings"
+      "content": "Logo"
     },
     {
       "type": "image_picker",
@@ -706,166 +517,93 @@
       "default": 140
     },
     {
+      "type": "header",
+      "content": "Navigation"
+    },
+    {
       "type": "link_list",
       "id": "menu",
       "label": "Main Navigation Menu",
       "default": "main-menu",
-      "info": "To use custom Shopify navigation, add items here. If left default, the Modex Streetwear menu will display."
+      "info": "Online Store > Navigation > Main menu"
+    },
+    {
+      "type": "header",
+      "content": "Main Mega Menu"
     },
     {
       "type": "checkbox",
       "id": "enable_mega_menu",
-      "label": "Enable Modern Mega Menus",
+      "label": "Enable Main Mega Menu",
       "default": true,
-      "info": "Displays multi-column dropdowns for categories and sub-collections inspired by leading streetwear fashion stores."
+      "info": "Displays a multi-column mega menu with sub-collections and promotional banner card on desktop."
+    },
+    {
+      "type": "text",
+      "id": "mega_menu_trigger",
+      "label": "Menu Item to Open Mega Menu",
+      "default": "Catalog",
+      "info": "Name of the link in your Main Menu that opens this mega menu (e.g. Catalog, Shop, Collections, or المتجر)."
+    },
+    {
+      "type": "link_list",
+      "id": "mega_menu_linklist",
+      "label": "Custom Mega Menu Columns Menu (Optional)",
+      "info": "Select a menu with child links to customize the columns. If left blank, default streetwear categories (Men, Women, Kids, Trending) are displayed."
     },
     {
       "type": "header",
-      "content": "Collections Visibility"
+      "content": "Mega Menu Promotional Banner"
     },
     {
       "type": "checkbox",
-      "id": "show_men",
-      "label": "Show Men Collection",
+      "id": "show_promo_banner",
+      "label": "Show Promotional Banner Card",
       "default": true
     },
     {
-      "type": "checkbox",
-      "id": "show_women",
-      "label": "Show Women Collection",
-      "default": true
+      "type": "image_picker",
+      "id": "promo_image",
+      "label": "Promotional Banner Image"
     },
     {
-      "type": "checkbox",
-      "id": "show_kids",
-      "label": "Show Kids Collection",
-      "default": true
+      "type": "text",
+      "id": "promo_badge",
+      "label": "Promo Badge Pill Text",
+      "default": "NEW DROP 2026"
+    },
+    {
+      "type": "text",
+      "id": "promo_title",
+      "label": "Promotional Heading",
+      "default": "Never Mind Streetwear Drop"
+    },
+    {
+      "type": "url",
+      "id": "promo_url",
+      "label": "Promotional Destination Link"
+    },
+    {
+      "type": "text",
+      "id": "promo_btn",
+      "label": "Promotional Button Text",
+      "default": "Shop Now"
+    },
+    {
+      "type": "header",
+      "content": "Featured Quick Links"
     },
     {
       "type": "checkbox",
       "id": "show_best_sellers",
-      "label": "Show Best Sellers",
+      "label": "Show Best Sellers Link",
       "default": true
     },
     {
       "type": "checkbox",
       "id": "show_sale",
-      "label": "Show Sale (Red Accent)",
+      "label": "Show Sale Link (Highlighted)",
       "default": true
-    },
-    {
-      "type": "header",
-      "content": "Men's Mega Menu Customization"
-    },
-    {
-      "type": "link_list",
-      "id": "men_menu",
-      "label": "Custom Men Menu (Optional)",
-      "info": "Leave blank to use the default curated Modex men's categories."
-    },
-    {
-      "type": "image_picker",
-      "id": "men_promo_image",
-      "label": "Men Promotional Banner Image"
-    },
-    {
-      "type": "text",
-      "id": "men_promo_badge",
-      "label": "Men Promo Badge",
-      "default": "NEW DROP"
-    },
-    {
-      "type": "text",
-      "id": "men_promo_title",
-      "label": "Men Promo Title",
-      "default": "Men's New Drop 2026"
-    },
-    {
-      "type": "url",
-      "id": "men_promo_url",
-      "label": "Men Promo Link"
-    },
-    {
-      "type": "text",
-      "id": "men_promo_btn",
-      "label": "Men Promo Button Text",
-      "default": "Shop Now"
-    },
-    {
-      "type": "header",
-      "content": "Women's Mega Menu Customization"
-    },
-    {
-      "type": "link_list",
-      "id": "women_menu",
-      "label": "Custom Women Menu (Optional)",
-      "info": "Leave blank to use the default curated Modex women's categories."
-    },
-    {
-      "type": "image_picker",
-      "id": "women_promo_image",
-      "label": "Women Promotional Banner Image"
-    },
-    {
-      "type": "text",
-      "id": "women_promo_badge",
-      "label": "Women Promo Badge",
-      "default": "TRENDING"
-    },
-    {
-      "type": "text",
-      "id": "women_promo_title",
-      "label": "Women Promo Title",
-      "default": "Women's Collection 2026"
-    },
-    {
-      "type": "url",
-      "id": "women_promo_url",
-      "label": "Women Promo Link"
-    },
-    {
-      "type": "text",
-      "id": "women_promo_btn",
-      "label": "Women Promo Button Text",
-      "default": "Shop Now"
-    },
-    {
-      "type": "header",
-      "content": "Kids' Mega Menu Customization"
-    },
-    {
-      "type": "link_list",
-      "id": "kids_menu",
-      "label": "Custom Kids Menu (Optional)",
-      "info": "Leave blank to use the default curated Modex kids' categories."
-    },
-    {
-      "type": "image_picker",
-      "id": "kids_promo_image",
-      "label": "Kids Promotional Banner Image"
-    },
-    {
-      "type": "text",
-      "id": "kids_promo_badge",
-      "label": "Kids Promo Badge",
-      "default": "KIDS DROP"
-    },
-    {
-      "type": "text",
-      "id": "kids_promo_title",
-      "label": "Kids Promo Title",
-      "default": "Kids Streetwear 2026"
-    },
-    {
-      "type": "url",
-      "id": "kids_promo_url",
-      "label": "Kids Promo Link"
-    },
-    {
-      "type": "text",
-      "id": "kids_promo_btn",
-      "label": "Kids Promo Button Text",
-      "default": "Shop Now"
     }
   ],
   "blocks": [

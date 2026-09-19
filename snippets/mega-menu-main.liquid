@@ -1,0 +1,226 @@
+<!-- Main Mega Menu: Unified Streetwear Layout & Customizable via Shopify Settings & Navigation -->
+{%- assign has_custom_columns = false -%}
+{%- assign custom_links = nil -%}
+
+{%- if section.settings.mega_menu_linklist != blank and linklists[section.settings.mega_menu_linklist].links.size > 0 -%}
+  {%- assign has_custom_columns = true -%}
+  {%- assign custom_links = linklists[section.settings.mega_menu_linklist].links -%}
+{%- elsif link.links.size > 0 -%}
+  {%- assign has_custom_columns = true -%}
+  {%- assign custom_links = link.links -%}
+{%- endif -%}
+
+{%- if has_custom_columns and custom_links != nil -%}
+  <!-- Dynamic Custom Linklist Columns -->
+  {%- for col in custom_links -%}
+    <div class="mega-menu__col">
+      <a href="{{ col.url }}" class="mega-menu__heading">{{ col.title }}</a>
+      {%- if col.links.size > 0 -%}
+        <ul class="mega-menu__list">
+          {%- for sub in col.links -%}
+            <li class="mega-menu__item">
+              <a href="{{ sub.url }}" class="mega-menu__link">{{ sub.title }}</a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+  {%- endfor -%}
+
+{%- else -%}
+  <!-- Default Curated Streetwear Mega Menu (Modex Style Categories) -->
+
+  <!-- Column 1: MEN -->
+  <div class="mega-menu__col">
+    <a href="/collections/men" class="mega-menu__heading">
+      {% if request.locale.iso_code == 'ar' %}رجالي (Men){% else %}Men's Streetwear{% endif %}
+    </a>
+    <ul class="mega-menu__list">
+      <li class="mega-menu__item">
+        <a href="/collections/men" class="mega-menu__link">
+          {% if request.locale.iso_code == 'ar' %}تيشيرتات أوفر سايز (Oversized){% else %}Oversized T-Shirts{% endif %}
+        </a>
+      </li>
+      <li class="mega-menu__item">
+        <a href="/collections/men" class="mega-menu__link">
+          {% if request.locale.iso_code == 'ar' %}تيشيرتات جرافيك وطباعة{% else %}Graphic & Printed Tees{% endif %}
+        </a>
+      </li>
+      <li class="mega-menu__item">
+        <a href="/collections/men" class="mega-menu__link">
+          {% if request.locale.iso_code == 'ar' %}هوديز وسويت شيرت سميك{% else %}Heavyweight Hoodies{% endif %}
+        </a>
+      </li>
+      <li class="mega-menu__item">
+        <a href="/collections/men" class="mega-menu__link">
+          {% if request.locale.iso_code == 'ar' %}بنطلونات كارجو وسويت بانتس{% else %}Tactical Cargo & Pants{% endif %}
+        </a>
+      </li>
+      <li class="mega-menu__item">
+        <a href="/collections/men" class="mega-menu__link">
+          {% if request.locale.iso_code == 'ar' %}أطقم قطعتين وترينجات{% else %}Matching Sets & Tracksuits{% endif %}
+        </a>
+      </li>
+      <li class="mega-menu__item">
+        <a href="/collections/men" class="mega-menu__link" style="color: var(--color-primary); font-weight: 700;">
+          {% if request.locale.iso_code == 'ar' %}تسوق كل تشكيلة الرجال &larr;{% else %}Shop All Men's &rarr;{% endif %}
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Column 2: WOMEN -->
+  <div class="mega-menu__col">
+    <a href="/collections/women" class="mega-menu__heading">
+      {% if request.locale.iso_code == 'ar' %}حريمي (Women){% else %}Women's Collection{% endif %}
+    </a>
+    <ul class="mega-menu__list">
+      <li class="mega-menu__item">
+        <a href="/collections/women" class="mega-menu__link">
+          {% if request.locale.iso_code == 'ar' %}توبات وتيشيرتات واسعة{% else %}Cropped & Oversized Tops{% endif %}
+        </a>
+      </li>
+      <li class="mega-menu__item">
+        <a href="/collections/women" class="mega-menu__link">
+          {% if request.locale.iso_code == 'ar' %}هوديز وسويت شيرت مريح{% else %}Minimalist Lounge Hoodies{% endif %}
+        </a>
+      </li>
+      <li class="mega-menu__item">
+        <a href="/collections/women" class="mega-menu__link">
+          {% if request.locale.iso_code == 'ar' %}بنطلونات واسعة وكارجو{% else %}Wide-Leg Pants & Cargo{% endif %}
+        </a>
+      </li>
+      <li class="mega-menu__item">
+        <a href="/collections/women" class="mega-menu__link">
+          {% if request.locale.iso_code == 'ar' %}أطقم ملابس مريحة Loungewear{% else %}Comfort Matching Sets{% endif %}
+        </a>
+      </li>
+      <li class="mega-menu__item">
+        <a href="/collections/women" class="mega-menu__link">
+          {% if request.locale.iso_code == 'ar' %}إكسسوارات وحقائب كاجوال{% else %}Bags & Accessories{% endif %}
+        </a>
+      </li>
+      <li class="mega-menu__item">
+        <a href="/collections/women" class="mega-menu__link" style="color: var(--color-primary); font-weight: 700;">
+          {% if request.locale.iso_code == 'ar' %}تسوق كل تشكيلة النساء &larr;{% else %}Shop All Women's &rarr;{% endif %}
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Column 3: KIDS & TEENS -->
+  <div class="mega-menu__col">
+    <a href="/collections/kids" class="mega-menu__heading">
+      {% if request.locale.iso_code == 'ar' %}أطفال وناشئين (Kids){% else %}Kids & Teens{% endif %}
+    </a>
+    <ul class="mega-menu__list">
+      <li class="mega-menu__item">
+        <a href="/collections/kids" class="mega-menu__link">
+          {% if request.locale.iso_code == 'ar' %}تيشيرتات جرافيك أولاد{% else %}Boys Graphic Tees{% endif %}
+        </a>
+      </li>
+      <li class="mega-menu__item">
+        <a href="/collections/kids" class="mega-menu__link">
+          {% if request.locale.iso_code == 'ar' %}ملابس كاجوال بنات{% else %}Girls Casual & Tops{% endif %}
+        </a>
+      </li>
+      <li class="mega-menu__item">
+        <a href="/collections/kids" class="mega-menu__link">
+          {% if request.locale.iso_code == 'ar' %}هوديز وترينجات أطفال{% else %}Kids Hoodies & Sweats{% endif %}
+        </a>
+      </li>
+      <li class="mega-menu__item">
+        <a href="/collections/kids" class="mega-menu__link">
+          {% if request.locale.iso_code == 'ar' %}شورتات وبنطلونات مريحة{% else %}Comfort Shorts & Pants{% endif %}
+        </a>
+      </li>
+      <li class="mega-menu__item">
+        <a href="/collections/kids" class="mega-menu__link">
+          {% if request.locale.iso_code == 'ar' %}أساسيات المراهقين والناشئين{% else %}Teen Streetwear Essentials{% endif %}
+        </a>
+      </li>
+      <li class="mega-menu__item">
+        <a href="/collections/kids" class="mega-menu__link" style="color: var(--color-primary); font-weight: 700;">
+          {% if request.locale.iso_code == 'ar' %}تسوق كل تشكيلة الأطفال &larr;{% else %}Shop All Kids &rarr;{% endif %}
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Column 4: BEST SELLERS & OFFERS -->
+  <div class="mega-menu__col">
+    <a href="/collections/best-sellers" class="mega-menu__heading">
+      {% if request.locale.iso_code == 'ar' %}الأكثر طلباً والعروض{% else %}Trending & Highlights{% endif %}
+    </a>
+    <ul class="mega-menu__list">
+      <li class="mega-menu__item">
+        <a href="/collections/best-sellers" class="mega-menu__link" style="font-weight: 600;">
+          {% if request.locale.iso_code == 'ar' %}الأكثر مبيعاً هذا الأسبوع 🔥{% else %}Top Best Sellers 🔥{% endif %}
+        </a>
+      </li>
+      <li class="mega-menu__item">
+        <a href="/collections/all" class="mega-menu__link">
+          {% if request.locale.iso_code == 'ar' %}وصل حديثاً صيف 2026{% else %}Summer Drop 2026{% endif %}
+        </a>
+      </li>
+      <li class="mega-menu__item">
+        <a href="/collections/men" class="mega-menu__link">
+          {% if request.locale.iso_code == 'ar' %}تشكيلة Heavyweight القطنية{% else %}Heavyweight Essentials{% endif %}
+        </a>
+      </li>
+      <li class="mega-menu__item">
+        <a href="/collections/sale" class="mega-menu__link" style="color: var(--color-sale); font-weight: 700;">
+          {% if request.locale.iso_code == 'ar' %}تخفيضات تصل إلى 50% 🏷️{% else %}Clearance Sale Up to 50% 🏷️{% endif %}
+        </a>
+      </li>
+      <li class="mega-menu__item">
+        <a href="/collections/all" class="mega-menu__link" style="font-weight: 700; text-decoration: underline;">
+          {% if request.locale.iso_code == 'ar' %}عرض جميع المنتجات &larr;{% else %}Browse All Collections &rarr;{% endif %}
+        </a>
+      </li>
+    </ul>
+  </div>
+{%- endif -%}
+
+<!-- Column 5: Promotional Banner Card (Customizable via Shopify Theme Editor) -->
+{%- if section.settings.show_promo_banner -%}
+  <div class="mega-menu__promo-col">
+    <a href="{{ section.settings.promo_url | default: '/collections/all' }}" class="mega-menu__promo">
+      <div class="mega-menu__promo-img-wrap">
+        {%- if section.settings.promo_image != blank -%}
+          <img
+            src="{{ section.settings.promo_image | image_url: width: 600 }}"
+            alt="{{ section.settings.promo_title | default: 'Streetwear Drop' | escape }}"
+            class="mega-menu__promo-img"
+            loading="lazy"
+          >
+        {%- else -%}
+          <img
+            src="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?auto=format&fit=crop&w=600&q=80"
+            alt="Never Mind Drop"
+            class="mega-menu__promo-img"
+            loading="lazy"
+          >
+        {%- endif -%}
+        <div class="mega-menu__promo-overlay"></div>
+      </div>
+      <div class="mega-menu__promo-content">
+        {%- if section.settings.promo_badge != blank -%}
+          <span class="mega-menu__promo-tag">{{ section.settings.promo_badge }}</span>
+        {%- endif -%}
+        <h4 class="mega-menu__promo-title">
+          {{ section.settings.promo_title | default: 'Never Mind Streetwear Drop' }}
+        </h4>
+        {%- if section.settings.promo_btn != blank -%}
+          <span class="mega-menu__promo-btn">
+            {{ section.settings.promo_btn }}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </span>
+        {%- endif -%}
+      </div>
+    </a>
+  </div>
+{%- endif -%}
