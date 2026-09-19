@@ -36,7 +36,38 @@
   <div class="container mega-menu__container">
     <div class="mega-menu__grid">
 
-      {%- if matched_columns_count > 0 -%}
+      {%- assign menu_source = section.settings.mega_menu_source | default: 'auto' -%}
+
+      {%- assign nav_cols = nil -%}
+      {%- if section.settings.mega_menu_linklist != blank and linklists[section.settings.mega_menu_linklist].links.size > 0 -%}
+        {%- assign nav_cols = linklists[section.settings.mega_menu_linklist].links -%}
+      {%- elsif link.links.size > 0 -%}
+        {%- assign nav_cols = link.links -%}
+      {%- endif -%}
+
+      {%- assign use_mode = 'fallback' -%}
+      {%- if menu_source == 'navigation' and nav_cols != nil and nav_cols.size > 0 -%}
+        {%- assign use_mode = 'navigation' -%}
+      {%- elsif menu_source == 'blocks' -%}
+        {%- if matched_columns_count > 0 -%}
+          {%- assign use_mode = 'blocks' -%}
+        {%- elsif matched_full_block != nil -%}
+          {%- assign use_mode = 'full_block' -%}
+        {%- endif -%}
+      {%- else -%}
+        <!-- Auto mode: if nav_cols has child links, use native Shopify Navigation menu shape! -->
+        {%- if nav_cols != nil and nav_cols.size > 0 -%}
+          {%- assign use_mode = 'navigation' -%}
+        {%- elsif matched_columns_count > 0 -%}
+          {%- assign use_mode = 'blocks' -%}
+        {%- elsif matched_full_block != nil -%}
+          {%- assign use_mode = 'full_block' -%}
+        {%- else -%}
+          {%- assign use_mode = 'fallback' -%}
+        {%- endif -%}
+      {%- endif -%}
+
+      {%- if use_mode == 'blocks' -%}
         <!-- ======================================================= -->
         <!-- MODE A: MODULAR THEME EDITOR COLUMN BLOCKS (1 TO 6+)   -->
         <!-- ======================================================= -->
@@ -234,57 +265,149 @@
           </div>
         {%- endif -%}
 
-      {%- elsif matched_full_block != nil -%}
+      {%- elsif use_mode == 'full_block' -%}
         <!-- ======================================================= -->
         <!-- MODE B: ALL-IN-ONE PRESET BLOCK (BACKWARD COMPATIBLE)   -->
         <!-- ======================================================= -->
         {% render 'mega-menu-block', block: matched_full_block %}
 
-      {%- else -%}
+      {%- elsif use_mode == 'navigation' -%}
         <!-- ======================================================= -->
-        <!-- MODE C: SHOPIFY NAVIGATION LINKLIST OR SMART FALLBACK   -->
+        <!-- MODE C: SHOPIFY NAVIGATION LINKLIST (3-LEVEL MENU)     -->
         <!-- ======================================================= -->
-        {%- assign nav_cols = nil -%}
-        {%- if section.settings.mega_menu_linklist != blank and linklists[section.settings.mega_menu_linklist].links.size > 0 -%}
-          {%- assign nav_cols = linklists[section.settings.mega_menu_linklist].links -%}
-        {%- elsif link.links.size > 0 -%}
-          {%- assign nav_cols = link.links -%}
-        {%- endif -%}
+        {%- for col in nav_cols -%}
+          <div class="mega-menu__col">
+            <!-- Optional Collection Thumbnail if object has image -->
+            {%- if col.type == 'collection_link' and col.object.image != blank -%}
+              <a href="{{ col.url }}" class="mega-menu__col-thumb-wrap">
+                <img
+                  src="{{ col.object.image | image_url: width: 300 }}"
+                  alt="{{ col.title | escape }}"
+                  class="mega-menu__col-thumb"
+                  loading="lazy"
+                  width="300"
+                  height="180"
+                >
+              </a>
+            {%- endif -%}
 
-        {%- if nav_cols != nil and nav_cols.size > 0 -%}
-          <!-- Dynamic Shopify Navigation 3-Level Columns -->
-          {%- for col in nav_cols -%}
-            <div class="mega-menu__col">
+            <!-- Heading & optional badge pill -->
+            {%- assign col_badge = nil -%}
+            {%- assign dt = col.title | downcase -%}
+            {%- if dt contains 'hot' or dt contains '🔥' -%}
+              {%- assign col_badge = 'HOT' -%}
+            {%- elsif dt contains 'new' or dt contains '✨' or dt contains 'جديد' -%}
+              {%- assign col_badge = 'NEW' -%}
+            {%- elsif dt contains 'sale' or dt contains '🏷️' or dt contains 'تخفيض' or dt contains 'عروض' -%}
+              {%- assign col_badge = 'SALE' -%}
+            {%- endif -%}
+
+            <div class="mega-menu__heading-wrap">
               <a href="{{ col.url }}" class="mega-menu__heading">{{ col.title }}</a>
-              <ul class="mega-menu__list">
-                {%- if col.links.size > 0 -%}
-                  {%- for sub in col.links -%}
-                    <li class="mega-menu__item">
-                      <a href="{{ sub.url }}" class="mega-menu__link">{{ sub.title }}</a>
-                    </li>
-                  {%- endfor -%}
-                {%- else -%}
-                  <!-- If column has no children, offer direct links so it's not a blank void -->
-                  <li class="mega-menu__item">
-                    <a href="{{ col.url }}" class="mega-menu__link">
-                      {% if is_rtl %}عرض تشكيلة {{ col.title }}{% else %}Explore {{ col.title }}{% endif %}
-                    </a>
-                  </li>
-                {%- endif -%}
+              {%- if col_badge != nil -%}
+                <span class="mega-menu__col-badge {% if col_badge == 'SALE' %}mega-menu__col-badge--sale{% endif %}">
+                  {{ col_badge }}
+                </span>
+              {%- endif -%}
+            </div>
 
-                <!-- Shop All CTA -->
-                <li class="mega-menu__item mega-menu__item--shop-all">
-                  <a href="{{ col.url }}" class="mega-menu__shop-all">
-                    <span>{% if is_rtl %}تسوق كل {{ col.title }}{% else %}Shop All {{ col.title }}{% endif %}</span>
-                    <span class="mega-menu__shop-all-arrow" aria-hidden="true">{% if is_rtl %}&larr;{% else %}&rarr;{% endif %}</span>
+            <ul class="mega-menu__list">
+              {%- if col.links.size > 0 -%}
+                {%- for sub in col.links -%}
+                  <li class="mega-menu__item">
+                    <a href="{{ sub.url }}" class="mega-menu__link">{{ sub.title }}</a>
+                  </li>
+                {%- endfor -%}
+              {%- else -%}
+                <li class="mega-menu__item">
+                  <a href="{{ col.url }}" class="mega-menu__link">
+                    {% if is_rtl %}عرض تشكيلة {{ col.title }}{% else %}Explore {{ col.title }}{% endif %}
                   </a>
                 </li>
-              </ul>
-            </div>
-          {%- endfor -%}
+              {%- endif -%}
 
-        {%- else -%}
-          <!-- Default Curated Streetwear Mega Menu (Never Mind Modex Style) -->
+              <!-- Shop All CTA -->
+              <li class="mega-menu__item mega-menu__item--shop-all">
+                <a href="{{ col.url }}" class="mega-menu__shop-all">
+                  <span>{% if is_rtl %}تسوق كل {{ col.title }}{% else %}Shop All {{ col.title }}{% endif %}</span>
+                  <span class="mega-menu__shop-all-arrow" aria-hidden="true">{% if is_rtl %}&larr;{% else %}&rarr;{% endif %}</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        {%- endfor -%}
+
+        <!-- Promotional Banner Card in Navigation Mode -->
+        {%- if matched_promo_block != nil -%}
+          {%- assign p_settings = matched_promo_block.settings -%}
+          <div class="mega-menu__promo-col" {{ matched_promo_block.shopify_attributes }}>
+            <a href="{{ p_settings.button_url | default: '/collections/all' }}" class="mega-menu__promo">
+              <div class="mega-menu__promo-img-wrap">
+                {%- if p_settings.image != blank -%}
+                  <img src="{{ p_settings.image | image_url: width: 600 }}" alt="{{ p_settings.title | escape }}" class="mega-menu__promo-img" loading="lazy" width="600" height="750">
+                {%- else -%}
+                  <img src="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?auto=format&fit=crop&w=600&q=80" alt="Never Mind Drop" class="mega-menu__promo-img" loading="lazy" width="600" height="750">
+                {%- endif -%}
+                <div class="mega-menu__promo-overlay"></div>
+              </div>
+              <div class="mega-menu__promo-content">
+                {%- if p_settings.badge != blank -%}
+                  <span class="mega-menu__promo-tag">{{ p_settings.badge }}</span>
+                {%- endif -%}
+                <h4 class="mega-menu__promo-title">{{ p_settings.title | default: 'Never Mind Streetwear Drop' }}</h4>
+                {%- if p_settings.description != blank -%}
+                  <p class="mega-menu__promo-desc">{{ p_settings.description }}</p>
+                {%- endif -%}
+                <span class="mega-menu__promo-btn">
+                  {{ p_settings.button_text | default: 'Shop Now' }}
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    {%- if is_rtl -%}
+                      <line x1="19" y1="12" x2="5" y2="12"></line>
+                      <polyline points="12 19 5 12 12 5"></polyline>
+                    {%- else -%}
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
+                    {%- endif -%}
+                  </svg>
+                </span>
+              </div>
+            </a>
+          </div>
+        {%- elsif section.settings.show_promo_banner -%}
+          <div class="mega-menu__promo-col">
+            <a href="{{ section.settings.promo_url | default: '/collections/all' }}" class="mega-menu__promo">
+              <div class="mega-menu__promo-img-wrap">
+                {%- if section.settings.promo_image != blank -%}
+                  <img src="{{ section.settings.promo_image | image_url: width: 600 }}" alt="{{ section.settings.promo_title | default: 'Drop' | escape }}" class="mega-menu__promo-img" loading="lazy" width="600" height="750">
+                {%- else -%}
+                  <img src="https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?auto=format&fit=crop&w=600&q=80" alt="Never Mind Drop" class="mega-menu__promo-img" loading="lazy" width="600" height="750">
+                {%- endif -%}
+                <div class="mega-menu__promo-overlay"></div>
+              </div>
+              <div class="mega-menu__promo-content">
+                <span class="mega-menu__promo-tag">{{ section.settings.promo_badge | default: 'NEW DROP 2026' }}</span>
+                <h4 class="mega-menu__promo-title">{{ section.settings.promo_title | default: 'Never Mind Streetwear Drop' }}</h4>
+                <span class="mega-menu__promo-btn">
+                  {{ section.settings.promo_btn | default: 'Shop Now' }}
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    {%- if is_rtl -%}
+                      <line x1="19" y1="12" x2="5" y2="12"></line>
+                      <polyline points="12 19 5 12 12 5"></polyline>
+                    {%- else -%}
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                      <polyline points="12 5 19 12 12 19"></polyline>
+                    {%- endif -%}
+                  </svg>
+                </span>
+              </div>
+            </a>
+          </div>
+        {%- endif -%}
+
+      {%- else -%}
+        <!-- ======================================================= -->
+        <!-- MODE D: DEFAULT CURATED STREETWEAR PRESET FALLBACK      -->
+        <!-- ======================================================= -->
           <!-- Column 1: MEN -->
           <div class="mega-menu__col">
             <a href="/collections/men" class="mega-menu__heading">
@@ -363,7 +486,6 @@
               </li>
             </ul>
           </div>
-        {%- endif -%}
 
         <!-- Promotional Banner Card (Section Fallback) -->
         {%- if section.settings.show_promo_banner -%}

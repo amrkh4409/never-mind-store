@@ -299,7 +299,60 @@
                 <span aria-hidden="true">{% if is_rtl %}&larr;{% else %}&rarr;{% endif %}</span>
               </a>
 
-              {%- if matched_columns_count > 0 -%}
+              {%- assign m_source = section.settings.mega_menu_source | default: 'auto' -%}
+              {%- assign nav_cols = nil -%}
+              {%- if section.settings.mega_menu_linklist != blank and linklists[section.settings.mega_menu_linklist].links.size > 0 -%}
+                {%- assign nav_cols = linklists[section.settings.mega_menu_linklist].links -%}
+              {%- elsif link.links.size > 0 -%}
+                {%- assign nav_cols = link.links -%}
+              {%- endif -%}
+
+              {%- assign use_nav_mode = false -%}
+              {%- if m_source == 'navigation' and nav_cols != nil and nav_cols.size > 0 -%}
+                {%- assign use_nav_mode = true -%}
+              {%- elsif m_source == 'auto' and nav_cols != nil and nav_cols.size > 0 -%}
+                {%- assign use_nav_mode = true -%}
+              {%- endif -%}
+
+              {%- if use_nav_mode -%}
+                <!-- Sub-Accordions from Shopify Navigation (3-Level Menu) -->
+                {%- for child in nav_cols -%}
+                  {%- if child.links.size > 0 -%}
+                    <div class="mobile-nav__sub-accordion">
+                      <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
+                        <span>{{ child.title }}</span>
+                        <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                      </button>
+                      <div class="mobile-nav__sub-accordion-content">
+                        <a href="{{ child.url }}" class="mobile-nav__sub-link" style="font-weight: 700; color: var(--color-primary);">Shop All {{ child.title }} {% if is_rtl %}&larr;{% else %}&rarr;{% endif %}</a>
+                        {%- for sub in child.links -%}
+                          <a href="{{ sub.url }}" class="mobile-nav__sub-link">{{ sub.title }}</a>
+                        {%- endfor -%}
+                      </div>
+                    </div>
+                  {%- else -%}
+                    <a href="{{ child.url }}" class="mobile-nav__child-link">{{ child.title }}</a>
+                  {%- endif -%}
+                {%- endfor -%}
+
+                <!-- Featured Banner in Mobile Accordion if present -->
+                {%- if matched_promo_block != nil -%}
+                  {%- assign p_settings = matched_promo_block.settings -%}
+                  <div style="margin-top: 14px; padding: 14px; background: var(--color-bg-secondary); border-radius: var(--radius-sm); border: 1px solid var(--color-border-light);" {{ matched_promo_block.shopify_attributes }}>
+                    {%- if p_settings.badge != blank -%}
+                      <span class="mega-menu__promo-tag" style="margin-bottom: 6px; background: rgba(0,0,0,0.6); color: #FFF;">{{ p_settings.badge }}</span>
+                    {%- endif -%}
+                    <strong style="display: block; font-size: 0.95rem; margin-bottom: 6px; color: var(--color-foreground);">{{ p_settings.title | default: 'Never Mind Streetwear Drop' }}</strong>
+                    {%- if p_settings.description != blank -%}
+                      <p style="font-size: 0.8rem; color: var(--color-foreground-secondary); margin-bottom: 8px;">{{ p_settings.description }}</p>
+                    {%- endif -%}
+                    <a href="{{ p_settings.button_url | default: '/collections/all' }}" class="btn btn-primary btn-sm btn-full" style="margin-top: 8px;">
+                      {{ p_settings.button_text | default: 'Shop Now' }} {% if is_rtl %}&larr;{% else %}&rarr;{% endif %}
+                    </a>
+                  </div>
+                {%- endif -%}
+
+              {%- elsif matched_columns_count > 0 -%}
                 <!-- Sub-Accordions from mega_column blocks -->
                 {%- for block in section.blocks -%}
                   {%- if block.type == 'mega_column' -%}
@@ -640,6 +693,27 @@
         }
       ],
       "default": "container"
+    },
+    {
+      "type": "select",
+      "id": "mega_menu_source",
+      "label": "Mega Menu Content Source",
+      "options": [
+        {
+          "value": "auto",
+          "label": "Auto (Use Navigation 3-Level Menu if nested, else Blocks)"
+        },
+        {
+          "value": "navigation",
+          "label": "Shopify Navigation (Online Store > Navigation 3-Level Menu)"
+        },
+        {
+          "value": "blocks",
+          "label": "Theme Customizer Blocks (Mega Menu Column blocks)"
+        }
+      ],
+      "default": "auto",
+      "info": "Choose whether columns are populated from your standard Shopify Navigation menu hierarchy or individual Theme Customizer blocks."
     },
     {
       "type": "link_list",
