@@ -1,22 +1,22 @@
 <div class="container" style="padding-top: 50px; padding-bottom: 80px;">
   <div style="margin-bottom: 30px;">
-    <a href="{{ routes.account_url }}" class="btn btn-outline btn-sm">&larr; Return to Account Details</a>
+    <a href="{{ routes.account_url }}" class="btn btn-outline btn-sm">&larr; {{ 'customer.orders.back_to_account' | t }}</a>
   </div>
 
-  <h1 style="font-size: 1.8rem; margin-bottom: 8px;">Order {{ order.name }}</h1>
+  <h1 style="font-size: 1.8rem; margin-bottom: 8px;">{{ 'customer.account.order_number' | t }} {{ order.name }}</h1>
   <p style="color: var(--color-foreground-secondary); font-size: 0.92rem; margin-bottom: 24px;">
-    Placed on {{ order.created_at | time_tag: format: 'date_at_time' }}
+    {{ 'customer.orders.placed_on' | t }} {{ order.created_at | time_tag: format: 'date_at_time' }}
   </p>
 
   <div style="overflow-x: auto; margin-bottom: 36px;">
     <table class="size-guide-table" style="text-align: left;">
       <thead>
         <tr>
-          <th>Product</th>
-          <th>SKU</th>
-          <th>Price</th>
-          <th>Quantity</th>
-          <th>Total</th>
+          <th>{{ 'customer.orders.product' | t }}</th>
+          <th>{{ 'customer.orders.sku' | t }}</th>
+          <th>{{ 'customer.orders.price' | t }}</th>
+          <th>{{ 'customer.orders.quantity' | t }}</th>
+          <th>{{ 'customer.orders.total' | t }}</th>
         </tr>
       </thead>
       <tbody>
@@ -34,15 +34,15 @@
       </tbody>
       <tfoot>
         <tr>
-          <td colspan="4" style="text-align: right; font-weight: 600;">Subtotal</td>
+          <td colspan="4" style="text-align: right; font-weight: 600;">{{ 'customer.orders.subtotal' | t }}</td>
           <td><strong>{{ order.line_items_subtotal_price | money }}</strong></td>
         </tr>
         <tr>
-          <td colspan="4" style="text-align: right; font-weight: 600;">Shipping</td>
+          <td colspan="4" style="text-align: right; font-weight: 600;">{{ 'customer.orders.shipping' | t }}</td>
           <td><strong>{{ order.shipping_price | money }}</strong></td>
         </tr>
         <tr>
-          <td colspan="4" style="text-align: right; font-weight: 700; font-size: 1.1rem;">Total</td>
+          <td colspan="4" style="text-align: right; font-weight: 700; font-size: 1.1rem;">{{ 'customer.orders.total' | t }}</td>
           <td style="font-size: 1.1rem;"><strong>{{ order.total_net_amount | money_with_currency }}</strong></td>
         </tr>
       </tfoot>

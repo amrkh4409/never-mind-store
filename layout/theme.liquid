@@ -52,9 +52,24 @@
       document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
       window.NeverMindConfig = {
         freeShippingThreshold: {{ settings.free_shipping_threshold | default: 1000 }},
-        freeShippingUnlockedMsg: {{ settings.free_shipping_message | default: "You've unlocked FREE SHIPPING!" | json }},
+        freeShippingUnlockedMsg: {{ 'sections.cart_drawer.free_shipping_achieved' | t | json }},
         currency: {{ cart.currency.iso_code | default: 'EGP' | json }},
-        moneyFormat: {{ shop.money_format | json }}
+        moneyFormat: {{ shop.money_format | json }},
+        translations: {
+          addToCart: {{ 'products.product.add_to_cart' | t | json }},
+          soldOut: {{ 'products.product.sold_out' | t | json }},
+          unavailable: {{ 'products.product.unavailable' | t | json }},
+          freeShippingBefore: {{ 'sections.cart_drawer.free_shipping_before' | t | json }},
+          freeShippingAfter: {{ 'sections.cart_drawer.free_shipping_after' | t | json }},
+          freeShippingAchieved: {{ 'sections.cart_drawer.free_shipping_achieved' | t | json }},
+          cartEmptyTitle: {{ 'cart.general.empty' | t | json }},
+          cartEmptySubtext: {{ 'sections.cart_drawer.empty_subtext' | t | json }},
+          exploreAll: {{ 'customer.account.explore_collections' | t | json }},
+          wishlistEmptyTitle: {{ 'sections.wishlist.empty' | t | json }},
+          wishlistEmptySubtext: {{ 'sections.wishlist.empty_subtext' | t | json }},
+          viewStyle: {{ 'sections.quick_view.view_details' | t | json }},
+          removeItem: {{ 'cart.general.remove' | t | json }}
+        }
       };
     </script>
 
@@ -62,7 +77,7 @@
   </head>
 
   <body class="template-{{ template.name | handle }}">
-    <a class="visually-hidden" href="#MainContent">Skip to content</a>
+    <a class="visually-hidden" href="#MainContent">{{ 'accessibility.skip_to_content' | t }}</a>
 
     <!-- Global Header & Announcement -->
     {% section 'announcement-bar' %}

@@ -42,11 +42,11 @@
         {%- if paginate.pages > 1 -%}
           <div style="display: flex; justify-content: center; gap: 12px; margin-top: 48px;">
             {%- if paginate.previous -%}
-              <a href="{{ paginate.previous.url }}" class="btn btn-outline btn-sm">&larr; Previous</a>
+              <a href="{{ paginate.previous.url }}" class="btn btn-outline btn-sm">&larr; {{ 'general.pagination.previous' | t }}</a>
             {%- endif -%}
-            <span>Page {{ paginate.current_page }} of {{ paginate.pages }}</span>
+            <span>{{ 'general.pagination.current_page' | t: current: paginate.current_page, total: paginate.pages }}</span>
             {%- if paginate.next -%}
-              <a href="{{ paginate.next.url }}" class="btn btn-outline btn-sm">Next &rarr;</a>
+              <a href="{{ paginate.next.url }}" class="btn btn-outline btn-sm">{{ 'general.pagination.next' | t }} &rarr;</a>
             {%- endif -%}
           </div>
         {%- endif -%}

@@ -60,7 +60,7 @@
             {% render 'icon-star' %}
             {% render 'icon-star' %}
           </div>
-          <span style="color: var(--color-foreground-secondary); font-weight: 500;">4.9 (Verified Customers)</span>
+          <span style="color: var(--color-foreground-secondary); font-weight: 500;">{{ 'products.product.verified_reviews' | t }}</span>
         </div>
 
         <!-- Price Display -->
@@ -169,7 +169,7 @@
               data-wishlist-btn
               data-product-handle="{{ product.handle }}"
               style="padding: 0 16px; min-width: 52px;"
-              aria-label="Add to wishlist"
+              aria-label="{{ 'products.product.add_to_wishlist' | t }}"
             >
               {% render 'icon-heart' %}
             </button>
@@ -202,10 +202,10 @@
             </button>
             <div class="accordion-content">
               <ul style="padding-left: 20px; line-height: 1.8;">
-                <li>Premium heavyweight Egyptian combed cotton blend</li>
-                <li>Tailored fit with reinforced drop-shoulder seams</li>
-                <li>Pre-shrunk fabric to prevent post-wash deformation</li>
-                <li>Machine wash cold with like colors; do not tumble dry</li>
+                <li>{{ 'products.product.fabric_heavyweight' | t }}</li>
+                <li>{{ 'products.product.fabric_tailored_fit' | t }}</li>
+                <li>{{ 'products.product.fabric_preshrunk' | t }}</li>
+                <li>{{ 'products.product.fabric_wash_instructions' | t }}</li>
               </ul>
             </div>
           </div>
@@ -217,12 +217,12 @@
               {% render 'icon-chevron' %}
             </button>
             <div class="accordion-content">
-              <p><strong>Shipping across all Egyptian Governorates:</strong></p>
+              <p><strong>{{ 'products.product.shipping_gov_title' | t }}</strong></p>
               <ul style="padding-left: 20px; margin-top: 8px; line-height: 1.8;">
-                <li><strong>Cairo & Giza:</strong> Delivered within 24 to 48 hours.</li>
-                <li><strong>Alexandria & Delta:</strong> 2 to 3 business days.</li>
-                <li><strong>Upper Egypt & Coastal:</strong> 3 to 4 business days.</li>
-                <li><strong>Free Shipping:</strong> Automatically applied for orders above 1000 EGP.</li>
+                <li>{{ 'products.product.shipping_cairo_giza' | t }}</li>
+                <li>{{ 'products.product.shipping_alex_delta' | t }}</li>
+                <li>{{ 'products.product.shipping_upper_coastal' | t }}</li>
+                <li><strong>{{ 'products.product.shipping_free_threshold' | t }}</strong></li>
               </ul>
             </div>
           </div>
@@ -235,8 +235,7 @@
             </button>
             <div class="accordion-content">
               <p>
-                We offer a hassle-free <strong>14-day exchange and return policy</strong>.
-                If the size is not ideal, simply contact our WhatsApp team, and our courier will deliver the replacement right to your doorstep.
+                {{ 'products.product.returns_policy_text' | t }}
               </p>
             </div>
           </div>

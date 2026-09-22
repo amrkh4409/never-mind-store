@@ -97,20 +97,20 @@
       {%- if paginate.pages > 1 -%}
         <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 56px;">
           {%- if paginate.previous -%}
-            <a href="{{ paginate.previous.url }}" class="btn btn-outline btn-sm">&larr; Previous</a>
+            <a href="{{ paginate.previous.url }}" class="btn btn-outline btn-sm">&larr; {{ 'general.pagination.previous' | t }}</a>
           {%- endif -%}
           <span style="font-size: 0.9rem; font-weight: 600; color: var(--color-foreground-secondary);">
-            Page {{ paginate.current_page }} of {{ paginate.pages }}
+            {{ 'general.pagination.current_page' | t: current: paginate.current_page, total: paginate.pages }}
           </span>
           {%- if paginate.next -%}
-            <a href="{{ paginate.next.url }}" class="btn btn-outline btn-sm">Next &rarr;</a>
+            <a href="{{ paginate.next.url }}" class="btn btn-outline btn-sm">{{ 'general.pagination.next' | t }} &rarr;</a>
           {%- endif -%}
         </div>
       {%- endif -%}
     {%- else -%}
       <div style="text-align: center; padding: 60px 16px;">
-        <h3>No products found</h3>
-        <p style="color: var(--color-foreground-secondary); margin-top: 8px;">Check back soon for new arrivals.</p>
+        <h3>{{ 'general.search.no_results_simple' | t }}</h3>
+        <p style="color: var(--color-foreground-secondary); margin-top: 8px;">{{ 'general.search.no_results_subtext' | t }}</p>
       </div>
     {%- endif -%}
   {%- endpaginate -%}

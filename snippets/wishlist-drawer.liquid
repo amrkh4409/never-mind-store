@@ -1,12 +1,12 @@
 <div id="WishlistBackdrop" class="drawer-backdrop" data-wishlist-close></div>
 
-<div id="WishlistDrawer" class="wishlist-drawer" role="dialog" aria-modal="true" aria-label="{{ 'sections.header.wishlist' | default: 'Wishlist' }}">
+<div id="WishlistDrawer" class="wishlist-drawer" role="dialog" aria-modal="true" aria-label="{{ 'sections.wishlist.title' | t }}">
   <div class="cart-drawer__header">
     <div style="display: flex; align-items: center; gap: 8px;">
-      <h3 class="cart-drawer__title">{{ 'sections.header.wishlist' | default: 'Wishlist' }}</h3>
+      <h3 class="cart-drawer__title">{{ 'sections.wishlist.title' | t }}</h3>
       <span class="badge badge-sale" data-wishlist-drawer-count style="font-size: 0.75rem; padding: 2px 8px;">0</span>
     </div>
-    <button type="button" class="cart-drawer__close-btn" data-wishlist-close aria-label="Close wishlist drawer">
+    <button type="button" class="cart-drawer__close-btn" data-wishlist-close aria-label="{{ 'sections.wishlist.close' | t }}">
       {% render 'icon-close' %}
     </button>
   </div>
@@ -17,7 +17,7 @@
 
   <div class="cart-drawer__footer" style="padding: 16px 24px; border-top: 1px solid var(--color-border);">
     <a href="/collections/all" class="btn btn-primary btn-full" data-wishlist-close>
-      {{ 'sections.cart_drawer.continue_shopping' | default: 'Continue Shopping' }}
+      {{ 'sections.cart_drawer.continue_shopping' | t }}
     </a>
   </div>
 </div>

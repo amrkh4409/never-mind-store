@@ -60,20 +60,20 @@
 
   <!-- Password Recovery Form -->
   <div id="RecoverPasswordForm" style="display: none; margin-top: 20px;">
-    <h2 style="font-size: 1.4rem; text-align: center; margin-bottom: 12px;">Reset Your Password</h2>
+    <h2 style="font-size: 1.4rem; text-align: center; margin-bottom: 12px;">{{ 'customer.recover_password.title' | t }}</h2>
     <p style="font-size: 0.9rem; color: var(--color-foreground-secondary); text-align: center; margin-bottom: 20px;">
-      We will send you an email to reset your password.
+      {{ 'customer.recover_password.subtext' | t }}
     </p>
 
     {%- form 'recover_customer_password' -%}
       <div style="margin-bottom: 16px;">
-        <label for="RecoverEmail" style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 6px;">Email Address</label>
+        <label for="RecoverEmail" style="display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 6px;">{{ 'customer.login_page.email' | t }}</label>
         <input type="email" name="email" id="RecoverEmail" required style="width: 100%; padding: 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm);">
       </div>
-      <button type="submit" class="btn btn-primary btn-full">Submit</button>
+      <button type="submit" class="btn btn-primary btn-full">{{ 'customer.recover_password.submit' | t }}</button>
       <div style="text-align: center; margin-top: 14px;">
         <a href="#cancel" onclick="document.getElementById('RecoverPasswordForm').style.display='none'; document.getElementById('CustomerLoginForm').style.display='block';" style="font-size: 0.88rem; text-decoration: underline;">
-          Cancel
+          {{ 'customer.recover_password.cancel' | t }}
         </a>
       </div>
     {%- endform -%}

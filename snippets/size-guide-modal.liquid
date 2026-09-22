@@ -11,20 +11,20 @@
 
     <h3 style="margin-bottom: 8px;">{{ 'sections.size_guide.title' | t }}</h3>
     <p style="color: var(--color-foreground-secondary); font-size: 0.9rem; margin-bottom: 24px;">
-      All measurements are in centimeters (cm) unless specified. Fits may vary slightly depending on fabric stretch.
+      {{ 'sections.size_guide.subtitle' | t }}
     </p>
 
     <!-- Tops Sizing Table -->
-    <h4 style="font-size: 1.05rem; margin-bottom: 10px;">Tops, Shirts & Hoodies</h4>
+    <h4 style="font-size: 1.05rem; margin-bottom: 10px;">{{ 'sections.size_guide.tops_title' | t }}</h4>
     <div style="overflow-x: auto;">
       <table class="size-guide-table">
         <thead>
           <tr>
-            <th>Size</th>
-            <th>Chest (cm)</th>
-            <th>Length (cm)</th>
-            <th>Shoulder (cm)</th>
-            <th>Recommended Weight</th>
+            <th>{{ 'sections.size_guide.size_label' | t }}</th>
+            <th>{{ 'sections.size_guide.chest_label' | t }} (cm)</th>
+            <th>{{ 'sections.size_guide.length_label' | t }} (cm)</th>
+            <th>{{ 'sections.size_guide.shoulder_label' | t }} (cm)</th>
+            <th>{{ 'sections.size_guide.weight_label' | t }}</th>
           </tr>
         </thead>
         <tbody>
@@ -68,15 +68,15 @@
     </div>
 
     <!-- Pants & Shorts Sizing Table -->
-    <h4 style="font-size: 1.05rem; margin-top: 24px; margin-bottom: 10px;">Pants, Gabardine & Shorts</h4>
+    <h4 style="font-size: 1.05rem; margin-top: 24px; margin-bottom: 10px;">{{ 'sections.size_guide.pants_title' | t }}</h4>
     <div style="overflow-x: auto;">
       <table class="size-guide-table">
         <thead>
           <tr>
-            <th>Waist Size</th>
-            <th>Waist (cm)</th>
-            <th>Length (cm)</th>
-            <th>Thigh (cm)</th>
+            <th>{{ 'sections.size_guide.waist_label' | t }}</th>
+            <th>{{ 'sections.size_guide.waist_label' | t }} (cm)</th>
+            <th>{{ 'sections.size_guide.length_label' | t }} (cm)</th>
+            <th>{{ 'sections.size_guide.thigh_label' | t }} (cm)</th>
           </tr>
         </thead>
         <tbody>
@@ -95,7 +95,7 @@
       <p style="font-size: 0.85rem; color: var(--color-foreground-secondary); line-height: 1.5;">
         {{ 'sections.size_guide.tips_body' | t }}
         <br>
-        <em>Note: Our courier allows you to inspect and try on your item upon delivery across Egypt!</em>
+        <em>{{ 'sections.size_guide.tips_note' | t }}</em>
       </p>
     </div>
   </div>

@@ -1,7 +1,7 @@
 <div class="container" style="padding-top: 48px; padding-bottom: 80px;">
   <div style="text-align: center; margin-bottom: 40px;">
     <h1 style="margin-bottom: 8px;">{{ blog.title }}</h1>
-    <p style="color: var(--color-foreground-secondary); font-size: 1rem;">Style guides, editorial releases, and drops</p>
+    <p style="color: var(--color-foreground-secondary); font-size: 1rem;">{{ 'sections.blog.subtitle' | t }}</p>
   </div>
 
   <div class="products-grid" style="grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));">
@@ -15,7 +15,7 @@
         <span style="font-size: 0.8rem; color: var(--color-foreground-secondary);">{{ article.published_at | date: '%b %d, %Y' }}</span>
         <h3 style="font-size: 1.2rem;"><a href="{{ article.url }}">{{ article.title }}</a></h3>
         <p style="font-size: 0.9rem; color: var(--color-foreground-secondary); line-height: 1.5;">{{ article.excerpt_or_content | strip_html | truncate: 120 }}</p>
-        <a href="{{ article.url }}" style="font-size: 0.88rem; font-weight: 600; text-decoration: underline;">Read More &rarr;</a>
+        <a href="{{ article.url }}" style="font-size: 0.88rem; font-weight: 600; text-decoration: underline;">{{ 'sections.blog.read_more' | t }} &rarr;</a>
       </div>
     {%- endfor -%}
   </div>

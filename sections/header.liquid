@@ -36,8 +36,8 @@
       </a>
     </div>
 
-    <!-- Desktop Navigation Menu -->
-    <nav class="header__nav" aria-label="Main Navigation">
+    <!-- Desktop Main Navigation -->
+    <nav class="header__nav" aria-label="{{ 'accessibility.main_navigation' | t }}">
       {%- assign nav_links = linklists[section.settings.menu].links -%}
       {%- assign trigger_name = section.settings.mega_menu_trigger | default: 'Catalog' | downcase | strip -%}
 
@@ -128,7 +128,7 @@
         {%- if section.settings.show_best_sellers and has_bestsellers_in_menu == false -%}
           <div class="header__menu-item">
             <a href="/collections/best-sellers" class="header__menu-link">
-              <span>{% if request.locale.iso_code == 'ar' %}الأكثر مبيعاً{% else %}BEST SELLERS{% endif %}</span>
+              <span>{{ 'collections.sorting.best_selling' | t }}</span>
               <span class="nav-badge nav-badge--hot">{{ 'sections.header.hot' | t | default: 'HOT' }}</span>
             </a>
           </div>
@@ -137,7 +137,7 @@
         {%- if section.settings.show_sale and has_sale_in_menu == false -%}
           <div class="header__menu-item header__menu-item--sale">
             <a href="/collections/sale" class="header__menu-link">
-              <span>{% if request.locale.iso_code == 'ar' %}تخفيضات{% else %}SALE{% endif %}</span>
+              <span>{{ 'sections.header.sale' | t }}</span>
               <span class="nav-badge nav-badge--sale">{{ 'sections.header.sale' | t | default: 'SALE' }}</span>
             </a>
           </div>
@@ -204,11 +204,9 @@
 <!-- Mobile Navigation Drawer (Synchronized with Main Mega Menu & Multi-Level Accordions) -->
 <div id="MobileNavDrawer" class="mobile-nav-drawer" role="dialog" aria-modal="true" aria-label="{{ 'sections.header.menu' | t | default: 'Menu' }}">
   <div class="mobile-nav-drawer__header">
-    <div class="header__logo">
-      <img src="{{ 'logo.svg' | asset_url }}" alt="{{ shop.name }}" style="height: 36px;">
-    </div>
-    <button type="button" class="mobile-nav-drawer__close-btn" data-mobile-menu-close aria-label="Close menu">
-      {% render 'icon-close' %}
+    <span class="mobile-nav-drawer__title">{{ 'sections.header.menu' | t }}</span>
+    <button type="button" class="mobile-nav-drawer__close-btn" data-mobile-menu-close aria-label="{{ 'sections.header.close_menu' | t }}">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
     </button>
   </div>
 
@@ -578,7 +576,7 @@
       {%- if section.settings.show_best_sellers and has_bestsellers_in_menu == false -%}
         <div class="mobile-nav__item">
           <a href="/collections/best-sellers" class="mobile-nav__item-link">
-            <span>{% if request.locale.iso_code == 'ar' %}الأكثر مبيعاً{% else %}BEST SELLERS{% endif %}</span>
+            <span>{{ 'collections.sorting.best_selling' | t }}</span>
             <span class="nav-badge nav-badge--hot">{{ 'sections.header.hot' | t | default: 'HOT' }}</span>
           </a>
         </div>
@@ -587,7 +585,7 @@
       {%- if section.settings.show_sale and has_sale_in_menu == false -%}
         <div class="mobile-nav__item">
           <a href="/collections/sale" class="mobile-nav__item-link" style="color: var(--color-sale);">
-            <span>{% if request.locale.iso_code == 'ar' %}تخفيضات{% else %}SALE{% endif %}</span>
+            <span>{{ 'sections.header.sale' | t }}</span>
             <span class="nav-badge nav-badge--sale">{{ 'sections.header.sale' | t | default: 'SALE' }}</span>
           </a>
         </div>
@@ -612,13 +610,9 @@
       <div class="mobile-nav__trust-badge">
         <div class="mobile-nav__trust-icon">🇪🇬</div>
         <div>
-          <strong>Never Mind Egypt</strong><br>
+          <strong>{{ 'sections.header.brand_tagline' | t }}</strong><br>
           <span style="font-size: 0.8rem; color: var(--color-foreground-secondary);">
-            {% if request.locale.iso_code == 'ar' %}
-              دفع عند الاستلام • معاينة الشحنة قبل الدفع
-            {% else %}
-              Cash on Delivery Available • Inspect Before Paying
-            {% endif %}
+            {{ 'sections.header.cod_badge' | t }} • {{ 'sections.header.courier_try_badge' | t }}
           </span>
         </div>
       </div>

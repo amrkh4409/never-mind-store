@@ -1,7 +1,7 @@
 <div class="container" style="padding-top: 48px; padding-bottom: 80px;">
   <div style="text-align: center; margin-bottom: 40px;">
-    <h1 style="margin-bottom: 8px;">All Collections</h1>
-    <p style="color: var(--color-foreground-secondary); font-size: 1rem;">Browse our complete fashion catalog</p>
+    <h1 style="margin-bottom: 8px;">{{ 'collections.general.all_collections' | t }}</h1>
+    <p style="color: var(--color-foreground-secondary); font-size: 1rem;">{{ 'sections.list_collections.subtitle' | t }}</p>
   </div>
 
   <div class="collections-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
@@ -22,8 +22,8 @@
 
         <div class="collection-card__overlay">
           <h3 class="collection-card__title">{{ collection.title }}</h3>
-          <span class="collection-card__count">{{ collection.all_products_count }} Products</span>
-          <span class="collection-card__btn">Explore &rarr;</span>
+          <span class="collection-card__count">{{ 'collections.general.product_count' | t: count: collection.all_products_count }}</span>
+          <span class="collection-card__btn">{{ 'sections.list_collections.explore' | t }} &rarr;</span>
         </div>
       </a>
     {%- endfor -%}

@@ -142,24 +142,29 @@
         this.shippingBar.style.width = `${progress}%`;
 
         if (totalEGP >= this.threshold) {
-          this.shippingText.innerHTML = `🎉 <strong>${window.NeverMindConfig?.freeShippingUnlockedMsg || "You've unlocked FREE SHIPPING!"}</strong>`;
+          this.shippingText.innerHTML = `🎉 <strong>${window.NeverMindConfig?.translations?.freeShippingAchieved || window.NeverMindConfig?.freeShippingUnlockedMsg || "You've unlocked FREE SHIPPING!"}</strong>`;
         } else {
           const remaining = Math.round(this.threshold - totalEGP);
-          this.shippingText.innerHTML = `Add <strong>${remaining} EGP</strong> more for <strong>FREE SHIPPING</strong>`;
+          const before = window.NeverMindConfig?.translations?.freeShippingBefore || 'Add';
+          const after = window.NeverMindConfig?.translations?.freeShippingAfter || 'more for FREE SHIPPING';
+          this.shippingText.innerHTML = `${before} <strong>${remaining} EGP</strong> ${after}`;
         }
       }
 
       // Render Item List
       if (!this.itemsContainer) return;
       if (cart.items.length === 0) {
+        const emptyTitle = window.NeverMindConfig?.translations?.cartEmptyTitle || 'Your shopping bag is empty';
+        const emptySubtext = window.NeverMindConfig?.translations?.cartEmptySubtext || 'Discover our latest arrivals and luxury fashion essentials.';
+        const exploreAll = window.NeverMindConfig?.translations?.exploreAll || 'Explore All Products';
         this.itemsContainer.innerHTML = `
           <div style="text-align: center; padding: 48px 16px; color: var(--color-foreground-secondary);">
             <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="margin: 0 auto 16px; opacity: 0.4;">
               <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z"/>
             </svg>
-            <p style="font-size: 1.05rem; font-weight: 600; margin-bottom: 8px;">Your shopping bag is empty</p>
-            <p style="font-size: 0.9rem; margin-bottom: 24px;">Discover our latest arrivals and luxury fashion essentials.</p>
-            <a href="/collections/all" class="btn btn-primary btn-sm">Explore All Products</a>
+            <p style="font-size: 1.05rem; font-weight: 600; margin-bottom: 8px;">${emptyTitle}</p>
+            <p style="font-size: 0.9rem; margin-bottom: 24px;">${emptySubtext}</p>
+            <a href="/collections/all" class="btn btn-primary btn-sm">${exploreAll}</a>
           </div>
         `;
         return;
@@ -263,10 +268,10 @@
       if (this.submitBtn && this.submitBtnText) {
         if (variant.available) {
           this.submitBtn.disabled = false;
-          this.submitBtnText.textContent = 'Add to Bag';
+          this.submitBtnText.textContent = window.NeverMindConfig?.translations?.addToCart || 'Add to Bag';
         } else {
           this.submitBtn.disabled = true;
-          this.submitBtnText.textContent = 'Sold Out';
+          this.submitBtnText.textContent = window.NeverMindConfig?.translations?.soldOut || 'Sold Out';
         }
       }
 
@@ -528,14 +533,17 @@
     renderDrawer() {
       if (!this.drawerItems) return;
       if (this.items.length === 0) {
+        const emptyTitle = window.NeverMindConfig?.translations?.wishlistEmptyTitle || 'Your wishlist is empty';
+        const emptySub = window.NeverMindConfig?.translations?.wishlistEmptySubtext || 'Explore our collections and save pieces you love.';
+        const exploreBtn = window.NeverMindConfig?.translations?.exploreAll || 'Explore Catalog';
         this.drawerItems.innerHTML = `
           <div style="text-align: center; padding: 48px 16px; color: var(--color-foreground-secondary);">
             <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="margin: 0 auto 16px; opacity: 0.4;">
               <path stroke-linecap="round" stroke-linejoin="round" d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
             </svg>
-            <p style="font-size: 1.05rem; font-weight: 600; margin-bottom: 8px;">Your wishlist is empty</p>
-            <p style="font-size: 0.9rem; margin-bottom: 24px;">Explore our collections and tap the heart icon on any style to save it here.</p>
-            <a href="/collections/all" class="btn btn-primary btn-sm" data-wishlist-close>Explore Catalog</a>
+            <p style="font-size: 1.05rem; font-weight: 600; margin-bottom: 8px;">${emptyTitle}</p>
+            <p style="font-size: 0.9rem; margin-bottom: 24px;">${emptySub}</p>
+            <a href="/collections/all" class="btn btn-primary btn-sm" data-wishlist-close>${exploreBtn}</a>
           </div>
         `;
         return;
@@ -553,9 +561,9 @@
               <span style="font-weight: 700; font-size: 0.92rem;">${item.price}</span>
               ${item.compare_at_price ? `<s style="color: var(--color-foreground-muted); font-size: 0.82rem;">${item.compare_at_price}</s>` : ''}
             </div>
-            <a href="${item.url}" class="btn btn-outline btn-sm" style="margin-top: 8px; padding: 6px 12px; font-size: 0.8rem; width: fit-content;">View Style</a>
+            <a href="${item.url}" class="btn btn-outline btn-sm" style="margin-top: 8px; padding: 6px 12px; font-size: 0.8rem; width: fit-content;">${window.NeverMindConfig?.translations?.viewStyle || 'View Style'}</a>
           </div>
-          <button type="button" data-wishlist-remove data-product-handle="${item.handle}" style="background: none; border: none; padding: 8px; cursor: pointer; color: var(--color-foreground-muted);" aria-label="Remove item">
+          <button type="button" data-wishlist-remove data-product-handle="${item.handle}" style="background: none; border: none; padding: 8px; cursor: pointer; color: var(--color-foreground-muted);" aria-label="${window.NeverMindConfig?.translations?.removeItem || 'Remove item'}">
             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
           </button>
         </div>
@@ -565,11 +573,14 @@
     renderPage() {
       if (!this.pageContainer) return;
       if (this.items.length === 0) {
+        const emptyTitle = window.NeverMindConfig?.translations?.wishlistEmptyTitle || 'Your wishlist is currently empty';
+        const emptySub = window.NeverMindConfig?.translations?.wishlistEmptySubtext || 'Discover our luxury streetwear essentials and save your favorite pieces.';
+        const exploreBtn = window.NeverMindConfig?.translations?.exploreAll || 'Explore Catalog';
         this.pageContainer.innerHTML = `
           <div style="grid-column: 1 / -1; text-align: center; padding: 64px 16px;">
-            <h3>Your wishlist is currently empty</h3>
-            <p style="color: var(--color-foreground-secondary); margin: 12px 0 24px;">Discover our luxury streetwear essentials and save your favorite pieces.</p>
-            <a href="/collections/all" class="btn btn-primary">Explore Catalog</a>
+            <h3>${emptyTitle}</h3>
+            <p style="color: var(--color-foreground-secondary); margin: 12px 0 24px;">${emptySub}</p>
+            <a href="/collections/all" class="btn btn-primary">${exploreBtn}</a>
           </div>
         `;
         return;

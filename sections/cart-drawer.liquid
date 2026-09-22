@@ -3,7 +3,7 @@
 <div id="CartDrawer" class="cart-drawer" role="dialog" aria-modal="true" aria-label="{{ 'sections.cart_drawer.title' | t }}">
   <div class="cart-drawer__header">
     <h3 class="cart-drawer__title">{{ 'sections.cart_drawer.title' | t }}</h3>
-    <button type="button" class="cart-drawer__close-btn" data-cart-close aria-label="Close cart drawer">
+    <button type="button" class="cart-drawer__close-btn" data-cart-close aria-label="{{ 'sections.cart_drawer.close' | t }}">
       {% render 'icon-close' %}
     </button>
   </div>
@@ -14,10 +14,10 @@
       {%- assign threshold = settings.free_shipping_threshold | default: 1000 -%}
       {%- assign total_egp = cart.total_price | divided_by: 100.0 -%}
       {%- if total_egp >= threshold -%}
-        🎉 <strong>{{ settings.free_shipping_message | default: "You've unlocked FREE SHIPPING!" }}</strong>
+        🎉 <strong>{{ 'sections.cart_drawer.free_shipping_achieved' | t }}</strong>
       {%- else -%}
         {%- assign remaining = threshold | minus: total_egp | round -%}
-        Add <strong>{{ remaining }} EGP</strong> more for <strong>FREE SHIPPING</strong>
+        {{ 'sections.cart_drawer.free_shipping_before' | t }} <strong>{{ remaining }} EGP</strong> {{ 'sections.cart_drawer.free_shipping_after' | t }}
       {%- endif -%}
     </div>
     <div class="cart-free-shipping__bar">
@@ -35,7 +35,7 @@
           <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z"/>
         </svg>
         <p style="font-size: 1.05rem; font-weight: 600; margin-bottom: 8px;">{{ 'sections.cart_drawer.empty' | t }}</p>
-        <p style="font-size: 0.9rem; margin-bottom: 24px;">Discover our latest arrivals and luxury fashion essentials.</p>
+        <p style="font-size: 0.9rem; margin-bottom: 24px;">{{ 'sections.cart_drawer.empty_subtext' | t }}</p>
         <a href="/collections/all" class="btn btn-primary btn-sm" data-cart-close>{{ 'sections.cart_drawer.continue_shopping' | t }}</a>
       </div>
     {%- else -%}

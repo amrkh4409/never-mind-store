@@ -23,11 +23,7 @@
                   {%- if block.settings.text != blank -%}
                     {{ block.settings.text }}
                   {%- else -%}
-                    {%- if is_ar -%}
-                      أزياء ستريت وير مصرية فاخرة وتصاميم مينيمال عصرية مصممة بنقاء خامات القطن المصري الفاخر.
-                    {%- else -%}
-                      Contemporary Egyptian luxury streetwear and minimalist fashion designed with premium fabrics and tailored cuts.
-                    {%- endif -%}
+                    {{ 'sections.footer.brand_bio' | t }}
                   {%- endif -%}
                 </p>
 
@@ -61,12 +57,12 @@
                       <li><a href="{{ link.url }}">{{ link.title }}</a></li>
                     {%- endfor -%}
                   {%- else -%}
-                    <li><a href="/collections/all">{% if is_ar %}جميع المنتجات{% else %}All Products{% endif %}</a></li>
-                    <li><a href="/collections/men">{% if is_ar %}تشكيلة الرجال{% else %}Men's Collection{% endif %}</a></li>
-                    <li><a href="/collections/women">{% if is_ar %}تشكيلة النساء{% else %}Women's Collection{% endif %}</a></li>
-                    <li><a href="/collections/kids">{% if is_ar %}تشكيلة الأطفال{% else %}Kids & Teens{% endif %}</a></li>
-                    <li><a href="/collections/best-sellers">{% if is_ar %}الأكثر مبيعاً{% else %}Best Sellers{% endif %}</a></li>
-                    <li><a href="/collections/sale">{% if is_ar %}التخفيضات{% else %}Sale & Offers{% endif %}</a></li>
+                    <li><a href="/collections/all">{{ 'collections.general.all_collections' | t }}</a></li>
+                    <li><a href="/collections/men">{{ 'sections.mega_menu.category_1_title' | t }}</a></li>
+                    <li><a href="/collections/women">{{ 'sections.mega_menu.category_2_title' | t }}</a></li>
+                    <li><a href="/collections/kids">{{ 'sections.mega_menu.category_3_title' | t }}</a></li>
+                    <li><a href="/collections/best-sellers">{{ 'collections.sorting.best_selling' | t }}</a></li>
+                    <li><a href="/collections/sale">{{ 'sections.header.sale' | t }}</a></li>
                   {%- endif -%}
                 </ul>
               </div>
@@ -139,11 +135,7 @@
             <img src="{{ 'logo.svg' | asset_url }}" alt="{{ shop.name }}" style="height: 38px;">
           </div>
           <p style="font-size: 0.9rem; color: var(--color-foreground-secondary); line-height: 1.6; margin-bottom: 20px; max-width: 320px;">
-            {%- if is_ar -%}
-              أزياء ستريت وير مصرية فاخرة وتصاميم مينيمال عصرية مصممة بنقاء خامات القطن المصري الفاخر.
-            {%- else -%}
-              Contemporary Egyptian luxury streetwear and minimalist fashion designed with premium fabrics and tailored cuts.
-            {%- endif -%}
+            {{ 'sections.footer.brand_bio' | t }}
           </p>
           <div style="display: flex; align-items: center; gap: 14px;">
             {%- if settings.social_instagram != blank -%}
@@ -165,34 +157,30 @@
         </div>
 
         <div class="footer-col">
-          <h4 class="footer-col__title">{% if is_ar %}تشكيلات المتجر{% else %}Shop Collections{% endif %}</h4>
+          <h4 class="footer-col__title">{{ 'sections.footer.shop_collections' | t }}</h4>
           <ul class="footer-links">
-            <li><a href="/collections/all">{% if is_ar %}جميع المنتجات{% else %}All Products{% endif %}</a></li>
-            <li><a href="/collections/men">{% if is_ar %}تشكيلة الرجال{% else %}Men's Collection{% endif %}</a></li>
-            <li><a href="/collections/women">{% if is_ar %}تشكيلة النساء{% else %}Women's Collection{% endif %}</a></li>
-            <li><a href="/collections/kids">{% if is_ar %}تشكيلة الأطفال{% else %}Kids & Teens{% endif %}</a></li>
-            <li><a href="/collections/best-sellers">{% if is_ar %}الأكثر مبيعاً{% else %}Best Sellers{% endif %}</a></li>
-            <li><a href="/collections/sale">{% if is_ar %}التخفيضات{% else %}Sale & Offers{% endif %}</a></li>
+            <li><a href="/collections/all">{{ 'collections.general.all_collections' | t }}</a></li>
+            <li><a href="/collections/men">{{ 'sections.mega_menu.category_1_title' | t }}</a></li>
+            <li><a href="/collections/women">{{ 'sections.mega_menu.category_2_title' | t }}</a></li>
+            <li><a href="/collections/kids">{{ 'sections.mega_menu.category_3_title' | t }}</a></li>
+            <li><a href="/collections/best-sellers">{{ 'collections.sorting.best_selling' | t }}</a></li>
+            <li><a href="/collections/sale">{{ 'sections.header.sale' | t }}</a></li>
           </ul>
         </div>
 
         <div class="footer-col">
-          <h4 class="footer-col__title">{% if is_ar %}خدمة العملاء{% else %}Customer Service{% endif %}</h4>
+          <h4 class="footer-col__title">{{ 'sections.footer.customer_service' | t }}</h4>
           <ul class="footer-links">
-            <li><a href="/pages/contact">{% if is_ar %}تواصل معنا{% else %}Contact Us{% endif %}</a></li>
-            <li><a href="/pages/faq">{% if is_ar %}الأسئلة الشائعة{% else %}FAQ{% endif %}</a></li>
-            <li><a href="#" data-size-guide-open>{% if is_ar %}دليل المقاسات{% else %}Size Guide{% endif %}</a></li>
+            <li><a href="/pages/contact">{{ 'sections.contact.title' | t }}</a></li>
+            <li><a href="/pages/faq">{{ 'sections.footer.faq' | t }}</a></li>
+            <li><a href="#" data-size-guide-open>{{ 'products.product.size_guide' | t }}</a></li>
           </ul>
         </div>
 
         <div class="footer-col">
           <h4 class="footer-col__title">{{ 'general.newsletter.title' | t }}</h4>
           <p style="font-size: 0.88rem; color: var(--color-foreground-secondary); margin-bottom: 16px;">
-            {%- if is_ar -%}
-              اشترك في قائمتنا البريدية ليصلك جديد تشكيلاتنا وأحدث العروض الحصرية.
-            {%- else -%}
-              {{ 'general.newsletter.subtitle' | t }}
-            {%- endif -%}
+            {{ 'general.newsletter.subtitle' | t }}
           </p>
           {%- form 'customer', id: 'FooterNewsletterFormDefault' -%}
             <input type="hidden" name="contact[tags]" value="newsletter">
@@ -212,11 +200,7 @@
           <div style="margin-top: 20px; display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--color-foreground-secondary);">
             {% render 'icon-shield' %}
             <span>
-              {%- if is_ar -%}
-                الدفع عند الاستلام مع إمكانية المعاينة قبل الدفع لجميع محافظات مصر
-              {%- else -%}
-                Cash on Delivery with package inspection across all Egypt
-              {%- endif -%}
+              {{ 'sections.footer.cod_inspection' | t }}
             </span>
           </div>
         </div>

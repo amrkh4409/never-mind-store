@@ -7,8 +7,14 @@
  * made to this file may be overwritten.
  * ------------------------------------------------------------
  */
+
 {
   "general": {
+    "404": {
+      "title": "Page Not Found",
+      "subtext": "The page you are looking for does not exist or has been moved.",
+      "link": "Back to Homepage"
+    },
     "search": {
       "search": "Search products, collections...",
       "placeholder": "What are you looking for?",
@@ -18,7 +24,10 @@
         "one": "{{ count }} result found",
         "other": "{{ count }} results found"
       },
-      "view_all": "View all {{ count }} results"
+      "view_all": "View all {{ count }} results",
+      "predictive_prompt": "Type to discover shirts, sets, pants, shoes, and new arrivals...",
+      "no_results_simple": "No products found",
+      "no_results_subtext": "Check back soon for new arrivals."
     },
     "pagination": {
       "previous": "Previous",
@@ -34,6 +43,15 @@
       "email_placeholder": "Enter your email address",
       "button_label": "Subscribe",
       "success": "Thanks for subscribing to Never Mind Store!"
+    },
+    "password_page": {
+      "opening_soon": "Opening Soon",
+      "signup_success": "Thank you! We'll notify you when we drop.",
+      "email_placeholder": "Enter your email for early access",
+      "notify_me": "Notify Me",
+      "enter_password_link": "Enter using password",
+      "password_placeholder": "Store password",
+      "enter_store_button": "Enter Store"
     }
   },
   "sections": {
@@ -54,7 +72,12 @@
       "promo_mens_title": "Men's New Drop 2026",
       "promo_womens_title": "Women's Collection 2026",
       "promo_kids_title": "Kids Streetwear 2026",
-      "promo_cta": "Shop Now"
+      "promo_cta": "Shop Now",
+      "brand_tagline": "Never Mind Egypt",
+      "cod_badge": "Cash on Delivery",
+      "exchange_badge": "14-Day Free Exchange",
+      "courier_try_badge": "Try Before Payment",
+      "close_menu": "Close menu"
     },
     "cart_drawer": {
       "title": "Shopping Bag",
@@ -68,7 +91,9 @@
       "checkout": "Proceed to Checkout",
       "view_cart": "View Bag",
       "notes_title": "Add order notes / delivery instructions",
-      "notes_placeholder": "Special instructions, delivery landmark, etc."
+      "notes_placeholder": "Special instructions, delivery landmark, etc.",
+      "empty_subtext": "Your luxury wardrobe awaits.",
+      "close": "Close cart drawer"
     },
     "quick_view": {
       "title": "Quick View",
@@ -79,16 +104,78 @@
       "title": "Size Guide & Measurements",
       "close": "Close Size Guide",
       "tips_title": "How to Measure",
-      "tips_body": "Chest: Measure around the fullest part of your chest. Length: Measure from the highest point of the shoulder to the hem."
+      "tips_body": "Chest: Measure around the fullest part of your chest. Length: Measure from the highest point of the shoulder to the hem.",
+      "subtitle": "All measurements are in centimeters (cm). Streetwear relaxed fit.",
+      "tops_title": "Tops (T-Shirts, Hoodies & Sweatshirts)",
+      "pants_title": "Bottoms (Pants & Shorts)",
+      "size_label": "Size",
+      "chest_label": "Chest",
+      "length_label": "Length",
+      "shoulder_label": "Shoulder",
+      "waist_label": "Waist",
+      "thigh_label": "Thigh",
+      "weight_label": "Recommended Weight (kg)",
+      "tips_note": "Inspection Guarantee: You can inspect and try on your items with the courier upon delivery before completing payment."
     },
     "footer": {
       "copyright": "All rights reserved.",
-      "payment_cod": "Cash on Delivery Available"
+      "payment_cod": "Cash on Delivery Available",
+      "brand_bio": "Contemporary Egyptian luxury streetwear and minimalist fashion designed with premium fabrics and tailored cuts.",
+      "shop_collections": "Shop Collections",
+      "customer_service": "Customer Service",
+      "faq": "FAQ",
+      "cod_inspection": "Cash on Delivery with package inspection across all Egypt"
     },
     "testimonials": {
       "heading": "What Our Customers Say",
       "subheading": "Real reviews from our community across Egyptian governorates",
       "verified_buyer": "Verified Buyer"
+    },
+    "contact": {
+      "title": "Contact Us",
+      "subtitle": "Get in touch with the Never Mind team for inquiries, styling advice, or order support.",
+      "success": "Thanks for contacting us. We'll get back to you as soon as possible.",
+      "name": "Name",
+      "phone": "Phone / WhatsApp",
+      "email": "Email Address",
+      "message": "How can we help you?",
+      "submit": "Send Message",
+      "whatsapp_prompt": "Need instant support for sizing or delivery today?",
+      "whatsapp_btn": "Chat on WhatsApp"
+    },
+    "wishlist": {
+      "title": "My Wishlist",
+      "subtitle": "Your curated favorites saved for later",
+      "empty": "Your wishlist is empty",
+      "empty_subtext": "Explore our collections and save pieces you love.",
+      "close": "Close Wishlist"
+    },
+    "blog": {
+      "title": "Editorial & Journal",
+      "subtitle": "Style guides, editorial releases, and drops",
+      "read_more": "Read More",
+      "back_to_blog": "Back to Blog"
+    },
+    "list_collections": {
+      "title": "All Collections",
+      "subtitle": "Browse our complete fashion catalog",
+      "explore": "Explore"
+    },
+    "mega_menu": {
+      "category_1_title": "Men's Streetwear",
+      "category_2_title": "Women's Collection",
+      "category_3_title": "Shoes & Accessories",
+      "category_4_title": "Sale & Offers",
+      "oversized_tshirts": "Oversized T-Shirts",
+      "hoodies_sweatshirts": "Hoodies & Sweatshirts",
+      "cargo_pants": "Cargo Pants & Jeans",
+      "matching_sets": "Matching Sets & Tracksuits",
+      "jackets_outerwear": "Jackets & Outerwear",
+      "caps_accessories": "Caps & Accessories",
+      "sneakers": "Streetwear Sneakers",
+      "sale_up_to": "Sale Up to 50% Off",
+      "view_catalog": "View Full Catalog",
+      "shop_collection": "Shop Collection"
     }
   },
   "products": {
@@ -117,7 +204,19 @@
       "cod_available": "Cash on Delivery available across Egypt",
       "inspection_notice": "Inspect & try package before payment with courier",
       "reviews": "Customer Reviews",
-      "no_reviews_yet": "No reviews yet. Be the first to review this product."
+      "no_reviews_yet": "No reviews yet. Be the first to review this product.",
+      "verified_reviews": "4.9 (Verified Customers)",
+      "add_to_wishlist": "Add to wishlist",
+      "fabric_heavyweight": "Premium heavyweight Egyptian combed cotton blend",
+      "fabric_tailored_fit": "Tailored fit with reinforced drop-shoulder seams",
+      "fabric_preshrunk": "Pre-shrunk fabric to prevent post-wash deformation",
+      "fabric_wash_instructions": "Machine wash cold with like colors; do not tumble dry",
+      "shipping_gov_title": "Shipping across all Egyptian Governorates:",
+      "shipping_cairo_giza": "Cairo & Giza: Delivered within 24 to 48 hours.",
+      "shipping_alex_delta": "Alexandria & Delta: 2 to 3 business days.",
+      "shipping_upper_coastal": "Upper Egypt & Coastal: 3 to 4 business days.",
+      "shipping_free_threshold": "Free Shipping: Automatically applied for orders above 1000 EGP.",
+      "returns_policy_text": "We offer a hassle-free 14-day exchange and return policy across all Egyptian governorates. You can also inspect and try the order with the courier before payment."
     }
   },
   "collections": {
@@ -193,7 +292,47 @@
       "payment_status": "Payment Status",
       "fulfillment_status": "Fulfillment Status",
       "total": "Total",
-      "log_out": "Log Out"
+      "log_out": "Log Out",
+      "welcome": "Welcome back",
+      "manage_addresses": "Manage Addresses",
+      "explore_collections": "Explore Collections"
+    },
+    "orders": {
+      "title": "Order Details",
+      "back_to_account": "Back to Account",
+      "placed_on": "Placed on",
+      "product": "Product",
+      "sku": "SKU",
+      "price": "Price",
+      "quantity": "Quantity",
+      "total": "Total",
+      "subtotal": "Subtotal",
+      "shipping": "Shipping"
+    },
+    "addresses": {
+      "title": "Your Addresses",
+      "default": "Default Address",
+      "add_new": "Add New Address",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "recover_password": {
+      "title": "Reset Your Password",
+      "subtext": "We will send you an email to reset your password.",
+      "submit": "Submit",
+      "cancel": "Cancel"
+    }
+  },
+  "accessibility": {
+    "skip_to_content": "Skip to content",
+    "close": "Close",
+    "main_navigation": "Main Navigation"
+  },
+  "templates": {
+    "gift_card": {
+      "title": "Gift Card",
+      "subtext": "Never Mind Luxury Fashion",
+      "start_shopping": "Start Shopping"
     }
   }
 }

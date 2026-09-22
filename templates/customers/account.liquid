@@ -3,7 +3,7 @@
     <div>
       <h1>{{ 'customer.account.title' | t }}</h1>
       <p style="color: var(--color-foreground-secondary); font-size: 0.95rem;">
-        Welcome back, {{ customer.first_name }}!
+        {{ 'customer.account.welcome' | t }}, {{ customer.first_name }}!
       </p>
     </div>
     <a href="{{ routes.account_logout_url }}" class="btn btn-outline btn-sm">
@@ -43,7 +43,7 @@
           </div>
         {%- else -%}
           <p style="color: var(--color-foreground-secondary);">{{ 'customer.account.no_orders' | t }}</p>
-          <a href="/collections/all" class="btn btn-primary btn-sm" style="margin-top: 16px;">Explore Collections</a>
+          <a href="/collections/all" class="btn btn-primary btn-sm" style="margin-top: 16px;">{{ 'customer.account.explore_collections' | t }}</a>
         {%- endif -%}
       {%- endpaginate -%}
     </div>
@@ -66,7 +66,7 @@
         {%- endif -%}
 
         <a href="{{ routes.account_addresses_url }}" class="btn btn-outline btn-sm btn-full" style="margin-top: 20px;">
-          Manage Addresses
+          {{ 'customer.account.manage_addresses' | t }}
         </a>
       </div>
     </div>
