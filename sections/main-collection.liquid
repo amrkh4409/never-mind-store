@@ -7,89 +7,15 @@
     {%- endif -%}
   </div>
 
-  {%- paginate collection.products by 24 -%}
-    <!-- Filter & Sort Bar -->
-    {%- assign is_ar = false -%}
-    {%- if request.locale.iso_code == 'ar' or localization.language.iso_code == 'ar' -%}
-      {%- assign is_ar = true -%}
-    {%- endif -%}
+  {%- assign per_page = section.settings.products_per_page | default: 24 -%}
+  {%- paginate collection.products by per_page -%}
 
-    {%- assign sort_by_label = 'collections.general.sort_by' | t -%}
-    {%- if sort_by_label contains 'translation missing' or sort_by_label contains 'collections.general' or sort_by_label == blank -%}
-      {%- if is_ar -%}
-        {%- assign sort_by_label = 'ترتيب حسب' -%}
-      {%- else -%}
-        {%- assign sort_by_label = 'Sort by' -%}
-      {%- endif -%}
-    {%- endif -%}
-
-    {%- assign count_label = 'collections.general.product_count' | t: count: collection.products_count -%}
-    {%- if count_label contains 'translation missing' or count_label contains 'collections.general' or count_label == blank -%}
-      {%- if is_ar -%}
-        {%- if collection.products_count == 1 -%}
-          {%- assign count_label = 'منتج واحد' -%}
-        {%- else -%}
-          {%- assign count_label = collection.products_count | append: ' منتجات' -%}
-        {%- endif -%}
-      {%- else -%}
-        {%- if collection.products_count == 1 -%}
-          {%- assign count_label = '1 product' -%}
-        {%- else -%}
-          {%- assign count_label = collection.products_count | append: ' products' -%}
-        {%- endif -%}
-      {%- endif -%}
-    {%- endif -%}
-
-    <div class="facets-container" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid var(--color-border-light);">
-      <div style="font-size: 0.9rem; color: var(--color-foreground-secondary);">
-        <span>{{ count_label }}</span>
-      </div>
-
-      <div style="display: flex; align-items: center; gap: 16px;">
-        <form id="FacetSortForm" method="get" style="display: inline-flex; align-items: center; gap: 8px;">
-          <label for="SortBy" style="font-size: 0.88rem; font-weight: 600;">{{ sort_by_label }}:</label>
-          <select
-            name="sort_by"
-            id="SortBy"
-            onchange="this.form.submit()"
-            style="padding: 8px 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-size: 0.88rem; background-color: var(--color-bg);"
-          >
-            {%- for option in collection.sort_options -%}
-              {%- assign opt_name = option.name -%}
-              {%- if is_ar -%}
-                {%- case option.value -%}
-                  {%- when 'manual' -%}
-                    {%- assign opt_name = 'المميز' -%}
-                  {%- when 'best-selling' -%}
-                    {%- assign opt_name = 'الأكثر مبيعاً' -%}
-                  {%- when 'title-ascending' -%}
-                    {%- assign opt_name = 'أبجدياً، أ-ي' -%}
-                  {%- when 'title-descending' -%}
-                    {%- assign opt_name = 'أبجدياً، ي-أ' -%}
-                  {%- when 'price-ascending' -%}
-                    {%- assign opt_name = 'السعر: من الأقل للأعلى' -%}
-                  {%- when 'price-descending' -%}
-                    {%- assign opt_name = 'السعر: من الأعلى للأقل' -%}
-                  {%- when 'created-ascending' -%}
-                    {%- assign opt_name = 'التاريخ: من الأقدم للأحدث' -%}
-                  {%- when 'created-descending' -%}
-                    {%- assign opt_name = 'التاريخ: من الأحدث للأقدم' -%}
-                {%- endcase -%}
-              {%- endif -%}
-              <option
-                value="{{ option.value }}"
-                {% if option.value == collection.sort_by %}selected{% endif %}
-              >
-                {{ opt_name }}
-              </option>
-            {%- endfor -%}
-          </select>
-        </form>
-      </div>
-    </div>
+    <!-- Advanced Filtration & Sorting (Price, Availability, Sort By) -->
+    {% render 'collection-filters', collection: collection, section: section %}
 
     {%- if collection.products.size > 0 -%}
-      <div class="products-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+      {%- assign cols = section.settings.columns_desktop | default: 4 -%}
+      <div class="products-grid" style="grid-template-columns: repeat(auto-fill, minmax(calc(100% / {{ cols }} - 20px), 1fr));">
         {%- for product in collection.products -%}
           {% render 'product-card', product_card_product: product, show_vendor: true %}
         {%- endfor -%}
@@ -111,7 +37,10 @@
     {%- else -%}
       <div style="text-align: center; padding: 60px 16px;">
         <h3>{{ 'general.search.no_results_simple' | t }}</h3>
-        <p style="color: var(--color-foreground-secondary); margin-top: 8px;">{{ 'general.search.no_results_subtext' | t }}</p>
+        <p style="color: var(--color-foreground-secondary); margin-top: 8px;">{{ 'collections.general.empty' | t }}</p>
+        <a href="{{ collection.url }}" class="btn btn-primary btn-sm" style="margin-top: 20px;">
+          {{ 'collections.general.clear_all' | t }}
+        </a>
       </div>
     {%- endif -%}
   {%- endpaginate -%}
@@ -120,6 +49,43 @@
 {% schema %}
 {
   "name": "Collection Products",
-  "settings": []
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "default": 24,
+      "label": "Products per page"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 4,
+      "label": "Desktop columns"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_filtering",
+      "default": true,
+      "label": "Enable filtering"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sorting",
+      "default": true,
+      "label": "Enable sorting"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_count",
+      "default": true,
+      "label": "Show product count"
+    }
+  ]
 }
 {% endschema %}

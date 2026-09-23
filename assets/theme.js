@@ -966,6 +966,101 @@
     }
   }
 
+  // --- Collection Filters & Facets Controller ---
+  function initCollectionFilters() {
+    const filterDrawer = document.getElementById('FilterDrawer');
+    const filterBackdrop = document.getElementById('FilterDrawerBackdrop');
+    const openBtns = document.querySelectorAll('[data-filter-drawer-open]');
+    const closeBtns = document.querySelectorAll('[data-filter-drawer-close]');
+
+    // 1. Mobile Filter Drawer Open/Close
+    const openDrawer = () => {
+      if (filterDrawer) filterDrawer.classList.add('is-open');
+      if (filterBackdrop) filterBackdrop.classList.add('is-active');
+      document.body.style.overflow = 'hidden';
+    };
+
+    const closeDrawer = () => {
+      if (filterDrawer) filterDrawer.classList.remove('is-open');
+      if (filterBackdrop) filterBackdrop.classList.remove('is-active');
+      document.body.style.overflow = '';
+    };
+
+    openBtns.forEach(btn => btn.addEventListener('click', openDrawer));
+    closeBtns.forEach(btn => btn.addEventListener('click', closeDrawer));
+
+    // 2. Desktop Dropdown Popovers
+    const dropdownWraps = document.querySelectorAll('[data-facet-dropdown]');
+    dropdownWraps.forEach(wrap => {
+      const trigger = wrap.querySelector('[data-facet-chip-trigger]');
+      const popover = wrap.querySelector('[data-facet-popover]');
+      if (!trigger || !popover) return;
+
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isOpen = popover.classList.contains('is-open');
+        // Close any other open popovers
+        document.querySelectorAll('[data-facet-popover].is-open').forEach(p => {
+          if (p !== popover) {
+            p.classList.remove('is-open');
+            const otherBtn = p.closest('[data-facet-dropdown]')?.querySelector('[data-facet-chip-trigger]');
+            if (otherBtn) otherBtn.classList.remove('is-open');
+          }
+        });
+
+        if (isOpen) {
+          popover.classList.remove('is-open');
+          trigger.classList.remove('is-open');
+        } else {
+          popover.classList.add('is-open');
+          trigger.classList.add('is-open');
+        }
+      });
+
+      // Prevent clicks inside popover from closing it
+      popover.addEventListener('click', (e) => e.stopPropagation());
+    });
+
+    // Close popovers on click outside
+    document.addEventListener('click', () => {
+      document.querySelectorAll('[data-facet-popover].is-open').forEach(p => {
+        p.classList.remove('is-open');
+        const trigger = p.closest('[data-facet-dropdown]')?.querySelector('[data-facet-chip-trigger]');
+        if (trigger) trigger.classList.remove('is-open');
+      });
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('[data-facet-popover].is-open').forEach(p => {
+          p.classList.remove('is-open');
+          const trigger = p.closest('[data-facet-dropdown]')?.querySelector('[data-facet-chip-trigger]');
+          if (trigger) trigger.classList.remove('is-open');
+        });
+        closeDrawer();
+      }
+    });
+
+    // 3. Clean Form Submission (ignore blank inputs so query string stays clean)
+    const forms = [
+      document.getElementById('CollectionFacetsForm'),
+      document.querySelector('.filter-drawer__form')
+    ];
+
+    forms.forEach(form => {
+      if (!form) return;
+      form.addEventListener('submit', () => {
+        const inputs = form.querySelectorAll('input[type="number"], input[type="text"]');
+        inputs.forEach(input => {
+          if (input.value.trim() === '') {
+            input.disabled = true;
+          }
+        });
+      });
+    });
+  }
+
   // --- Initialize All Theme Features on DOM Ready ---
   document.addEventListener('DOMContentLoaded', () => {
     window.NeverMindCart = new CartDrawer();
@@ -977,5 +1072,6 @@
     initModals();
     initSliders();
     initRecentlyViewed();
+    initCollectionFilters();
   });
 })();

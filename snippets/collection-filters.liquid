@@ -1,0 +1,507 @@
+{%- comment -%}
+  Snippet: collection-filters.liquid
+  Renders modern Shopify collection filtration (Price Range, In/Out of Stock Availability, and Sort By)
+  Fully responsive, bilingual (EN/AR), and compatible with native Shopify 2.0 Facets API and standard parameters.
+{%- endcomment -%}
+
+{%- assign is_ar = false -%}
+{%- if request.locale.iso_code == 'ar' or localization.language.iso_code == 'ar' -%}
+  {%- assign is_ar = true -%}
+{%- endif -%}
+
+{%- comment -%} Discover native Shopify filters {%- endcomment -%}
+{%- assign availability_filter = nil -%}
+{%- assign price_filter = nil -%}
+{%- assign other_filters = '' -%}
+
+{%- for filter in collection.filters -%}
+  {%- if filter.param_name contains 'availability' -%}
+    {%- assign availability_filter = filter -%}
+  {%- elsif filter.type == 'price_range' -%}
+    {%- assign price_filter = filter -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- comment -%} Count total active filters {%- endcomment -%}
+{%- assign total_active_filters = 0 -%}
+{%- for filter in collection.filters -%}
+  {%- assign total_active_filters = total_active_filters | plus: filter.active_values.size -%}
+  {%- if filter.type == 'price_range' -%}
+    {%- if filter.min_value.value != nil or filter.max_value.value != nil -%}
+      {%- assign total_active_filters = total_active_filters | plus: 1 -%}
+    {%- endif -%}
+  {%- endif -%}
+{%- endfor -%}
+
+{%- comment -%} Fallback active detection if collection.filters not yet published in admin {%- endcomment -%}
+{%- assign fallback_in_stock = false -%}
+{%- assign fallback_out_of_stock = false -%}
+{%- assign fallback_min_price = '' -%}
+{%- assign fallback_max_price = '' -%}
+
+<div class="facets-wrapper" data-collection-facets>
+  <!-- Main Desktop & Mobile Filters Form -->
+  <form id="CollectionFacetsForm" action="{{ collection.url }}" method="get" class="facets-form">
+    
+    <!-- Preserve active sort_by in hidden input if not in mobile drawer -->
+    <input type="hidden" name="sort_by" value="{{ collection.sort_by | default: collection.default_sort_by }}">
+
+    <div class="facets-bar">
+      <!-- ========================================== -->
+      <!-- 1. DESKTOP TOOLBAR                         -->
+      <!-- ========================================== -->
+      <div class="facets-desktop">
+        <div class="facets-desktop-left">
+          
+          <!-- Product Count Display -->
+          {%- if section.settings.show_product_count -%}
+            <span class="facets-product-count">
+              {%- if is_ar -%}
+                {%- if collection.products_count == 1 -%}
+                  منتج واحد
+                {%- else -%}
+                  {{ collection.products_count }} منتجات
+                {%- endif -%}
+              {%- else -%}
+                {{ 'collections.general.product_count' | t: count: collection.products_count }}
+              {%- endif -%}
+            </span>
+          {%- endif -%}
+
+          {%- if section.settings.enable_filtering -%}
+            <!-- AVAILABILITY FILTER CHIP & DROPDOWN -->
+            <div class="facet-dropdown-wrap" data-facet-dropdown>
+              {%- assign avail_active_count = 0 -%}
+              {%- if availability_filter != nil -%}
+                {%- assign avail_active_count = availability_filter.active_values.size -%}
+              {%- endif -%}
+
+              <button
+                type="button"
+                class="facet-chip-btn {% if avail_active_count > 0 %}has-active{% endif %}"
+                data-facet-chip-trigger
+                aria-expanded="false"
+              >
+                <span>{{ 'collections.general.availability' | t }}</span>
+                {%- if avail_active_count > 0 -%}
+                  <span class="facet-chip-badge">{{ avail_active_count }}</span>
+                {%- endif -%}
+                <svg class="facet-chip-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </button>
+
+              <div class="facet-popover" data-facet-popover>
+                <div class="facet-popover__header">
+                  <h4 class="facet-popover__title">{{ 'collections.general.availability' | t }}</h4>
+                  {%- if availability_filter != nil and avail_active_count > 0 -%}
+                    <a href="{{ availability_filter.url_to_remove }}" class="facet-popover__reset">{{ 'collections.general.reset' | t }}</a>
+                  {%- endif -%}
+                </div>
+
+                <div class="facet-checkbox-list">
+                  {%- if availability_filter != nil -%}
+                    {%- for val in availability_filter.values -%}
+                      <label class="facet-checkbox-label">
+                        <span class="facet-checkbox-label-content">
+                          <input
+                            type="checkbox"
+                            name="{{ val.param_name }}"
+                            value="{{ val.value }}"
+                            class="facet-checkbox-input"
+                            {% if val.active %}checked{% endif %}
+                            onchange="this.closest('form').submit();"
+                          >
+                          <span>
+                            {%- if val.value == '1' -%}
+                              {{ 'collections.general.in_stock' | t }}
+                            {%- elsif val.value == '0' -%}
+                              {{ 'collections.general.out_of_stock' | t }}
+                            {%- else -%}
+                              {{ val.label }}
+                            {%- endif -%}
+                          </span>
+                        </span>
+                        <span class="facet-checkbox-count">({{ val.count }})</span>
+                      </label>
+                    {%- endfor -%}
+                  {%- else -%}
+                    <!-- Fallback Availability Checkboxes -->
+                    <label class="facet-checkbox-label">
+                      <span class="facet-checkbox-label-content">
+                        <input
+                          type="checkbox"
+                          name="filter.v.availability"
+                          value="1"
+                          class="facet-checkbox-input"
+                          onchange="this.closest('form').submit();"
+                        >
+                        <span>{{ 'collections.general.in_stock' | t }}</span>
+                      </span>
+                    </label>
+                    <label class="facet-checkbox-label">
+                      <span class="facet-checkbox-label-content">
+                        <input
+                          type="checkbox"
+                          name="filter.v.availability"
+                          value="0"
+                          class="facet-checkbox-input"
+                          onchange="this.closest('form').submit();"
+                        >
+                        <span>{{ 'collections.general.out_of_stock' | t }}</span>
+                      </span>
+                    </label>
+                  {%- endif -%}
+                </div>
+              </div>
+            </div>
+
+            <!-- PRICE RANGE FILTER CHIP & DROPDOWN -->
+            <div class="facet-dropdown-wrap" data-facet-dropdown>
+              {%- assign price_active = false -%}
+              {%- if price_filter != nil -%}
+                {%- if price_filter.min_value.value != nil or price_filter.max_value.value != nil -%}
+                  {%- assign price_active = true -%}
+                {%- endif -%}
+              {%- endif -%}
+
+              <button
+                type="button"
+                class="facet-chip-btn {% if price_active %}has-active{% endif %}"
+                data-facet-chip-trigger
+                aria-expanded="false"
+              >
+                <span>{{ 'collections.general.price' | t }}</span>
+                {%- if price_active -%}
+                  <span class="facet-chip-badge">1</span>
+                {%- endif -%}
+                <svg class="facet-chip-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </button>
+
+              <div class="facet-popover" data-facet-popover>
+                <div class="facet-popover__header">
+                  <h4 class="facet-popover__title">{{ 'collections.general.price' | t }}</h4>
+                  {%- if price_filter != nil and price_active -%}
+                    <a href="{{ price_filter.url_to_remove }}" class="facet-popover__reset">{{ 'collections.general.reset' | t }}</a>
+                  {%- endif -%}
+                </div>
+
+                <div class="facet-price-range">
+                  {%- liquid
+                    assign min_val = ''
+                    assign max_val = ''
+                    assign min_param = 'filter.v.price.gte'
+                    assign max_param = 'filter.v.price.lte'
+                    if price_filter != nil
+                      assign min_param = price_filter.min_value.param_name
+                      assign max_param = price_filter.max_value.param_name
+                      if price_filter.min_value.value
+                        assign min_val = price_filter.min_value.value | divided_by: 100.0 | round
+                      endif
+                      if price_filter.max_value.value
+                        assign max_val = price_filter.max_value.value | divided_by: 100.0 | round
+                      endif
+                    endif
+                  -%}
+
+                  <div class="facet-price-row">
+                    <div class="facet-price-field">
+                      <span class="facet-price-currency">EGP</span>
+                      <input
+                        type="number"
+                        name="{{ min_param }}"
+                        value="{{ min_val }}"
+                        placeholder="{{ 'collections.general.price_from' | t }}"
+                        class="facet-price-input"
+                        min="0"
+                      >
+                    </div>
+                    <span class="facet-price-separator">–</span>
+                    <div class="facet-price-field">
+                      <span class="facet-price-currency">EGP</span>
+                      <input
+                        type="number"
+                        name="{{ max_param }}"
+                        value="{{ max_val }}"
+                        placeholder="{{ 'collections.general.price_to' | t }}"
+                        class="facet-price-input"
+                        min="0"
+                      >
+                    </div>
+                  </div>
+
+                  <div class="facet-popover__actions">
+                    <button type="submit" class="btn btn-primary btn-sm btn-full">
+                      {{ 'collections.general.apply' | t }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {%- endif -%}
+
+        </div>
+      </div>
+
+      <!-- ========================================== -->
+      <!-- 2. DESKTOP SORT BY DROPDOWN                -->
+      <!-- ========================================== -->
+      {%- if section.settings.enable_sorting -%}
+        <div class="facets-desktop">
+          <div class="facet-sort-wrapper">
+            <label for="DesktopSortBy" class="facet-sort-label">{{ 'collections.general.sort_by' | t }}:</label>
+            <select
+              id="DesktopSortBy"
+              class="facet-sort-select"
+              onchange="this.closest('form').querySelector('input[name=sort_by]').value = this.value; this.closest('form').submit();"
+            >
+              {%- assign cur_sort = collection.sort_by | default: collection.default_sort_by -%}
+              {%- for option in collection.sort_options -%}
+                {%- assign opt_name = option.name -%}
+                {%- if is_ar -%}
+                  {%- case option.value -%}
+                    {%- when 'manual' -%}{%- assign opt_name = 'collections.sorting.featured' | t -%}
+                    {%- when 'best-selling' -%}{%- assign opt_name = 'collections.sorting.best_selling' | t -%}
+                    {%- when 'title-ascending' -%}{%- assign opt_name = 'collections.sorting.az' | t -%}
+                    {%- when 'title-descending' -%}{%- assign opt_name = 'collections.sorting.za' | t -%}
+                    {%- when 'price-ascending' -%}{%- assign opt_name = 'collections.sorting.price_ascending' | t -%}
+                    {%- when 'price-descending' -%}{%- assign opt_name = 'collections.sorting.price_descending' | t -%}
+                    {%- when 'created-descending' -%}{%- assign opt_name = 'collections.sorting.date_descending' | t -%}
+                    {%- when 'created-ascending' -%}{%- assign opt_name = 'collections.sorting.date_ascending' | t -%}
+                  {%- endcase -%}
+                {%- endif -%}
+                <option value="{{ option.value }}" {% if option.value == cur_sort %}selected{% endif %}>
+                  {{ opt_name }}
+                </option>
+              {%- endfor -%}
+            </select>
+          </div>
+        </div>
+      {%- endif -%}
+
+      <!-- ========================================== -->
+      <!-- 3. MOBILE TOOLBAR (FILTER & SORT BUTTONS)  -->
+      <!-- ========================================== -->
+      <div class="facets-mobile-bar">
+        <button type="button" class="facets-mobile-btn" data-filter-drawer-open>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+          <span>{{ 'collections.general.filter_button' | t }}</span>
+          {%- if total_active_filters > 0 -%}
+            <span class="facet-chip-badge">{{ total_active_filters }}</span>
+          {%- endif -%}
+        </button>
+
+        {%- if section.settings.enable_sorting -%}
+          <div style="flex: 1;">
+            <select
+              class="facet-sort-select"
+              style="width: 100%;"
+              onchange="this.closest('form').querySelector('input[name=sort_by]').value = this.value; this.closest('form').submit();"
+            >
+              {%- assign cur_sort = collection.sort_by | default: collection.default_sort_by -%}
+              {%- for option in collection.sort_options -%}
+                {%- assign opt_name = option.name -%}
+                {%- if is_ar -%}
+                  {%- case option.value -%}
+                    {%- when 'manual' -%}{%- assign opt_name = 'collections.sorting.featured' | t -%}
+                    {%- when 'best-selling' -%}{%- assign opt_name = 'collections.sorting.best_selling' | t -%}
+                    {%- when 'price-ascending' -%}{%- assign opt_name = 'collections.sorting.price_ascending' | t -%}
+                    {%- when 'price-descending' -%}{%- assign opt_name = 'collections.sorting.price_descending' | t -%}
+                    {%- when 'created-descending' -%}{%- assign opt_name = 'collections.sorting.date_descending' | t -%}
+                  {%- endcase -%}
+                {%- endif -%}
+                <option value="{{ option.value }}" {% if option.value == cur_sort %}selected{% endif %}>
+                  {{ opt_name }}
+                </option>
+              {%- endfor -%}
+            </select>
+          </div>
+        {%- endif -%}
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 4. ACTIVE FILTERS PILLS ROW                -->
+    <!-- ========================================== -->
+    {%- if total_active_filters > 0 -%}
+      <div class="active-facets-bar">
+        {%- for filter in collection.filters -%}
+          {%- for val in filter.active_values -%}
+            <a href="{{ val.url_to_remove }}" class="active-facet-pill">
+              <span>
+                {%- if val.value == '1' -%}
+                  {{ 'collections.general.in_stock' | t }}
+                {%- elsif val.value == '0' -%}
+                  {{ 'collections.general.out_of_stock' | t }}
+                {%- else -%}
+                  {{ val.label }}
+                {%- endif -%}
+              </span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </a>
+          {%- endfor -%}
+
+          {%- if filter.type == 'price_range' -%}
+            {%- if filter.min_value.value != nil or filter.max_value.value != nil -%}
+              <a href="{{ filter.url_to_remove }}" class="active-facet-pill">
+                <span>
+                  {{ 'collections.general.price' | t }}:
+                  {%- if filter.min_value.value != nil -%}{{ filter.min_value.value | money }}{%- else -%}0{%- endif -%}
+                  –
+                  {%- if filter.max_value.value != nil -%}{{ filter.max_value.value | money }}{%- else -%}{{ filter.range_max | money }}{%- endif -%}
+                </span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </a>
+            {%- endif -%}
+          {%- endif -%}
+        {%- endfor -%}
+
+        <!-- Clear all active filters link -->
+        <a href="{{ collection.url }}{% if collection.sort_by != blank %}?sort_by={{ collection.sort_by }}{% endif %}" class="active-facet-clear-all">
+          {{ 'collections.general.clear_all' | t }}
+        </a>
+      </div>
+    {%- endif -%}
+
+  </form>
+</div>
+
+<!-- ========================================== -->
+<!-- 5. SLIDE-OUT MOBILE FILTER DRAWER          -->
+<!-- ========================================== -->
+<div id="FilterDrawerBackdrop" class="drawer-backdrop" data-filter-drawer-close></div>
+
+<div id="FilterDrawer" class="filter-drawer" role="dialog" aria-modal="true" aria-label="{{ 'collections.general.filter_and_sort' | t }}">
+  <div class="filter-drawer__header">
+    <h3 class="filter-drawer__title">{{ 'collections.general.filter_and_sort' | t }}</h3>
+    <button type="button" class="filter-drawer__close" data-filter-drawer-close aria-label="{{ 'collections.general.close_filters' | t }}">
+      {% render 'icon-close' %}
+    </button>
+  </div>
+
+  <form action="{{ collection.url }}" method="get" class="filter-drawer__form" style="display: flex; flex-direction: column; height: 100%;">
+    <div class="filter-drawer__body">
+      
+      <!-- AVAILABILITY SECTION -->
+      <div>
+        <h4 class="filter-drawer__section-title">
+          <span>{{ 'collections.general.availability' | t }}</span>
+        </h4>
+        <div class="facet-checkbox-list">
+          {%- if availability_filter != nil -%}
+            {%- for val in availability_filter.values -%}
+              <label class="facet-checkbox-label">
+                <span class="facet-checkbox-label-content">
+                  <input
+                    type="checkbox"
+                    name="{{ val.param_name }}"
+                    value="{{ val.value }}"
+                    class="facet-checkbox-input"
+                    {% if val.active %}checked{% endif %}
+                  >
+                  <span>
+                    {%- if val.value == '1' -%}
+                      {{ 'collections.general.in_stock' | t }}
+                    {%- elsif val.value == '0' -%}
+                      {{ 'collections.general.out_of_stock' | t }}
+                    {%- else -%}
+                      {{ val.label }}
+                    {%- endif -%}
+                  </span>
+                </span>
+                <span class="facet-checkbox-count">({{ val.count }})</span>
+              </label>
+            {%- endfor -%}
+          {%- else -%}
+            <label class="facet-checkbox-label">
+              <span class="facet-checkbox-label-content">
+                <input type="checkbox" name="filter.v.availability" value="1" class="facet-checkbox-input">
+                <span>{{ 'collections.general.in_stock' | t }}</span>
+              </span>
+            </label>
+            <label class="facet-checkbox-label">
+              <span class="facet-checkbox-label-content">
+                <input type="checkbox" name="filter.v.availability" value="0" class="facet-checkbox-input">
+                <span>{{ 'collections.general.out_of_stock' | t }}</span>
+              </span>
+            </label>
+          {%- endif -%}
+        </div>
+      </div>
+
+      <!-- PRICE RANGE SECTION -->
+      <div>
+        <h4 class="filter-drawer__section-title">
+          <span>{{ 'collections.general.price' | t }} (EGP)</span>
+        </h4>
+        <div class="facet-price-range">
+          <div class="facet-price-row">
+            <div class="facet-price-field">
+              <span class="facet-price-currency">EGP</span>
+              <input
+                type="number"
+                name="{{ min_param }}"
+                value="{{ min_val }}"
+                placeholder="{{ 'collections.general.price_from' | t }}"
+                class="facet-price-input"
+                min="0"
+              >
+            </div>
+            <span class="facet-price-separator">–</span>
+            <div class="facet-price-field">
+              <span class="facet-price-currency">EGP</span>
+              <input
+                type="number"
+                name="{{ max_param }}"
+                value="{{ max_val }}"
+                placeholder="{{ 'collections.general.price_to' | t }}"
+                class="facet-price-input"
+                min="0"
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SORT BY SECTION -->
+      {%- if section.settings.enable_sorting -%}
+        <div>
+          <h4 class="filter-drawer__section-title">
+            <span>{{ 'collections.general.sort_by' | t }}</span>
+          </h4>
+          <select name="sort_by" class="facet-sort-select" style="width: 100%; padding: 12px 14px;">
+            {%- assign cur_sort = collection.sort_by | default: collection.default_sort_by -%}
+            {%- for option in collection.sort_options -%}
+              {%- assign opt_name = option.name -%}
+              {%- if is_ar -%}
+                {%- case option.value -%}
+                  {%- when 'manual' -%}{%- assign opt_name = 'collections.sorting.featured' | t -%}
+                  {%- when 'best-selling' -%}{%- assign opt_name = 'collections.sorting.best_selling' | t -%}
+                  {%- when 'title-ascending' -%}{%- assign opt_name = 'collections.sorting.az' | t -%}
+                  {%- when 'title-descending' -%}{%- assign opt_name = 'collections.sorting.za' | t -%}
+                  {%- when 'price-ascending' -%}{%- assign opt_name = 'collections.sorting.price_ascending' | t -%}
+                  {%- when 'price-descending' -%}{%- assign opt_name = 'collections.sorting.price_descending' | t -%}
+                  {%- when 'created-descending' -%}{%- assign opt_name = 'collections.sorting.date_descending' | t -%}
+                  {%- when 'created-ascending' -%}{%- assign opt_name = 'collections.sorting.date_ascending' | t -%}
+                {%- endcase -%}
+              {%- endif -%}
+              <option value="{{ option.value }}" {% if option.value == cur_sort %}selected{% endif %}>
+                {{ opt_name }}
+              </option>
+            {%- endfor -%}
+          </select>
+        </div>
+      {%- endif -%}
+
+    </div>
+
+    <!-- DRAWER STICKY FOOTER -->
+    <div class="filter-drawer__footer">
+      <a href="{{ collection.url }}" class="btn btn-outline" style="flex: 1; text-align: center;">
+        {{ 'collections.general.clear_all' | t }}
+      </a>
+      <button type="submit" class="btn btn-primary" style="flex: 1;">
+        {{ 'collections.general.apply' | t }}
+      </button>
+    </div>
+  </form>
+</div>

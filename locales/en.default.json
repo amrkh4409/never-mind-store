@@ -233,6 +233,14 @@
       "out_of_stock": "Out of Stock",
       "price_from": "From",
       "price_to": "To",
+      "price": "Price",
+      "availability": "Availability",
+      "active_filters": "Active Filters",
+      "filter_and_sort": "Filter & Sort",
+      "close_filters": "Close filters",
+      "reset": "Reset",
+      "min_price": "Min price",
+      "max_price": "Max price",
       "product_count": {
         "one": "{{ count }} product",
         "other": "{{ count }} products"

@@ -233,6 +233,14 @@
       "out_of_stock": "غير متوفر",
       "price_from": "من",
       "price_to": "إلى",
+      "price": "السعر",
+      "availability": "حالة التوفر",
+      "active_filters": "الفلاتر النشطة",
+      "filter_and_sort": "تصفية وترتيب",
+      "close_filters": "إغلاق التصفية",
+      "reset": "إعادة ضبط",
+      "min_price": "أقل سعر",
+      "max_price": "أعلى سعر",
       "product_count": {
         "one": "منتج واحد",
         "other": "{{ count }} منتجات"
