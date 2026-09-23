@@ -968,12 +968,89 @@
 
   // --- Collection Filters & Facets Controller ---
   function initCollectionFilters() {
+    const filterContainer = document.querySelector('[data-collection-facets]');
+    if (!filterContainer && !document.getElementById('FilterDrawer')) return;
+
+    let isFetching = false;
+
+    // Helper: Safely re-enable any disabled form inputs
+    const enableAllInputs = () => {
+      document.querySelectorAll('#CollectionFacetsForm input, .filter-drawer__form input').forEach(input => {
+        input.disabled = false;
+      });
+    };
+
+    window.addEventListener('pageshow', enableAllInputs);
+
+    // Sync client-side fallback URL parameters (if collection.filters not yet published in admin)
+    const syncUrlParamsToUI = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      
+      // Availability checkboxes
+      const availabilities = urlParams.getAll('filter.v.availability');
+      if (availabilities.length > 0) {
+        document.querySelectorAll('input[name="filter.v.availability"]').forEach(input => {
+          if (availabilities.includes(input.value)) {
+            input.checked = true;
+          }
+        });
+        const availWrap = document.querySelector('[data-facet-dropdown="availability"]');
+        if (availWrap) {
+          const btn = availWrap.querySelector('[data-facet-chip-trigger]');
+          const badge = availWrap.querySelector('.facet-chip-badge');
+          if (btn) btn.classList.add('has-active');
+          if (badge) {
+            badge.textContent = availabilities.length;
+            badge.style.display = 'inline-flex';
+          }
+        }
+      }
+
+      // Price inputs
+      const priceGte = urlParams.get('filter.v.price.gte');
+      const priceLte = urlParams.get('filter.v.price.lte');
+      if (priceGte || priceLte) {
+        if (priceGte) {
+          document.querySelectorAll('input[name="filter.v.price.gte"]').forEach(input => {
+            input.value = priceGte;
+          });
+        }
+        if (priceLte) {
+          document.querySelectorAll('input[name="filter.v.price.lte"]').forEach(input => {
+            input.value = priceLte;
+          });
+        }
+        const priceWrap = document.querySelector('[data-facet-dropdown="price"]');
+        if (priceWrap) {
+          const btn = priceWrap.querySelector('[data-facet-chip-trigger]');
+          const badge = priceWrap.querySelector('.facet-chip-badge');
+          if (btn) btn.classList.add('has-active');
+          if (badge) badge.style.display = 'inline-flex';
+        }
+      }
+
+      // Sort by select
+      const sortBy = urlParams.get('sort_by');
+      if (sortBy) {
+        document.querySelectorAll('[data-facet-sort-select]').forEach(select => {
+          select.value = sortBy;
+        });
+      }
+    };
+
+    // Close all desktop popovers
+    const closeAllPopovers = () => {
+      document.querySelectorAll('[data-facet-popover].is-open').forEach(p => {
+        p.classList.remove('is-open');
+        const trigger = p.closest('[data-facet-dropdown]')?.querySelector('[data-facet-chip-trigger]');
+        if (trigger) trigger.classList.remove('is-open');
+      });
+    };
+
+    // Mobile Filter Drawer Open/Close
     const filterDrawer = document.getElementById('FilterDrawer');
     const filterBackdrop = document.getElementById('FilterDrawerBackdrop');
-    const openBtns = document.querySelectorAll('[data-filter-drawer-open]');
-    const closeBtns = document.querySelectorAll('[data-filter-drawer-close]');
 
-    // 1. Mobile Filter Drawer Open/Close
     const openDrawer = () => {
       if (filterDrawer) filterDrawer.classList.add('is-open');
       if (filterBackdrop) filterBackdrop.classList.add('is-active');
@@ -986,79 +1063,196 @@
       document.body.style.overflow = '';
     };
 
-    openBtns.forEach(btn => btn.addEventListener('click', openDrawer));
-    closeBtns.forEach(btn => btn.addEventListener('click', closeDrawer));
+    // Fetch and render filtered results via Section Rendering API
+    const fetchResults = async (targetUrl) => {
+      if (isFetching) return;
+      isFetching = true;
 
-    // 2. Desktop Dropdown Popovers
-    const dropdownWraps = document.querySelectorAll('[data-facet-dropdown]');
-    dropdownWraps.forEach(wrap => {
-      const trigger = wrap.querySelector('[data-facet-chip-trigger]');
-      const popover = wrap.querySelector('[data-facet-popover]');
-      if (!trigger || !popover) return;
+      const gridContainer = document.getElementById('ProductGridContainer');
+      const facetsWrapper = document.querySelector('[data-collection-facets]');
+      if (gridContainer) gridContainer.classList.add('is-loading');
 
-      trigger.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const isOpen = popover.classList.contains('is-open');
-        // Close any other open popovers
-        document.querySelectorAll('[data-facet-popover].is-open').forEach(p => {
-          if (p !== popover) {
-            p.classList.remove('is-open');
-            const otherBtn = p.closest('[data-facet-dropdown]')?.querySelector('[data-facet-chip-trigger]');
-            if (otherBtn) otherBtn.classList.remove('is-open');
-          }
-        });
+      try {
+        const urlObj = new URL(targetUrl, window.location.origin);
+        const sectionId = document.querySelector('.collection-main-container')?.dataset?.sectionId || 'main-collection';
+        urlObj.searchParams.set('section_id', sectionId);
 
-        if (isOpen) {
-          popover.classList.remove('is-open');
-          trigger.classList.remove('is-open');
-        } else {
-          popover.classList.add('is-open');
-          trigger.classList.add('is-open');
+        const res = await fetch(urlObj.toString());
+        if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+
+        const html = await res.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+
+        // 1. Update Product Grid
+        const newGrid = doc.getElementById('ProductGridContainer');
+        if (newGrid && gridContainer) {
+          gridContainer.innerHTML = newGrid.innerHTML;
         }
+
+        // 2. Update Desktop Facets Toolbar & Active Filter Pills
+        const newFacets = doc.querySelector('[data-collection-facets]');
+        if (newFacets && facetsWrapper) {
+          facetsWrapper.innerHTML = newFacets.innerHTML;
+        }
+
+        // 3. Update Mobile Drawer content
+        const newDrawer = doc.getElementById('FilterDrawer');
+        const curDrawer = document.getElementById('FilterDrawer');
+        if (newDrawer && curDrawer) {
+          curDrawer.innerHTML = newDrawer.innerHTML;
+        }
+
+        // 4. Update browser URL history
+        urlObj.searchParams.delete('section_id');
+        window.history.pushState({ path: urlObj.toString() }, '', urlObj.toString());
+
+        // 5. Close popovers & drawer
+        closeAllPopovers();
+        closeDrawer();
+
+        // 6. Re-bind event handlers
+        bindFacetEvents();
+        syncUrlParamsToUI();
+
+      } catch (err) {
+        console.warn('AJAX filter fallback to regular navigation:', err);
+        window.location.href = targetUrl;
+      } finally {
+        if (gridContainer) gridContainer.classList.remove('is-loading');
+        isFetching = false;
+        enableAllInputs();
+      }
+    };
+
+    // Build URL from form and trigger fetch
+    const submitFormAjax = (form) => {
+      if (!form) return;
+      const formData = new FormData(form);
+      const params = new URLSearchParams();
+
+      for (const [key, val] of formData.entries()) {
+        if (val !== '' && val !== null) {
+          params.append(key, val);
+        }
+      }
+
+      const action = form.getAttribute('action') || window.location.pathname;
+      const finalUrl = `${action}?${params.toString()}`;
+      fetchResults(finalUrl);
+    };
+
+    // Bind all interactive events
+    const bindFacetEvents = () => {
+      // 1. Mobile Drawer Triggers
+      document.querySelectorAll('[data-filter-drawer-open]').forEach(btn => {
+        btn.onclick = openDrawer;
+      });
+      document.querySelectorAll('[data-filter-drawer-close]').forEach(btn => {
+        btn.onclick = closeDrawer;
       });
 
-      // Prevent clicks inside popover from closing it
-      popover.addEventListener('click', (e) => e.stopPropagation());
-    });
+      // 2. Desktop Dropdown Popovers
+      document.querySelectorAll('[data-facet-dropdown]').forEach(wrap => {
+        const trigger = wrap.querySelector('[data-facet-chip-trigger]');
+        const popover = wrap.querySelector('[data-facet-popover]');
+        if (!trigger || !popover) return;
 
-    // Close popovers on click outside
-    document.addEventListener('click', () => {
-      document.querySelectorAll('[data-facet-popover].is-open').forEach(p => {
-        p.classList.remove('is-open');
-        const trigger = p.closest('[data-facet-dropdown]')?.querySelector('[data-facet-chip-trigger]');
-        if (trigger) trigger.classList.remove('is-open');
+        trigger.onclick = (e) => {
+          e.stopPropagation();
+          const isOpen = popover.classList.contains('is-open');
+          closeAllPopovers();
+
+          if (!isOpen) {
+            popover.classList.add('is-open');
+            trigger.classList.add('is-open');
+          }
+        };
+
+        popover.onclick = (e) => e.stopPropagation();
       });
-    });
 
-    // Close on Escape key
+      // 3. Desktop Checkbox Auto-Submit (AJAX)
+      const desktopForm = document.getElementById('CollectionFacetsForm');
+      if (desktopForm) {
+        desktopForm.querySelectorAll('.facet-checkbox-input').forEach(checkbox => {
+          checkbox.onchange = () => {
+            submitFormAjax(desktopForm);
+          };
+        });
+      }
+
+      // 4. Sort By Dropdowns (Desktop & Mobile Bar)
+      document.querySelectorAll('[data-facet-sort-select]').forEach(select => {
+        select.onchange = () => {
+          const form = document.getElementById('CollectionFacetsForm');
+          if (form) {
+            const hiddenSort = form.querySelector('input[name=sort_by]');
+            if (hiddenSort) hiddenSort.value = select.value;
+            submitFormAjax(form);
+          } else {
+            const url = new URL(window.location.href);
+            url.searchParams.set('sort_by', select.value);
+            fetchResults(url.toString());
+          }
+        };
+      });
+
+      // 5. Price Range Form Submission (Desktop Popover & Mobile Drawer)
+      if (desktopForm) {
+        desktopForm.onsubmit = (e) => {
+          e.preventDefault();
+          submitFormAjax(desktopForm);
+        };
+      }
+
+      const drawerForm = document.querySelector('.filter-drawer__form');
+      if (drawerForm) {
+        drawerForm.onsubmit = (e) => {
+          e.preventDefault();
+          submitFormAjax(drawerForm);
+        };
+      }
+
+      // 6. Active Filter Pills & Reset Links (AJAX)
+      document.querySelectorAll('[data-facet-remove], [data-facet-clear-all], [data-facet-reset]').forEach(link => {
+        link.onclick = (e) => {
+          e.preventDefault();
+          const href = link.getAttribute('href');
+          if (href) fetchResults(href);
+        };
+      });
+
+      // 7. Pagination Links (AJAX)
+      document.querySelectorAll('.collection-pagination a').forEach(link => {
+        link.onclick = (e) => {
+          e.preventDefault();
+          const href = link.getAttribute('href');
+          if (href) {
+            fetchResults(href);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        };
+      });
+    };
+
+    // Close on click outside & Escape key
+    document.addEventListener('click', closeAllPopovers);
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
-        document.querySelectorAll('[data-facet-popover].is-open').forEach(p => {
-          p.classList.remove('is-open');
-          const trigger = p.closest('[data-facet-dropdown]')?.querySelector('[data-facet-chip-trigger]');
-          if (trigger) trigger.classList.remove('is-open');
-        });
+        closeAllPopovers();
         closeDrawer();
       }
     });
 
-    // 3. Clean Form Submission (ignore blank inputs so query string stays clean)
-    const forms = [
-      document.getElementById('CollectionFacetsForm'),
-      document.querySelector('.filter-drawer__form')
-    ];
-
-    forms.forEach(form => {
-      if (!form) return;
-      form.addEventListener('submit', () => {
-        const inputs = form.querySelectorAll('input[type="number"], input[type="text"]');
-        inputs.forEach(input => {
-          if (input.value.trim() === '') {
-            input.disabled = true;
-          }
-        });
-      });
+    // Handle browser Back / Forward buttons
+    window.addEventListener('popstate', () => {
+      fetchResults(window.location.href);
     });
+
+    // Initial binding
+    bindFacetEvents();
+    syncUrlParamsToUI();
   }
 
   // --- Initialize All Theme Features on DOM Ready ---

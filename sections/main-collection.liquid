@@ -1,4 +1,4 @@
-<div class="container" style="padding-top: 40px; padding-bottom: 80px;">
+<div class="container collection-main-container" data-section-id="{{ section.id }}" style="padding-top: 40px; padding-bottom: 80px;">
   <div style="text-align: center; margin-bottom: 32px;">
     {%- assign coll_display_title = collection.title | default: "Catalog" -%}
     <h1 style="margin-bottom: 8px;">{% render 'translate-nav', text: coll_display_title %}</h1>
@@ -13,36 +13,38 @@
     <!-- Advanced Filtration & Sorting (Price, Availability, Sort By) -->
     {% render 'collection-filters', collection: collection, section: section %}
 
-    {%- if collection.products.size > 0 -%}
-      {%- assign cols = section.settings.columns_desktop | default: 4 -%}
-      <div class="products-grid" style="grid-template-columns: repeat(auto-fill, minmax(calc(100% / {{ cols }} - 20px), 1fr));">
-        {%- for product in collection.products -%}
-          {% render 'product-card', product_card_product: product, show_vendor: true %}
-        {%- endfor -%}
-      </div>
+    <div id="ProductGridContainer" class="collection-product-grid-container">
+      {%- if collection.products.size > 0 -%}
+        {%- assign cols = section.settings.columns_desktop | default: 4 -%}
+        <div class="products-grid" style="grid-template-columns: repeat(auto-fill, minmax(calc(100% / {{ cols }} - 20px), 1fr));">
+          {%- for product in collection.products -%}
+            {% render 'product-card', product_card_product: product, show_vendor: true %}
+          {%- endfor -%}
+        </div>
 
-      {%- if paginate.pages > 1 -%}
-        <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 56px;">
-          {%- if paginate.previous -%}
-            <a href="{{ paginate.previous.url }}" class="btn btn-outline btn-sm">&larr; {{ 'general.pagination.previous' | t }}</a>
-          {%- endif -%}
-          <span style="font-size: 0.9rem; font-weight: 600; color: var(--color-foreground-secondary);">
-            {{ 'general.pagination.current_page' | t: current: paginate.current_page, total: paginate.pages }}
-          </span>
-          {%- if paginate.next -%}
-            <a href="{{ paginate.next.url }}" class="btn btn-outline btn-sm">{{ 'general.pagination.next' | t }} &rarr;</a>
-          {%- endif -%}
+        {%- if paginate.pages > 1 -%}
+          <div class="collection-pagination" style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 56px;">
+            {%- if paginate.previous -%}
+              <a href="{{ paginate.previous.url }}" class="btn btn-outline btn-sm">&larr; {{ 'general.pagination.previous' | t }}</a>
+            {%- endif -%}
+            <span style="font-size: 0.9rem; font-weight: 600; color: var(--color-foreground-secondary);">
+              {{ 'general.pagination.current_page' | t: current: paginate.current_page, total: paginate.pages }}
+            </span>
+            {%- if paginate.next -%}
+              <a href="{{ paginate.next.url }}" class="btn btn-outline btn-sm">{{ 'general.pagination.next' | t }} &rarr;</a>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      {%- else -%}
+        <div style="text-align: center; padding: 60px 16px;">
+          <h3>{{ 'general.search.no_results_simple' | t }}</h3>
+          <p style="color: var(--color-foreground-secondary); margin-top: 8px;">{{ 'collections.general.empty' | t }}</p>
+          <a href="{{ collection.url }}" class="btn btn-primary btn-sm" style="margin-top: 20px;">
+            {{ 'collections.general.clear_all' | t }}
+          </a>
         </div>
       {%- endif -%}
-    {%- else -%}
-      <div style="text-align: center; padding: 60px 16px;">
-        <h3>{{ 'general.search.no_results_simple' | t }}</h3>
-        <p style="color: var(--color-foreground-secondary); margin-top: 8px;">{{ 'collections.general.empty' | t }}</p>
-        <a href="{{ collection.url }}" class="btn btn-primary btn-sm" style="margin-top: 20px;">
-          {{ 'collections.general.clear_all' | t }}
-        </a>
-      </div>
-    {%- endif -%}
+    </div>
   {%- endpaginate -%}
 </div>
 

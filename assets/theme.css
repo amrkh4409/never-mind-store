@@ -2679,3 +2679,42 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
     display: flex;
   }
 }
+
+.facet-price-hint {
+  font-size: 0.8rem;
+  color: var(--color-foreground-secondary);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.collection-product-grid-container {
+  position: relative;
+  transition: opacity 0.25s ease;
+}
+
+.collection-product-grid-container.is-loading {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.collection-product-grid-container.is-loading::after {
+  content: "";
+  position: absolute;
+  top: 120px;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  margin-left: -20px;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-top-color: var(--color-foreground);
+  border-radius: 50%;
+  animation: facetSpin 0.7s linear infinite;
+  z-index: 20;
+}
+
+@keyframes facetSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
