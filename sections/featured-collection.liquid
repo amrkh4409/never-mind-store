@@ -123,7 +123,7 @@
       </div>
     {%- else -%}
       <!-- Standard Grid View -->
-      <div class="products-grid" style="grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr);">
+      <div class="products-grid" style="--grid-desktop-cols: {{ section.settings.columns_desktop | default: 4 }};">
         {%- if collection != blank and collection.products.size > 0 -%}
           {%- for product in collection.products limit: section.settings.products_to_show -%}
             {% render 'product-card', product_card_product: product, show_vendor: section.settings.show_vendor %}
