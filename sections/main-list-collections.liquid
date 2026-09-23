@@ -21,7 +21,7 @@
         {%- endif -%}
 
         <div class="collection-card__overlay">
-          <h3 class="collection-card__title">{{ collection.title }}</h3>
+          <h3 class="collection-card__title">{% render 'translate-nav', text: collection.title %}</h3>
           <span class="collection-card__count">{{ 'collections.general.product_count' | t: count: collection.all_products_count }}</span>
           <span class="collection-card__btn">{{ 'sections.list_collections.explore' | t }} &rarr;</span>
         </div>

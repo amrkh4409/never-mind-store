@@ -1,0 +1,84 @@
+{%- comment -%}
+  Snippet: translate-nav.liquid
+  Safely translates navigation strings, badges, category titles, and promo cards
+  when the active locale is Arabic. Returns original string otherwise.
+{%- endcomment -%}
+{%- assign clean_text = text | strip -%}
+{%- assign out = clean_text -%}
+{%- if request.locale.iso_code == 'ar' or localization.language.iso_code == 'ar' -%}
+  {%- case clean_text -%}
+    {%- when "Home" -%}{%- assign out = "الرئيسية" -%}
+    {%- when "Catalog" -%}{%- assign out = "التشكيلات" -%}
+    {%- when "Men" -%}{%- assign out = "رجالي" -%}
+    {%- when "Women" -%}{%- assign out = "حريمي" -%}
+    {%- when "Kids" -%}{%- assign out = "أطفال" -%}
+    {%- when "Men Collection" -%}{%- assign out = "تشكيلة الرجال" -%}
+    {%- when "Women Collection" -%}{%- assign out = "تشكيلة النساء" -%}
+    {%- when "Kids Collection" -%}{%- assign out = "تشكيلة الأطفال" -%}
+    {%- when "Men's Collection" -%}{%- assign out = "تشكيلة الرجال" -%}
+    {%- when "Women's Collection" -%}{%- assign out = "تشكيلة النساء" -%}
+    {%- when "Kids & Teens Collection" -%}{%- assign out = "تشكيلة الأطفال والناشئين" -%}
+    {%- when "Men's Streetwear" -%}{%- assign out = "ستريت وير رجالي" -%}
+    {%- when "Kids & Teens" -%}{%- assign out = "أطفال وناشئين" -%}
+    {%- when "Trending & Highlights" -%}{%- assign out = "الأكثر طلباً والعروض" -%}
+    {%- when "Shoes & Accessories" -%}{%- assign out = "أحذية وإكسسوارات" -%}
+    {%- when "Sale & Offers" -%}{%- assign out = "العروض والتخفيضات" -%}
+    {%- when "Oversized T-Shirts" -%}{%- assign out = "تيشيرتات أوفر سايز" -%}
+    {%- when "Graphic & Printed Tees" -%}{%- assign out = "تيشيرتات جرافيك وطباعة" -%}
+    {%- when "Heavyweight Hoodies" -%}{%- assign out = "هوديز وسويت شيرت سميك" -%}
+    {%- when "Tactical Cargo & Pants" -%}{%- assign out = "بنطلونات كارجو وسويت بانتس" -%}
+    {%- when "Matching Sets & Tracksuits" -%}{%- assign out = "أطقم قطعتين وترينجات" -%}
+    {%- when "Cropped & Oversized Tops" -%}{%- assign out = "توبات وتيشيرتات واسعة" -%}
+    {%- when "Minimalist Lounge Hoodies" -%}{%- assign out = "هوديز وسويت شيرت مريح" -%}
+    {%- when "Wide-Leg Pants & Cargo" -%}{%- assign out = "بنطلونات واسعة وكارجو" -%}
+    {%- when "Comfort Matching Sets" -%}{%- assign out = "أطقم ملابس مريحة" -%}
+    {%- when "Bags & Accessories" -%}{%- assign out = "إكسسوارات وحقائب كاجوال" -%}
+    {%- when "Boys Graphic Tees" -%}{%- assign out = "تيشيرتات جرافيك أولاد" -%}
+    {%- when "Girls Casual & Tops" -%}{%- assign out = "ملابس كاجوال بنات" -%}
+    {%- when "Kids Hoodies & Sweats" -%}{%- assign out = "هوديز وترينجات أطفال" -%}
+    {%- when "Comfort Shorts & Pants" -%}{%- assign out = "شورتات وبنطلونات مريحة" -%}
+    {%- when "Teen Streetwear Essentials" -%}{%- assign out = "أساسيات المراهقين والناشئين" -%}
+    {%- when "Top Best Sellers 🔥" -%}{%- assign out = "الأكثر مبيعاً هذا الأسبوع 🔥" -%}
+    {%- when "Summer Drop 2026" -%}{%- assign out = "وصل حديثاً صيف 2026" -%}
+    {%- when "Heavyweight Essentials" -%}{%- assign out = "تشكيلة Heavyweight القطنية" -%}
+    {%- when "Clearance Sale Up to 50% 🏷️" -%}{%- assign out = "تخفيضات تصل إلى 50% 🏷️" -%}
+    {%- when "Shop All Men's →" -%}{%- assign out = "تسوق كل تشكيلة الرجال" -%}
+    {%- when "Shop All Women's →" -%}{%- assign out = "تسوق كل تشكيلة النساء" -%}
+    {%- when "Shop All Kids →" -%}{%- assign out = "تسوق كل تشكيلة الأطفال" -%}
+    {%- when "Browse All Collections →" -%}{%- assign out = "عرض جميع التشكيلات" -%}
+    {%- when "Shop All Men's" -%}{%- assign out = "تسوق كل تشكيلة الرجال" -%}
+    {%- when "Shop All Women's" -%}{%- assign out = "تسوق كل تشكيلة النساء" -%}
+    {%- when "Shop All Kids" -%}{%- assign out = "تسوق كل تشكيلة الأطفال" -%}
+    {%- when "Browse All Collections" -%}{%- assign out = "عرض جميع التشكيلات" -%}
+    {%- when "Shop All" -%}{%- assign out = "تسوق الكل" -%}
+    {%- when "View All" -%}{%- assign out = "عرض الكل" -%}
+    {%- when "HOT" -%}{%- assign out = "مميز" -%}
+    {%- when "NEW" -%}{%- assign out = "جديد" -%}
+    {%- when "SALE" -%}{%- assign out = "تخفيضات" -%}
+    {%- when "BEST SELLERS" -%}{%- assign out = "الأكثر مبيعاً" -%}
+    {%- when "Best Sellers" -%}{%- assign out = "الأكثر مبيعاً" -%}
+    {%- when "Featured Best Sellers" -%}{%- assign out = "الأكثر مبيعاً" -%}
+    {%- when "NEW DROP 2026" -%}{%- assign out = "تشكيلة 2026 الحصرية" -%}
+    {%- when "Never Mind Streetwear Drop" -%}{%- assign out = "إطلاق أزياء Never Mind الجديدة" -%}
+    {%- when "Uncompromising Egyptian Craft. Clean tailoring & everyday comfort." -%}{%- assign out = "صناعة مصرية فاخرة بلا مساومة. قَصّات متقنة وراحة تدوم." -%}
+    {%- when "Shop Now" -%}{%- assign out = "تسوق الآن" -%}
+    {%- when "Contact" -%}{%- assign out = "تواصل معنا" -%}
+    {%- when "Contact Us" -%}{%- assign out = "تواصل معنا" -%}
+    {%- when "FAQ" -%}{%- assign out = "الأسئلة الشائعة" -%}
+    {%- when "Track Order" -%}{%- assign out = "تتبع طلبك" -%}
+    {%- when "Track Your Order" -%}{%- assign out = "تتبع طلبك" -%}
+    {%- when "About Us" -%}{%- assign out = "من نحن" -%}
+    {%- when "All Products" -%}{%- assign out = "جميع المنتجات" -%}
+    {%- when "Collection" -%}{%- assign out = "التشكيلة" -%}
+    {%- when "Wishlist" -%}{%- assign out = "قائمة الرغبات" -%}
+    {%- when "Account" -%}{%- assign out = "حسابي" -%}
+    {%- when "Sign In" -%}{%- assign out = "تسجيل الدخول" -%}
+    {%- when "Sign In / Register" -%}{%- assign out = "تسجيل الدخول / إنشاء حساب" -%}
+    {%- else -%}
+      {%- if clean_text contains "Shop All " -%}
+        {%- assign sub_part = clean_text | remove: "Shop All " -%}
+        {%- assign out = "تسوق كل " | append: sub_part -%}
+      {%- endif -%}
+  {%- endcase -%}
+{%- endif -%}
+{{- out -}}

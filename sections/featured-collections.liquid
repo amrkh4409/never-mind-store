@@ -1,7 +1,7 @@
 <section class="featured-collections-section">
   <div class="container">
     {%- assign is_ar = false -%}
-    {%- if request.locale.iso_code == 'ar' -%}
+    {%- if request.locale.iso_code == 'ar' or localization.language.iso_code == 'ar' -%}
       {%- assign is_ar = true -%}
     {%- endif -%}
 

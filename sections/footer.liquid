@@ -20,10 +20,10 @@
                 </div>
 
                 <p style="font-size: 0.9rem; color: var(--color-foreground-secondary); line-height: 1.6; margin-bottom: 20px; max-width: 320px;">
-                  {%- if block.settings.text != blank -%}
-                    {{ block.settings.text }}
-                  {%- else -%}
+                  {%- if block.settings.text == blank or block.settings.text == 'Contemporary Egyptian luxury streetwear and minimalist fashion designed with premium fabrics and tailored cuts.' -%}
                     {{ 'sections.footer.brand_bio' | t }}
+                  {%- else -%}
+                    {{ block.settings.text }}
                   {%- endif -%}
                 </p>
 
@@ -50,7 +50,13 @@
 
             {%- when 'link_list' -%}
               <div class="footer-col" {{ block.shopify_attributes }}>
-                <h4 class="footer-col__title">{{ block.settings.heading }}</h4>
+                {%- assign col_heading = block.settings.heading -%}
+                {%- if col_heading == 'Shop Collections' or col_heading == blank -%}
+                  {%- assign col_heading = 'sections.footer.shop_collections' | t -%}
+                {%- elsif col_heading == 'Customer Service' -%}
+                  {%- assign col_heading = 'sections.footer.customer_service' | t -%}
+                {%- endif -%}
+                <h4 class="footer-col__title">{{ col_heading }}</h4>
                 <ul class="footer-links">
                   {%- if block.settings.menu != blank and linklists[block.settings.menu].links.size > 0 -%}
                     {%- for link in linklists[block.settings.menu].links -%}
@@ -77,16 +83,16 @@
 
             {%- when 'newsletter' -%}
               <div class="footer-col" {{ block.shopify_attributes }}>
-                <h4 class="footer-col__title">{{ block.settings.heading | default: 'general.newsletter.title' | t }}</h4>
+                {%- assign n_heading = block.settings.heading -%}
+                {%- if n_heading == blank or n_heading == 'Subscribe to our VIP list' or n_heading == 'Subscribe' -%}
+                  {%- assign n_heading = 'general.newsletter.title' | t -%}
+                {%- endif -%}
+                <h4 class="footer-col__title">{{ n_heading }}</h4>
                 <p style="font-size: 0.88rem; color: var(--color-foreground-secondary); margin-bottom: 16px;">
-                  {%- if block.settings.subtext != blank -%}
-                    {{ block.settings.subtext }}
+                  {%- if block.settings.subtext == blank or block.settings.subtext == 'Get early access to fresh drops and exclusive Egyptian cotton streetwear promotions.' -%}
+                    {{ 'general.newsletter.subtitle' | t }}
                   {%- else -%}
-                    {%- if is_ar -%}
-                      اشترك في قائمتنا البريدية ليصلك جديد تشكيلاتنا وأحدث العروض الحصرية.
-                    {%- else -%}
-                      {{ 'general.newsletter.subtitle' | t }}
-                    {%- endif -%}
+                    {{ block.settings.subtext }}
                   {%- endif -%}
                 </p>
 
@@ -115,11 +121,7 @@
                   <div style="margin-top: 20px; display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--color-foreground-secondary);">
                     {% render 'icon-shield' %}
                     <span>
-                      {%- if is_ar -%}
-                        الدفع عند الاستلام مع إمكانية المعاينة قبل الدفع لجميع محافظات مصر
-                      {%- else -%}
-                        Cash on Delivery with package inspection across all Egypt
-                      {%- endif -%}
+                      {{ 'sections.footer.cod_inspection' | t }}
                     </span>
                   </div>
                 {%- endif -%}
@@ -214,23 +216,14 @@
         {%- if section.settings.copyright_text != blank -%}
           {{ section.settings.copyright_text }}
         {%- else -%}
-          {%- if is_ar -%}
-            جميع الحقوق محفوظة.
-          {%- else -%}
-            {{ 'sections.footer.copyright' | default: 'All rights reserved.' }}
-          {%- endif -%}
+          {{ 'sections.footer.copyright' | t }}
         {%- endif -%}
       </div>
 
       {%- if section.settings.show_payment_cod -%}
         <div style="display: flex; align-items: center; gap: 12px; font-size: 0.85rem; font-weight: 600;">
           <span class="badge badge-cod">
-            💵 
-            {%- if is_ar -%}
-              الدفع عند الاستلام متاح بجميع المحافظات
-            {%- else -%}
-              {{ section.settings.cod_badge_text | default: "Cash on Delivery Available" }}
-            {%- endif -%}
+            💵 {{ 'sections.footer.payment_cod' | t }}
           </span>
         </div>
       {%- endif -%}

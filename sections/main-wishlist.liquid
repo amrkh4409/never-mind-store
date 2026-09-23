@@ -1,6 +1,10 @@
 <div class="container" style="padding-top: 48px; padding-bottom: 80px;">
   <div style="text-align: center; max-width: 640px; margin: 0 auto 40px;">
-    <h1 style="margin-bottom: 8px;">{{ page.title | default: ('sections.wishlist.title' | t) }}</h1>
+    {%- assign wishlist_title = page.title -%}
+    {%- if wishlist_title == blank -%}
+      {%- assign wishlist_title = 'sections.wishlist.title' | t -%}
+    {%- endif -%}
+    <h1 style="margin-bottom: 8px;">{{ wishlist_title }}</h1>
     <p style="color: var(--color-foreground-secondary); font-size: 1rem;">{{ 'sections.wishlist.subtitle' | t }}</p>
   </div>
 

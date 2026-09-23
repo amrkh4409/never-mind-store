@@ -110,14 +110,14 @@
                 <!-- Column Heading & Optional Badge -->
                 <div class="mega-menu__heading-wrap">
                   <a href="{{ col_url | default: '#' }}" class="mega-menu__heading">
-                    {{ col_title }}
+                    {% render 'translate-nav', text: col_title %}
                   </a>
                   {%- if block.settings.badge_text != blank -%}
                     <span
                       class="mega-menu__col-badge"
                       style="color: {{ block.settings.badge_color | default: '#FFFFFF' }}; background-color: {{ block.settings.badge_bg | default: '#E05A47' }};"
                     >
-                      {{ block.settings.badge_text }}
+                      {% render 'translate-nav', text: block.settings.badge_text %}
                     </span>
                   {%- endif -%}
                 </div>
@@ -128,19 +128,19 @@
                     <!-- Sub-links from Shopify Navigation Linklist -->
                     {%- for sub in linklists[block.settings.menu].links -%}
                       <li class="mega-menu__item">
-                        <a href="{{ sub.url }}" class="mega-menu__link">{{ sub.title }}</a>
+                        <a href="{{ sub.url }}" class="mega-menu__link">{% render 'translate-nav', text: sub.title %}</a>
                       </li>
                     {%- endfor -%}
                   {%- else -%}
                     <!-- Manual Sub-Links Slots -->
-                    {%- if block.settings.link_1_title != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.link_1_url | default: col_url }}" class="mega-menu__link">{{ block.settings.link_1_title }}</a></li>{%- endif -%}
-                    {%- if block.settings.link_2_title != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.link_2_url | default: col_url }}" class="mega-menu__link">{{ block.settings.link_2_title }}</a></li>{%- endif -%}
-                    {%- if block.settings.link_3_title != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.link_3_url | default: col_url }}" class="mega-menu__link">{{ block.settings.link_3_title }}</a></li>{%- endif -%}
-                    {%- if block.settings.link_4_title != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.link_4_url | default: col_url }}" class="mega-menu__link">{{ block.settings.link_4_title }}</a></li>{%- endif -%}
-                    {%- if block.settings.link_5_title != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.link_5_url | default: col_url }}" class="mega-menu__link">{{ block.settings.link_5_title }}</a></li>{%- endif -%}
-                    {%- if block.settings.link_6_title != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.link_6_url | default: col_url }}" class="mega-menu__link">{{ block.settings.link_6_title }}</a></li>{%- endif -%}
-                    {%- if block.settings.link_7_title != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.link_7_url | default: col_url }}" class="mega-menu__link">{{ block.settings.link_7_title }}</a></li>{%- endif -%}
-                    {%- if block.settings.link_8_title != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.link_8_url | default: col_url }}" class="mega-menu__link">{{ block.settings.link_8_title }}</a></li>{%- endif -%}
+                    {%- if block.settings.link_1_title != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.link_1_url | default: col_url }}" class="mega-menu__link">{% render 'translate-nav', text: block.settings.link_1_title %}</a></li>{%- endif -%}
+                    {%- if block.settings.link_2_title != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.link_2_url | default: col_url }}" class="mega-menu__link">{% render 'translate-nav', text: block.settings.link_2_title %}</a></li>{%- endif -%}
+                    {%- if block.settings.link_3_title != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.link_3_url | default: col_url }}" class="mega-menu__link">{% render 'translate-nav', text: block.settings.link_3_title %}</a></li>{%- endif -%}
+                    {%- if block.settings.link_4_title != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.link_4_url | default: col_url }}" class="mega-menu__link">{% render 'translate-nav', text: block.settings.link_4_title %}</a></li>{%- endif -%}
+                    {%- if block.settings.link_5_title != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.link_5_url | default: col_url }}" class="mega-menu__link">{% render 'translate-nav', text: block.settings.link_5_title %}</a></li>{%- endif -%}
+                    {%- if block.settings.link_6_title != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.link_6_url | default: col_url }}" class="mega-menu__link">{% render 'translate-nav', text: block.settings.link_6_title %}</a></li>{%- endif -%}
+                    {%- if block.settings.link_7_title != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.link_7_url | default: col_url }}" class="mega-menu__link">{% render 'translate-nav', text: block.settings.link_7_title %}</a></li>{%- endif -%}
+                    {%- if block.settings.link_8_title != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.link_8_url | default: col_url }}" class="mega-menu__link">{% render 'translate-nav', text: block.settings.link_8_title %}</a></li>{%- endif -%}
 
                     <!-- Quick Multi-Line Links (Title | URL) -->
                     {%- if block.settings.sub_links_text != blank -%}
@@ -152,7 +152,7 @@
                           {%- assign l_title = parts[0] | strip -%}
                           {%- assign l_url = parts[1] | strip | default: col_url -%}
                           <li class="mega-menu__item">
-                            <a href="{{ l_url }}" class="mega-menu__link">{{ l_title }}</a>
+                            <a href="{{ l_url }}" class="mega-menu__link">{% render 'translate-nav', text: l_title %}</a>
                           </li>
                         {%- endif -%}
                       {%- endfor -%}
@@ -172,7 +172,7 @@
                     {%- endif -%}
                     <li class="mega-menu__item mega-menu__item--shop-all">
                       <a href="{{ shop_all_url }}" class="mega-menu__shop-all">
-                        <span>{{ shop_all_label }}</span>
+                        <span>{% render 'translate-nav', text: shop_all_label %}</span>
                         <span class="mega-menu__shop-all-arrow" aria-hidden="true">{% if is_rtl %}&larr;{% else %}&rarr;{% endif %}</span>
                       </a>
                     </li>
@@ -212,14 +212,15 @@
               </div>
               <div class="mega-menu__promo-content">
                 {%- if p_settings.badge != blank -%}
-                  <span class="mega-menu__promo-tag">{{ p_settings.badge }}</span>
+                  <span class="mega-menu__promo-tag">{% render 'translate-nav', text: p_settings.badge %}</span>
                 {%- endif -%}
-                <h4 class="mega-menu__promo-title">{{ p_settings.title | default: 'Never Mind Streetwear Drop' }}</h4>
+                <h4 class="mega-menu__promo-title">{% render 'translate-nav', text: p_settings.title | default: 'Never Mind Streetwear Drop' %}</h4>
                 {%- if p_settings.description != blank -%}
-                  <p class="mega-menu__promo-desc">{{ p_settings.description }}</p>
+                  <p class="mega-menu__promo-desc">{% render 'translate-nav', text: p_settings.description %}</p>
                 {%- endif -%}
                 <span class="mega-menu__promo-btn">
-                  {{ p_settings.button_text | default: 'Shop Now' }}
+                  {%- assign promo_btn_lbl = p_settings.button_text | default: 'Shop Now' -%}
+                  {% render 'translate-nav', text: promo_btn_lbl %}
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     {%- if is_rtl -%}
                       <line x1="19" y1="12" x2="5" y2="12"></line>
@@ -246,10 +247,11 @@
                 <div class="mega-menu__promo-overlay"></div>
               </div>
               <div class="mega-menu__promo-content">
-                <span class="mega-menu__promo-tag">{{ section.settings.promo_badge | default: 'NEW DROP 2026' }}</span>
-                <h4 class="mega-menu__promo-title">{{ section.settings.promo_title | default: 'Never Mind Streetwear Drop' }}</h4>
+                <span class="mega-menu__promo-tag">{% render 'translate-nav', text: section.settings.promo_badge | default: 'NEW DROP 2026' %}</span>
+                <h4 class="mega-menu__promo-title">{% render 'translate-nav', text: section.settings.promo_title | default: 'Never Mind Streetwear Drop' %}</h4>
                 <span class="mega-menu__promo-btn">
-                  {{ section.settings.promo_btn | default: 'Shop Now' }}
+                  {%- assign fallback_promo_btn = section.settings.promo_btn | default: 'Shop Now' -%}
+                  {% render 'translate-nav', text: fallback_promo_btn %}
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     {%- if is_rtl -%}
                       <line x1="19" y1="12" x2="5" y2="12"></line>
@@ -352,14 +354,15 @@
               </div>
               <div class="mega-menu__promo-content">
                 {%- if p_settings.badge != blank -%}
-                  <span class="mega-menu__promo-tag">{{ p_settings.badge }}</span>
+                  <span class="mega-menu__promo-tag">{% render 'translate-nav', text: p_settings.badge %}</span>
                 {%- endif -%}
-                <h4 class="mega-menu__promo-title">{{ p_settings.title | default: 'Never Mind Streetwear Drop' }}</h4>
+                <h4 class="mega-menu__promo-title">{% render 'translate-nav', text: p_settings.title | default: 'Never Mind Streetwear Drop' %}</h4>
                 {%- if p_settings.description != blank -%}
-                  <p class="mega-menu__promo-desc">{{ p_settings.description }}</p>
+                  <p class="mega-menu__promo-desc">{% render 'translate-nav', text: p_settings.description %}</p>
                 {%- endif -%}
                 <span class="mega-menu__promo-btn">
-                  {{ p_settings.button_text | default: 'Shop Now' }}
+                  {%- assign nav_promo_btn = p_settings.button_text | default: 'Shop Now' -%}
+                  {% render 'translate-nav', text: nav_promo_btn %}
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     {%- if is_rtl -%}
                       <line x1="19" y1="12" x2="5" y2="12"></line>
@@ -385,10 +388,11 @@
                 <div class="mega-menu__promo-overlay"></div>
               </div>
               <div class="mega-menu__promo-content">
-                <span class="mega-menu__promo-tag">{{ section.settings.promo_badge | default: 'NEW DROP 2026' }}</span>
-                <h4 class="mega-menu__promo-title">{{ section.settings.promo_title | default: 'Never Mind Streetwear Drop' }}</h4>
+                <span class="mega-menu__promo-tag">{% render 'translate-nav', text: section.settings.promo_badge | default: 'NEW DROP 2026' %}</span>
+                <h4 class="mega-menu__promo-title">{% render 'translate-nav', text: section.settings.promo_title | default: 'Never Mind Streetwear Drop' %}</h4>
                 <span class="mega-menu__promo-btn">
-                  {{ section.settings.promo_btn | default: 'Shop Now' }}
+                  {%- assign nav_section_promo_btn = section.settings.promo_btn | default: 'Shop Now' -%}
+                  {% render 'translate-nav', text: nav_section_promo_btn %}
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     {%- if is_rtl -%}
                       <line x1="19" y1="12" x2="5" y2="12"></line>
@@ -500,10 +504,11 @@
                 <div class="mega-menu__promo-overlay"></div>
               </div>
               <div class="mega-menu__promo-content">
-                <span class="mega-menu__promo-tag">{{ section.settings.promo_badge | default: 'NEW DROP 2026' }}</span>
-                <h4 class="mega-menu__promo-title">{{ section.settings.promo_title | default: 'Never Mind Streetwear Drop' }}</h4>
+                <span class="mega-menu__promo-tag">{% render 'translate-nav', text: section.settings.promo_badge | default: 'NEW DROP 2026' %}</span>
+                <h4 class="mega-menu__promo-title">{% render 'translate-nav', text: section.settings.promo_title | default: 'Never Mind Streetwear Drop' %}</h4>
                 <span class="mega-menu__promo-btn">
-                  {{ section.settings.promo_btn | default: 'Shop Now' }}
+                  {%- assign fallback_mode_promo_btn = section.settings.promo_btn | default: 'Shop Now' -%}
+                  {% render 'translate-nav', text: fallback_mode_promo_btn %}
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     {%- if is_rtl -%}
                       <line x1="19" y1="12" x2="5" y2="12"></line>

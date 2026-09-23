@@ -14,12 +14,12 @@
   {%- if c1_title != blank or block.settings.col_1_menu != blank -%}
     <div class="mega-menu__col">
       <a href="{{ block.settings.col_1_url | default: '/collections/men' }}" class="mega-menu__heading">
-        {%- if request.locale.iso_code == 'ar' and c1_title contains 'Men' -%}رجالي (Men){%- else -%}{{ c1_title }}{%- endif -%}
+        {% render 'translate-nav', text: c1_title %}
       </a>
       <ul class="mega-menu__list">
         {%- if block.settings.col_1_menu != blank and linklists[block.settings.col_1_menu].links.size > 0 -%}
           {%- for sub in linklists[block.settings.col_1_menu].links -%}
-            <li class="mega-menu__item"><a href="{{ sub.url }}" class="mega-menu__link">{{ sub.title }}</a></li>
+            <li class="mega-menu__item"><a href="{{ sub.url }}" class="mega-menu__link">{% render 'translate-nav', text: sub.title %}</a></li>
           {%- endfor -%}
         {%- else -%}
           {%- assign s1_1 = block.settings.col_1_link_1_title | default: "Oversized T-Shirts" -%}
@@ -29,12 +29,12 @@
           {%- assign s1_5 = block.settings.col_1_link_5_title | default: "Matching Sets & Tracksuits" -%}
           {%- assign s1_6 = block.settings.col_1_link_6_title | default: "Shop All Men's →" -%}
 
-          {%- if s1_1 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_1_link_1_url | default: '/collections/men' }}" class="mega-menu__link">{{ s1_1 }}</a></li>{%- endif -%}
-          {%- if s1_2 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_1_link_2_url | default: '/collections/men' }}" class="mega-menu__link">{{ s1_2 }}</a></li>{%- endif -%}
-          {%- if s1_3 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_1_link_3_url | default: '/collections/men' }}" class="mega-menu__link">{{ s1_3 }}</a></li>{%- endif -%}
-          {%- if s1_4 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_1_link_4_url | default: '/collections/men' }}" class="mega-menu__link">{{ s1_4 }}</a></li>{%- endif -%}
-          {%- if s1_5 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_1_link_5_url | default: '/collections/men' }}" class="mega-menu__link">{{ s1_5 }}</a></li>{%- endif -%}
-          {%- if s1_6 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_1_link_6_url | default: '/collections/men' }}" class="mega-menu__link" style="color: var(--color-primary); font-weight: 700;">{{ s1_6 }}</a></li>{%- endif -%}
+          {%- if s1_1 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_1_link_1_url | default: '/collections/men' }}" class="mega-menu__link">{% render 'translate-nav', text: s1_1 %}</a></li>{%- endif -%}
+          {%- if s1_2 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_1_link_2_url | default: '/collections/men' }}" class="mega-menu__link">{% render 'translate-nav', text: s1_2 %}</a></li>{%- endif -%}
+          {%- if s1_3 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_1_link_3_url | default: '/collections/men' }}" class="mega-menu__link">{% render 'translate-nav', text: s1_3 %}</a></li>{%- endif -%}
+          {%- if s1_4 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_1_link_4_url | default: '/collections/men' }}" class="mega-menu__link">{% render 'translate-nav', text: s1_4 %}</a></li>{%- endif -%}
+          {%- if s1_5 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_1_link_5_url | default: '/collections/men' }}" class="mega-menu__link">{% render 'translate-nav', text: s1_5 %}</a></li>{%- endif -%}
+          {%- if s1_6 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_1_link_6_url | default: '/collections/men' }}" class="mega-menu__link" style="color: var(--color-primary); font-weight: 700;">{% render 'translate-nav', text: s1_6 %}</a></li>{%- endif -%}
         {%- endif -%}
       </ul>
     </div>
@@ -49,12 +49,12 @@
   {%- if c2_title != blank or block.settings.col_2_menu != blank -%}
     <div class="mega-menu__col">
       <a href="{{ block.settings.col_2_url | default: '/collections/women' }}" class="mega-menu__heading">
-        {%- if request.locale.iso_code == 'ar' and c2_title contains 'Women' -%}حريمي (Women){%- else -%}{{ c2_title }}{%- endif -%}
+        {% render 'translate-nav', text: c2_title %}
       </a>
       <ul class="mega-menu__list">
         {%- if block.settings.col_2_menu != blank and linklists[block.settings.col_2_menu].links.size > 0 -%}
           {%- for sub in linklists[block.settings.col_2_menu].links -%}
-            <li class="mega-menu__item"><a href="{{ sub.url }}" class="mega-menu__link">{{ sub.title }}</a></li>
+            <li class="mega-menu__item"><a href="{{ sub.url }}" class="mega-menu__link">{% render 'translate-nav', text: sub.title %}</a></li>
           {%- endfor -%}
         {%- else -%}
           {%- assign s2_1 = block.settings.col_2_link_1_title | default: "Cropped & Oversized Tops" -%}
@@ -64,12 +64,12 @@
           {%- assign s2_5 = block.settings.col_2_link_5_title | default: "Bags & Accessories" -%}
           {%- assign s2_6 = block.settings.col_2_link_6_title | default: "Shop All Women's →" -%}
 
-          {%- if s2_1 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_2_link_1_url | default: '/collections/women' }}" class="mega-menu__link">{{ s2_1 }}</a></li>{%- endif -%}
-          {%- if s2_2 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_2_link_2_url | default: '/collections/women' }}" class="mega-menu__link">{{ s2_2 }}</a></li>{%- endif -%}
-          {%- if s2_3 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_2_link_3_url | default: '/collections/women' }}" class="mega-menu__link">{{ s2_3 }}</a></li>{%- endif -%}
-          {%- if s2_4 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_2_link_4_url | default: '/collections/women' }}" class="mega-menu__link">{{ s2_4 }}</a></li>{%- endif -%}
-          {%- if s2_5 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_2_link_5_url | default: '/collections/women' }}" class="mega-menu__link">{{ s2_5 }}</a></li>{%- endif -%}
-          {%- if s2_6 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_2_link_6_url | default: '/collections/women' }}" class="mega-menu__link" style="color: var(--color-primary); font-weight: 700;">{{ s2_6 }}</a></li>{%- endif -%}
+          {%- if s2_1 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_2_link_1_url | default: '/collections/women' }}" class="mega-menu__link">{% render 'translate-nav', text: s2_1 %}</a></li>{%- endif -%}
+          {%- if s2_2 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_2_link_2_url | default: '/collections/women' }}" class="mega-menu__link">{% render 'translate-nav', text: s2_2 %}</a></li>{%- endif -%}
+          {%- if s2_3 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_2_link_3_url | default: '/collections/women' }}" class="mega-menu__link">{% render 'translate-nav', text: s2_3 %}</a></li>{%- endif -%}
+          {%- if s2_4 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_2_link_4_url | default: '/collections/women' }}" class="mega-menu__link">{% render 'translate-nav', text: s2_4 %}</a></li>{%- endif -%}
+          {%- if s2_5 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_2_link_5_url | default: '/collections/women' }}" class="mega-menu__link">{% render 'translate-nav', text: s2_5 %}</a></li>{%- endif -%}
+          {%- if s2_6 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_2_link_6_url | default: '/collections/women' }}" class="mega-menu__link" style="color: var(--color-primary); font-weight: 700;">{% render 'translate-nav', text: s2_6 %}</a></li>{%- endif -%}
         {%- endif -%}
       </ul>
     </div>
@@ -84,12 +84,12 @@
   {%- if c3_title != blank or block.settings.col_3_menu != blank -%}
     <div class="mega-menu__col">
       <a href="{{ block.settings.col_3_url | default: '/collections/kids' }}" class="mega-menu__heading">
-        {%- if request.locale.iso_code == 'ar' and c3_title contains 'Kids' -%}أطفال وناشئين (Kids){%- else -%}{{ c3_title }}{%- endif -%}
+        {% render 'translate-nav', text: c3_title %}
       </a>
       <ul class="mega-menu__list">
         {%- if block.settings.col_3_menu != blank and linklists[block.settings.col_3_menu].links.size > 0 -%}
           {%- for sub in linklists[block.settings.col_3_menu].links -%}
-            <li class="mega-menu__item"><a href="{{ sub.url }}" class="mega-menu__link">{{ sub.title }}</a></li>
+            <li class="mega-menu__item"><a href="{{ sub.url }}" class="mega-menu__link">{% render 'translate-nav', text: sub.title %}</a></li>
           {%- endfor -%}
         {%- else -%}
           {%- assign s3_1 = block.settings.col_3_link_1_title | default: "Boys Graphic Tees" -%}
@@ -99,12 +99,12 @@
           {%- assign s3_5 = block.settings.col_3_link_5_title | default: "Teen Streetwear Essentials" -%}
           {%- assign s3_6 = block.settings.col_3_link_6_title | default: "Shop All Kids →" -%}
 
-          {%- if s3_1 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_3_link_1_url | default: '/collections/kids' }}" class="mega-menu__link">{{ s3_1 }}</a></li>{%- endif -%}
-          {%- if s3_2 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_3_link_2_url | default: '/collections/kids' }}" class="mega-menu__link">{{ s3_2 }}</a></li>{%- endif -%}
-          {%- if s3_3 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_3_link_3_url | default: '/collections/kids' }}" class="mega-menu__link">{{ s3_3 }}</a></li>{%- endif -%}
-          {%- if s3_4 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_3_link_4_url | default: '/collections/kids' }}" class="mega-menu__link">{{ s3_4 }}</a></li>{%- endif -%}
-          {%- if s3_5 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_3_link_5_url | default: '/collections/kids' }}" class="mega-menu__link">{{ s3_5 }}</a></li>{%- endif -%}
-          {%- if s3_6 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_3_link_6_url | default: '/collections/kids' }}" class="mega-menu__link" style="color: var(--color-primary); font-weight: 700;">{{ s3_6 }}</a></li>{%- endif -%}
+          {%- if s3_1 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_3_link_1_url | default: '/collections/kids' }}" class="mega-menu__link">{% render 'translate-nav', text: s3_1 %}</a></li>{%- endif -%}
+          {%- if s3_2 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_3_link_2_url | default: '/collections/kids' }}" class="mega-menu__link">{% render 'translate-nav', text: s3_2 %}</a></li>{%- endif -%}
+          {%- if s3_3 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_3_link_3_url | default: '/collections/kids' }}" class="mega-menu__link">{% render 'translate-nav', text: s3_3 %}</a></li>{%- endif -%}
+          {%- if s3_4 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_3_link_4_url | default: '/collections/kids' }}" class="mega-menu__link">{% render 'translate-nav', text: s3_4 %}</a></li>{%- endif -%}
+          {%- if s3_5 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_3_link_5_url | default: '/collections/kids' }}" class="mega-menu__link">{% render 'translate-nav', text: s3_5 %}</a></li>{%- endif -%}
+          {%- if s3_6 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_3_link_6_url | default: '/collections/kids' }}" class="mega-menu__link" style="color: var(--color-primary); font-weight: 700;">{% render 'translate-nav', text: s3_6 %}</a></li>{%- endif -%}
         {%- endif -%}
       </ul>
     </div>
@@ -119,12 +119,12 @@
   {%- if c4_title != blank or block.settings.col_4_menu != blank -%}
     <div class="mega-menu__col">
       <a href="{{ block.settings.col_4_url | default: '/collections/best-sellers' }}" class="mega-menu__heading">
-        {%- if request.locale.iso_code == 'ar' and c4_title contains 'Trending' -%}الأكثر طلباً والعروض{%- else -%}{{ c4_title }}{%- endif -%}
+        {% render 'translate-nav', text: c4_title %}
       </a>
       <ul class="mega-menu__list">
         {%- if block.settings.col_4_menu != blank and linklists[block.settings.col_4_menu].links.size > 0 -%}
           {%- for sub in linklists[block.settings.col_4_menu].links -%}
-            <li class="mega-menu__item"><a href="{{ sub.url }}" class="mega-menu__link">{{ sub.title }}</a></li>
+            <li class="mega-menu__item"><a href="{{ sub.url }}" class="mega-menu__link">{% render 'translate-nav', text: sub.title %}</a></li>
           {%- endfor -%}
         {%- else -%}
           {%- assign s4_1 = block.settings.col_4_link_1_title | default: "Top Best Sellers 🔥" -%}
@@ -133,11 +133,11 @@
           {%- assign s4_4 = block.settings.col_4_link_4_title | default: "Clearance Sale Up to 50% 🏷️" -%}
           {%- assign s4_5 = block.settings.col_4_link_5_title | default: "Browse All Collections →" -%}
 
-          {%- if s4_1 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_4_link_1_url | default: '/collections/best-sellers' }}" class="mega-menu__link" style="font-weight: 600;">{{ s4_1 }}</a></li>{%- endif -%}
-          {%- if s4_2 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_4_link_2_url | default: '/collections/all' }}" class="mega-menu__link">{{ s4_2 }}</a></li>{%- endif -%}
-          {%- if s4_3 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_4_link_3_url | default: '/collections/men' }}" class="mega-menu__link">{{ s4_3 }}</a></li>{%- endif -%}
-          {%- if s4_4 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_4_link_4_url | default: '/collections/sale' }}" class="mega-menu__link" style="color: var(--color-sale); font-weight: 700;">{{ s4_4 }}</a></li>{%- endif -%}
-          {%- if s4_5 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_4_link_5_url | default: '/collections/all' }}" class="mega-menu__link" style="font-weight: 700; text-decoration: underline;">{{ s4_5 }}</a></li>{%- endif -%}
+          {%- if s4_1 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_4_link_1_url | default: '/collections/best-sellers' }}" class="mega-menu__link" style="font-weight: 600;">{% render 'translate-nav', text: s4_1 %}</a></li>{%- endif -%}
+          {%- if s4_2 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_4_link_2_url | default: '/collections/all' }}" class="mega-menu__link">{% render 'translate-nav', text: s4_2 %}</a></li>{%- endif -%}
+          {%- if s4_3 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_4_link_3_url | default: '/collections/men' }}" class="mega-menu__link">{% render 'translate-nav', text: s4_3 %}</a></li>{%- endif -%}
+          {%- if s4_4 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_4_link_4_url | default: '/collections/sale' }}" class="mega-menu__link" style="color: var(--color-sale); font-weight: 700;">{% render 'translate-nav', text: s4_4 %}</a></li>{%- endif -%}
+          {%- if s4_5 != blank -%}<li class="mega-menu__item"><a href="{{ block.settings.col_4_link_5_url | default: '/collections/all' }}" class="mega-menu__link" style="font-weight: 700; text-decoration: underline;">{% render 'translate-nav', text: s4_5 %}</a></li>{%- endif -%}
         {%- endif -%}
       </ul>
     </div>
@@ -159,10 +159,11 @@
           <div class="mega-menu__promo-overlay"></div>
         </div>
         <div class="mega-menu__promo-content">
-          <span class="mega-menu__promo-tag">{{ block.settings.promo_badge | default: 'NEW DROP 2026' }}</span>
-          <h4 class="mega-menu__promo-title">{{ block.settings.promo_title | default: 'Never Mind Streetwear Drop' }}</h4>
+          <span class="mega-menu__promo-tag">{% render 'translate-nav', text: block.settings.promo_badge | default: 'NEW DROP 2026' %}</span>
+          <h4 class="mega-menu__promo-title">{% render 'translate-nav', text: block.settings.promo_title | default: 'Never Mind Streetwear Drop' %}</h4>
           <span class="mega-menu__promo-btn">
-            {{ block.settings.promo_button_text | default: 'Shop Now' }}
+            {%- assign b_promo_btn = block.settings.promo_button_text | default: 'Shop Now' -%}
+            {% render 'translate-nav', text: b_promo_btn %}
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="5" y1="12" x2="19" y2="12"></line>
               <polyline points="12 5 19 12 12 19"></polyline>

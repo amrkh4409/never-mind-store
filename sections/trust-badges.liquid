@@ -1,7 +1,31 @@
 <section class="trust-section">
   <div class="container">
     <div class="trust-grid">
+      {%- assign is_ar = false -%}
+      {%- if request.locale.iso_code == 'ar' or localization.language.iso_code == 'ar' -%}
+        {%- assign is_ar = true -%}
+      {%- endif -%}
       {%- for block in section.blocks -%}
+        {%- assign t_title = block.settings.title -%}
+        {%- assign t_text = block.settings.text -%}
+
+        {%- if is_ar -%}
+          {%- case block.type -%}
+            {%- when 'cod' -%}
+              {%- if t_title == 'Cash on Delivery' -%}{%- assign t_title = 'الدفع عند الاستلام' -%}{%- endif -%}
+              {%- if t_text contains 'Pay comfortably' -%}{%- assign t_text = 'ادفع بأمان وراحة عند استلام طلبك حتى باب منزلك' -%}{%- endif -%}
+            {%- when 'inspection' -%}
+              {%- if t_title contains 'Inspect' -%}{%- assign t_title = 'معاينة وفحص الطلب قبل الدفع' -%}{%- endif -%}
+              {%- if t_text contains 'Open and review' -%}{%- assign t_text = 'افتح الشحنة وتأكد من جودة ومقاسات المنتجات بحضور المندوب قبل السداد' -%}{%- endif -%}
+            {%- when 'shipping' -%}
+              {%- if t_title contains 'Shipping' or t_title contains 'Delivery' -%}{%- assign t_title = 'شحن سريع لجميع محافظات مصر' -%}{%- endif -%}
+              {%- if t_text contains 'Cairo' or t_text contains '24-48' -%}{%- assign t_text = 'القاهرة والجيزة خلال ٢٤-٤٨ ساعة | باقي المحافظات خلال ٢-٤ أيام عمل' -%}{%- endif -%}
+            {%- when 'exchange' -%}
+              {%- if t_title contains 'Exchange' -%}{%- assign t_title = 'استبدال مقاسات خلال 14 يوماً' -%}{%- endif -%}
+              {%- if t_text contains 'WhatsApp' or t_text contains 'replacement' -%}{%- assign t_text = 'استبدال سهل وسريع للمقاسات وخدمة عملاء مباشرة عبر واتساب' -%}{%- endif -%}
+          {%- endcase -%}
+        {%- endif -%}
+
         <div class="trust-item" {{ block.shopify_attributes }}>
           <div class="trust-item__icon">
             {%- case block.type -%}
@@ -18,8 +42,8 @@
             {%- endcase -%}
           </div>
           <div>
-            <h4 class="trust-item__title">{{ block.settings.title }}</h4>
-            <p class="trust-item__text">{{ block.settings.text }}</p>
+            <h4 class="trust-item__title">{{ t_title }}</h4>
+            <p class="trust-item__text">{{ t_text }}</p>
           </div>
         </div>
       {%- endfor -%}

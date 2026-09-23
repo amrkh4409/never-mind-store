@@ -13,27 +13,56 @@
 
   <div class="hero-banner__overlay" style="opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};"></div>
 
+  {%- assign is_ar = false -%}
+  {%- if request.locale.iso_code == 'ar' or localization.language.iso_code == 'ar' -%}
+    {%- assign is_ar = true -%}
+  {%- endif -%}
+
+  {%- assign h_subheading = section.settings.subheading -%}
+  {%- assign h_heading = section.settings.heading -%}
+  {%- assign h_text = section.settings.text -%}
+  {%- assign h_btn1 = section.settings.button_1_label -%}
+  {%- assign h_btn2 = section.settings.button_2_label -%}
+
+  {%- if is_ar -%}
+    {%- if h_subheading == 'NEW LUXURY STREETWEAR COLLECTION' or h_subheading contains 'STREETWEAR COLLECTION' -%}
+      {%- assign h_subheading = 'تشكيلة أزياء ستريت وير فاخرة جديدة' -%}
+    {%- endif -%}
+    {%- if h_heading == 'Minimal Aesthetics. Uncompromising Craft.' or h_heading contains 'Minimal Aesthetics' -%}
+      {%- assign h_heading = 'جماليات مينيمال. حرفية مصرية بلا مساومة.' -%}
+    {%- endif -%}
+    {%- if h_text == 'Engineered for comfort, precision, and timeless presence in Egypt.' or h_text contains 'Engineered for comfort' -%}
+      {%- assign h_text = 'مصممة بأعلى معايير الراحة والدقة والحضور المميز في مصر.' -%}
+    {%- endif -%}
+    {%- if h_btn1 == 'SHOP MEN' or h_btn1 == 'Shop Men' -%}
+      {%- assign h_btn1 = 'تسوق رجالي' -%}
+    {%- endif -%}
+    {%- if h_btn2 == 'SHOP WOMEN' or h_btn2 == 'Shop Women' -%}
+      {%- assign h_btn2 = 'تسوق حريمي' -%}
+    {%- endif -%}
+  {%- endif -%}
+
   <div class="container hero-banner__content" style="text-align: {{ section.settings.text_alignment }}; margin-{{ section.settings.text_alignment }}: 0;">
-    {%- if section.settings.subheading != blank -%}
-      <div class="hero-banner__subheading">{{ section.settings.subheading }}</div>
+    {%- if h_subheading != blank -%}
+      <div class="hero-banner__subheading">{{ h_subheading }}</div>
     {%- endif -%}
 
-    <h1 class="hero-banner__heading">{{ section.settings.heading }}</h1>
+    <h1 class="hero-banner__heading">{{ h_heading }}</h1>
 
-    {%- if section.settings.text != blank -%}
-      <p class="hero-banner__text">{{ section.settings.text }}</p>
+    {%- if h_text != blank -%}
+      <p class="hero-banner__text">{{ h_text }}</p>
     {%- endif -%}
 
     <div class="hero-banner__actions" style="justify-content: {% if section.settings.text_alignment == 'center' %}center{% elsif section.settings.text_alignment == 'right' %}flex-end{% else %}flex-start{% endif %};">
-      {%- if section.settings.button_1_label != blank -%}
+      {%- if h_btn1 != blank -%}
         <a href="{{ section.settings.button_1_link | default: routes.all_products_collection_url }}" class="btn btn-white btn-lg">
-          {{ section.settings.button_1_label }}
+          {{ h_btn1 }}
         </a>
       {%- endif -%}
 
-      {%- if section.settings.button_2_label != blank -%}
+      {%- if h_btn2 != blank -%}
         <a href="{{ section.settings.button_2_link | default: routes.all_products_collection_url }}" class="btn btn-secondary btn-lg" style="color: #FFFFFF; border-color: #FFFFFF;">
-          {{ section.settings.button_2_label }}
+          {{ h_btn2 }}
         </a>
       {%- endif -%}
     </div>

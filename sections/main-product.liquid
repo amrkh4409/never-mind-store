@@ -80,15 +80,15 @@
         <div class="product-info__reassurance-box">
           <div class="reassurance-line">
             <span style="font-size: 1.1rem;">💵</span>
-            <span><strong>{{ settings.cod_badge_text | default: "Cash on Delivery Available" }}</strong> across all Egyptian governorates</span>
+            <span><strong>{{ 'products.product.cod_available' | t }}</strong></span>
           </div>
           <div class="reassurance-line">
             <span style="font-size: 1.1rem;">📦</span>
-            <span><strong>{{ settings.inspection_badge_text | default: "Open & inspect your package" }}</strong> with courier before paying</span>
+            <span>{{ 'products.product.inspection_notice' | t }}</span>
           </div>
           <div class="reassurance-line">
             <span style="font-size: 1.1rem;">⚡</span>
-            <span>{{ settings.delivery_time_text | default: "Cairo & Giza: 24-48 hrs | Governorates: 2-4 days" }}</span>
+            <span>{{ 'products.product.shipping_cairo_giza' | t }}</span>
           </div>
         </div>
 

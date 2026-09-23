@@ -1,6 +1,7 @@
 <div class="container" style="padding-top: 40px; padding-bottom: 80px;">
   <div style="text-align: center; margin-bottom: 32px;">
-    <h1 style="margin-bottom: 8px;">{{ collection.title | default: "Catalog" }}</h1>
+    {%- assign coll_display_title = collection.title | default: "Catalog" -%}
+    <h1 style="margin-bottom: 8px;">{% render 'translate-nav', text: coll_display_title %}</h1>
     {%- if collection.description != blank -%}
       <p style="color: var(--color-foreground-secondary); font-size: 1rem; max-width: 600px; margin: 0 auto;">{{ collection.description }}</p>
     {%- endif -%}

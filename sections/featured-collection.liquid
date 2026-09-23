@@ -1,7 +1,7 @@
 <section class="featured-products-section" style="padding: 60px 0;">
   <div class="container">
     {%- assign is_ar = false -%}
-    {%- if request.locale.iso_code == 'ar' -%}
+    {%- if request.locale.iso_code == 'ar' or localization.language.iso_code == 'ar' -%}
       {%- assign is_ar = true -%}
     {%- endif -%}
 
@@ -10,22 +10,27 @@
     {%- assign display_view_all = section.settings.view_all_text | default: "View All" -%}
 
     {%- if is_ar -%}
-      {%- if section.settings.title == 'Best Sellers' or section.settings.title == blank -%}
+      {%- if section.settings.title == 'Best Sellers' or section.settings.title == 'Featured Best Sellers' or section.settings.title == blank -%}
         {%- assign display_title = 'الأكثر مبيعاً' -%}
         {%- assign display_subtitle = 'القطع الأكثر طلباً ورواجاً الآن' -%}
         {%- assign display_view_all = 'عرض الأكثر مبيعاً' -%}
-      {%- elsif section.settings.title == "Men's Collection" -%}
+      {%- elsif section.settings.title == "Men Collection" or section.settings.title == "Men's Collection" or section.settings.title == "MEN" -%}
         {%- assign display_title = 'تشكيلة الرجال' -%}
         {%- assign display_subtitle = 'تيشيرتات أوفر سايز فاخرة وهوديز وبناطيل كارغو' -%}
         {%- assign display_view_all = 'تسوق تشكيلة الرجال' -%}
-      {%- elsif section.settings.title == "Women's Collection" -%}
+      {%- elsif section.settings.title == "Women Collection" or section.settings.title == "Women's Collection" or section.settings.title == "WOMEN" -%}
         {%- assign display_title = 'تشكيلة النساء' -%}
         {%- assign display_subtitle = 'تصاميم عصرية مريحة مصممة من أجود أقطان مصر' -%}
         {%- assign display_view_all = 'تسوق تشكيلة النساء' -%}
-      {%- elsif section.settings.title == "Kids & Teens Collection" -%}
+      {%- elsif section.settings.title == "Kids Collection" or section.settings.title == "Kids & Teens Collection" or section.settings.title == "Kids & Teens" or section.settings.title == "KIDS & TEENS" -%}
         {%- assign display_title = 'تشكيلة الأطفال والناشئين' -%}
         {%- assign display_subtitle = 'قطع مريحة وعملية لحرية الحركة والراحة التامة' -%}
         {%- assign display_view_all = 'تسوق تشكيلة الأطفال' -%}
+      {%- else -%}
+        {%- assign display_title = section.settings.title -%}
+        {%- if display_view_all == 'View All' -%}
+          {%- assign display_view_all = 'عرض الكل' -%}
+        {%- endif -%}
       {%- endif -%}
     {%- endif -%}
 
