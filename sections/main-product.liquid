@@ -44,7 +44,7 @@
       <!-- Product Buy Box & Details -->
       <div class="product-info">
         {%- if product.vendor != blank -%}
-          <span style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-foreground-secondary);">
+          <span data-product-vendor style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-foreground-secondary);">
             {{ product.vendor }}
           </span>
         {%- endif -%}
@@ -165,10 +165,17 @@
             <!-- Wishlist Button -->
             <button
               type="button"
-              class="btn btn-outline"
+              class="btn btn-outline product-main__wishlist"
               data-wishlist-btn
               data-product-handle="{{ product.handle }}"
-              style="padding: 0 16px; min-width: 52px;"
+              data-product-id="{{ product.id }}"
+              data-product-title="{{ product.title | escape }}"
+              data-product-url="{{ product.url }}"
+              data-product-image="{{ featured_image | image_url: width: 600 }}"
+              data-product-price="{{ current_variant.price | money }}"
+              data-product-compare-price="{% if current_variant.compare_at_price > current_variant.price %}{{ current_variant.compare_at_price | money }}{% endif %}"
+              data-product-vendor="{{ product.vendor | escape }}"
+              style="padding: 0 16px; min-width: 52px; display: inline-flex; align-items: center; justify-content: center;"
               aria-label="{{ 'products.product.add_to_wishlist' | t }}"
             >
               {% render 'icon-heart' %}

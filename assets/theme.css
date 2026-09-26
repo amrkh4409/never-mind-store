@@ -1848,9 +1848,22 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
   transform: translateX(0) !important;
 }
 
-.product-card__wishlist.is-active svg {
-  fill: var(--color-sale);
-  stroke: var(--color-sale);
+.product-card__wishlist.is-active svg,
+[data-wishlist-btn].is-active svg {
+  fill: var(--color-sale) !important;
+  stroke: var(--color-sale) !important;
+  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.btn[data-wishlist-btn].is-active,
+.product-main__wishlist.is-active {
+  border-color: var(--color-sale) !important;
+  color: var(--color-sale) !important;
+  background-color: rgba(224, 90, 71, 0.08) !important;
+}
+
+[data-wishlist-btn]:active svg {
+  transform: scale(1.25);
 }
 
 .cart-drawer__header {

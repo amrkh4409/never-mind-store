@@ -204,6 +204,7 @@
       this.comparePriceEl = this.container.querySelector('[data-product-compare-price]');
       this.submitBtn = this.container.querySelector('[data-add-to-cart]');
       this.submitBtnText = this.container.querySelector('[data-add-to-cart-text]');
+      this.wishlistBtn = this.container.querySelector('[data-wishlist-btn]');
 
       this.bindEvents();
     }
@@ -279,6 +280,20 @@
       if (variant.featured_image && variant.featured_image.src) {
         const mainImg = document.querySelector('[data-product-main-img]');
         if (mainImg) mainImg.src = variant.featured_image.src;
+      }
+
+      // Update wishlist button state for active variant
+      if (this.wishlistBtn) {
+        this.wishlistBtn.dataset.productId = variant.id;
+        this.wishlistBtn.dataset.productPrice = formatMoney(variant.price);
+        if (variant.compare_at_price && variant.compare_at_price > variant.price) {
+          this.wishlistBtn.dataset.productComparePrice = formatMoney(variant.compare_at_price);
+        } else {
+          this.wishlistBtn.dataset.productComparePrice = '';
+        }
+        if (variant.featured_image && variant.featured_image.src) {
+          this.wishlistBtn.dataset.productImage = variant.featured_image.src;
+        }
       }
 
       // Push URL
@@ -410,7 +425,35 @@
     loadItems() {
       try {
         const data = localStorage.getItem(this.storageKey);
-        return data ? JSON.parse(data) : [];
+        const parsed = data ? JSON.parse(data) : [];
+        if (!Array.isArray(parsed)) return [];
+        return parsed.map(item => {
+          if (!item || typeof item !== 'object') return null;
+          const handle = item.handle || '';
+          if (!handle) return null;
+
+          const cleanTitle = (item.title && item.title !== 'undefined')
+            ? item.title
+            : handle.replace(/[-_]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+          const cleanUrl = (item.url && item.url !== 'undefined')
+            ? item.url
+            : `/products/${handle}`;
+          const cleanPrice = (item.price && item.price !== 'undefined') ? item.price : '';
+          const cleanComparePrice = (item.compare_at_price && item.compare_at_price !== 'undefined') ? item.compare_at_price : '';
+          const cleanImage = (item.image && item.image !== 'undefined') ? item.image : '';
+          const cleanVendor = (item.vendor && item.vendor !== 'undefined') ? item.vendor : '';
+
+          return {
+            ...item,
+            handle,
+            title: cleanTitle,
+            url: cleanUrl,
+            price: cleanPrice,
+            compare_at_price: cleanComparePrice,
+            image: cleanImage,
+            vendor: cleanVendor
+          };
+        }).filter(Boolean);
       } catch (e) {
         return [];
       }
@@ -441,9 +484,12 @@
           e.preventDefault();
           e.stopPropagation();
           const handle = btn.dataset.productHandle;
+          if (!handle) return;
+
           const card = btn.closest('[data-product-card]');
-          
           let productData = { handle };
+          let isFromProductPage = false;
+
           if (card) {
             const titleEl = card.querySelector('.product-card__title a');
             const imgEl = card.querySelector('.product-card__img--primary') || card.querySelector('img');
@@ -453,16 +499,35 @@
 
             productData = {
               handle,
-              id: card.dataset.productId || handle,
-              title: titleEl ? titleEl.textContent.trim() : handle,
-              url: titleEl ? titleEl.getAttribute('href') : `/products/${handle}`,
-              image: imgEl ? imgEl.getAttribute('src') : '',
-              price: priceEl ? priceEl.textContent.trim() : '',
-              compare_at_price: comparePriceEl ? comparePriceEl.textContent.trim() : '',
-              vendor: vendorEl ? vendorEl.textContent.trim() : ''
+              id: card.dataset.productId || btn.dataset.productId || handle,
+              title: (titleEl ? titleEl.textContent.trim() : '') || btn.dataset.productTitle || handle,
+              url: (titleEl ? titleEl.getAttribute('href') : '') || btn.dataset.productUrl || `/products/${handle}`,
+              image: (imgEl ? imgEl.getAttribute('src') : '') || btn.dataset.productImage || '',
+              price: (priceEl ? priceEl.textContent.trim() : '') || btn.dataset.productPrice || '',
+              compare_at_price: (comparePriceEl ? comparePriceEl.textContent.trim() : '') || btn.dataset.productComparePrice || '',
+              vendor: (vendorEl ? vendorEl.textContent.trim() : '') || btn.dataset.productVendor || ''
+            };
+          } else {
+            isFromProductPage = true;
+            const productSection = btn.closest('.product-main-section, .product-layout, section') || document;
+            const titleEl = productSection.querySelector('.product-info__title, h1');
+            const imgEl = productSection.querySelector('[data-product-main-img], .product-gallery__main-img, img');
+            const priceEl = productSection.querySelector('[data-product-price]');
+            const comparePriceEl = productSection.querySelector('[data-product-compare-price]');
+            const vendorEl = productSection.querySelector('[data-product-vendor], .product-info > span:first-child');
+
+            productData = {
+              handle,
+              id: btn.dataset.productId || handle,
+              title: btn.dataset.productTitle || (titleEl ? titleEl.textContent.trim() : '') || handle,
+              url: btn.dataset.productUrl || window.location.pathname || `/products/${handle}`,
+              image: (imgEl && imgEl.getAttribute('src')) ? imgEl.getAttribute('src') : (btn.dataset.productImage || ''),
+              price: (priceEl && priceEl.textContent.trim()) ? priceEl.textContent.trim() : (btn.dataset.productPrice || ''),
+              compare_at_price: (comparePriceEl && comparePriceEl.offsetParent !== null && comparePriceEl.textContent.trim()) ? comparePriceEl.textContent.trim() : (btn.dataset.productComparePrice || ''),
+              vendor: btn.dataset.productVendor || (vendorEl ? vendorEl.textContent.trim() : '')
             };
           }
-          this.toggle(productData);
+          this.toggle(productData, isFromProductPage);
         }
 
         const removeBtn = e.target.closest('[data-wishlist-remove]');
@@ -474,12 +539,15 @@
       });
     }
 
-    toggle(product) {
+    toggle(product, openDrawerIfAdded = false) {
       const idx = this.items.findIndex(item => item.handle === product.handle);
       if (idx >= 0) {
         this.items.splice(idx, 1);
       } else {
         this.items.unshift(product);
+        if (openDrawerIfAdded) {
+          this.open();
+        }
       }
       this.saveItems();
     }
@@ -552,16 +620,16 @@
       this.drawerItems.innerHTML = this.items.map(item => `
         <div class="cart-item" style="display: grid; grid-template-columns: 80px 1fr auto; gap: 14px; align-items: center;">
           <div class="cart-item__media" style="aspect-ratio: 3/4; border-radius: 4px; overflow: hidden; background: #F8F8F9;">
-            ${item.image ? `<img src="${item.image}" alt="${item.title}" style="width: 100%; height: 100%; object-fit: cover;">` : ''}
+            ${item.image && item.image !== 'undefined' ? `<img src="${item.image}" alt="${item.title || ''}" style="width: 100%; height: 100%; object-fit: cover;">` : ''}
           </div>
           <div class="cart-item__details">
-            <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-foreground-muted);">${item.vendor || ''}</span>
-            <a href="${item.url}" class="cart-item__title" style="font-size: 0.92rem; font-weight: 600;">${item.title}</a>
+            ${item.vendor && item.vendor !== 'undefined' ? `<span style="font-size: 0.75rem; text-transform: uppercase; color: var(--color-foreground-muted);">${item.vendor}</span>` : ''}
+            <a href="${item.url && item.url !== 'undefined' ? item.url : `/products/${item.handle}`}" class="cart-item__title" style="font-size: 0.92rem; font-weight: 600;">${item.title && item.title !== 'undefined' ? item.title : item.handle}</a>
             <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
-              <span style="font-weight: 700; font-size: 0.92rem;">${item.price}</span>
-              ${item.compare_at_price ? `<s style="color: var(--color-foreground-muted); font-size: 0.82rem;">${item.compare_at_price}</s>` : ''}
+              ${item.price && item.price !== 'undefined' ? `<span style="font-weight: 700; font-size: 0.92rem;">${item.price}</span>` : ''}
+              ${item.compare_at_price && item.compare_at_price !== 'undefined' ? `<s style="color: var(--color-foreground-muted); font-size: 0.82rem;">${item.compare_at_price}</s>` : ''}
             </div>
-            <a href="${item.url}" class="btn btn-outline btn-sm" style="margin-top: 8px; padding: 6px 12px; font-size: 0.8rem; width: fit-content;">${window.NeverMindConfig?.translations?.viewStyle || 'View Style'}</a>
+            <a href="${item.url && item.url !== 'undefined' ? item.url : `/products/${item.handle}`}" class="btn btn-outline btn-sm" style="margin-top: 8px; padding: 6px 12px; font-size: 0.8rem; width: fit-content;">${window.NeverMindConfig?.translations?.viewStyle || 'View Style'}</a>
           </div>
           <button type="button" data-wishlist-remove data-product-handle="${item.handle}" style="background: none; border: none; padding: 8px; cursor: pointer; color: var(--color-foreground-muted);" aria-label="${window.NeverMindConfig?.translations?.removeItem || 'Remove item'}">
             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -589,22 +657,22 @@
       this.pageContainer.innerHTML = this.items.map(item => `
         <div class="product-card" data-product-card>
           <div class="product-card__media-wrapper">
-            <a href="${item.url}" style="display: block; width: 100%; height: 100%;">
-              ${item.image ? `<img src="${item.image}" alt="${item.title}" class="product-card__img product-card__img--primary">` : ''}
+            <a href="${item.url && item.url !== 'undefined' ? item.url : `/products/${item.handle}`}" style="display: block; width: 100%; height: 100%;">
+              ${item.image && item.image !== 'undefined' ? `<img src="${item.image}" alt="${item.title || ''}" class="product-card__img product-card__img--primary">` : ''}
             </a>
             <button type="button" class="product-card__wishlist is-active" data-wishlist-btn data-product-handle="${item.handle}" aria-label="Remove from Wishlist">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="#E05A47" stroke="#E05A47" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
             </button>
             <div class="product-card__quick-actions">
-              <a href="${item.url}" class="product-card__quick-btn"><span>View Product</span></a>
+              <a href="${item.url && item.url !== 'undefined' ? item.url : `/products/${item.handle}`}" class="product-card__quick-btn"><span>${window.NeverMindConfig?.translations?.viewStyle || 'View Product'}</span></a>
             </div>
           </div>
           <div class="product-card__content">
-            ${item.vendor ? `<span class="product-card__vendor">${item.vendor}</span>` : ''}
-            <h3 class="product-card__title"><a href="${item.url}">${item.title}</a></h3>
+            ${item.vendor && item.vendor !== 'undefined' ? `<span class="product-card__vendor">${item.vendor}</span>` : ''}
+            <h3 class="product-card__title"><a href="${item.url && item.url !== 'undefined' ? item.url : `/products/${item.handle}`}">${item.title && item.title !== 'undefined' ? item.title : item.handle}</a></h3>
             <div class="product-card__price-wrap">
-              <span class="product-price">${item.price}</span>
-              ${item.compare_at_price ? `<s class="product-price product-price--compare">${item.compare_at_price}</s>` : ''}
+              ${item.price && item.price !== 'undefined' ? `<span class="product-price">${item.price}</span>` : ''}
+              ${item.compare_at_price && item.compare_at_price !== 'undefined' ? `<s class="product-price product-price--compare">${item.compare_at_price}</s>` : ''}
             </div>
           </div>
         </div>
