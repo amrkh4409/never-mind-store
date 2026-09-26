@@ -1255,6 +1255,112 @@
     syncUrlParamsToUI();
   }
 
+  // --- Sticky Auto-Hide on Scroll Down / Reveal on Scroll Up ---
+  function initStickyHeader() {
+    const headerWrapper = document.getElementById('site-header') || document.querySelector('.header-wrapper');
+    if (!headerWrapper) return;
+
+    // Ensure parent shopify section wrapper behaves as sticky container
+    const headerSection = headerWrapper.closest('.shopify-section') || headerWrapper.parentElement;
+    if (headerSection && headerSection !== document.body) {
+      headerSection.classList.add('section-header-sticky');
+    }
+
+    let lastScrollY = Math.max(0, window.pageYOffset || document.documentElement.scrollTop);
+    let ticking = false;
+    const scrollThreshold = 8; // minimum px movement to detect intentional direction
+
+    function updateHeader() {
+      const currentScrollY = Math.max(0, window.pageYOffset || document.documentElement.scrollTop);
+      const headerHeight = headerWrapper.offsetHeight || 76;
+
+      // Do not toggle header if any drawer/modal is open or body is scroll-locked
+      const isDrawerOpen = document.body.style.overflow === 'hidden' ||
+        document.querySelector('.drawer.is-open, .filter-drawer.is-open, .search-modal.is-open, .mobile-nav-drawer.is-open');
+
+      if (isDrawerOpen) {
+        ticking = false;
+        return;
+      }
+
+      // 1. At the very top (or iOS negative overscroll)
+      if (currentScrollY <= 10) {
+        headerWrapper.classList.remove('header--hidden');
+        headerWrapper.classList.remove('header--scrolled');
+        lastScrollY = currentScrollY;
+        ticking = false;
+        return;
+      }
+
+      // Add elevation shadow whenever scrolled past top
+      headerWrapper.classList.add('header--scrolled');
+
+      // 2. Near top (within header height), keep visible
+      if (currentScrollY <= headerHeight) {
+        headerWrapper.classList.remove('header--hidden');
+        lastScrollY = currentScrollY;
+        ticking = false;
+        return;
+      }
+
+      // 3. Prevent false triggers at bottom of page (iOS rubber banding)
+      const maxScrollY = document.documentElement.scrollHeight - window.innerHeight;
+      if (currentScrollY >= maxScrollY - 20) {
+        ticking = false;
+        return;
+      }
+
+      const diff = currentScrollY - lastScrollY;
+
+      // 4. Directional scroll detection
+      if (Math.abs(diff) >= scrollThreshold) {
+        if (diff > 0) {
+          // Scrolling DOWN -> Hide Navbar
+          if (!headerWrapper.classList.contains('header--hidden')) {
+            headerWrapper.classList.add('header--hidden');
+
+            // Close any open desktop mega menus / dropdowns
+            document.querySelectorAll('.header__menu-item--has-mega.is-open, .header__menu-item--has-dropdown.is-open').forEach(item => {
+              item.classList.remove('is-open');
+              const link = item.querySelector('.header__menu-link');
+              if (link) link.setAttribute('aria-expanded', 'false');
+            });
+          }
+        } else {
+          // Scrolling UP -> Reveal Navbar
+          headerWrapper.classList.remove('header--hidden');
+        }
+
+        lastScrollY = currentScrollY;
+      }
+
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateHeader);
+        ticking = true;
+      }
+    }, { passive: true });
+
+    // Accessibility: Reveal header if keyboard focus moves inside it
+    headerWrapper.addEventListener('focusin', () => {
+      headerWrapper.classList.remove('header--hidden');
+    });
+
+    // Theme Editor: keep header visible during theme customizer interactions
+    document.addEventListener('shopify:section:select', (e) => {
+      if (e.target.contains(headerWrapper) || headerWrapper.contains(e.target)) {
+        headerWrapper.classList.remove('header--hidden');
+      }
+    });
+
+    document.addEventListener('shopify:block:select', () => {
+      headerWrapper.classList.remove('header--hidden');
+    });
+  }
+
   // --- Initialize All Theme Features on DOM Ready ---
   document.addEventListener('DOMContentLoaded', () => {
     window.NeverMindCart = new CartDrawer();
@@ -1267,5 +1373,7 @@
     initSliders();
     initRecentlyViewed();
     initCollectionFilters();
+    initStickyHeader();
   });
 })();
+

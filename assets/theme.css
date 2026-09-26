@@ -301,16 +301,37 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
   gap: 6px;
 }
 
-/* --- Header --- */
+/* --- Header Sticky & Smart Scroll Hide/Reveal --- */
+#shopify-section-header,
+.shopify-section-group-header-group,
+.section-header-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
 .header-wrapper {
   position: sticky;
   top: 0;
+  width: 100%;
   z-index: 40;
   background-color: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--color-border-light);
-  transition: all var(--transition-fast);
+  transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, background-color 0.25s ease;
+  will-change: transform;
+}
+
+.header-wrapper.header--hidden {
+  transform: translateY(-100%);
+  box-shadow: none;
+  pointer-events: none;
+}
+
+.header-wrapper.header--scrolled {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  background-color: rgba(255, 255, 255, 0.98);
 }
 
 .header {
