@@ -110,7 +110,14 @@
             "settings": {
               "logo": "shopify://shop_images/d.png",
               "text": "Contemporary Egyptian luxury streetwear and minimalist fashion designed with premium fabrics and tailored cuts.",
-              "show_social": true
+              "show_social": true,
+              "social_instagram": "https://www.instagram.com/nevermind.store.eg",
+              "social_facebook": "https://www.facebook.com/profile.php?id=61594818874431",
+              "social_tiktok": "https://www.tiktok.com/@nevermind.store.eg",
+              "social_youtube": "",
+              "social_twitter": "",
+              "social_whatsapp": "",
+              "social_pinterest": ""
             }
           },
           "footer-1": {
@@ -145,7 +152,14 @@
         "settings": {
           "show_payment_cod": true,
           "cod_badge_text": "Cash on Delivery Available",
-          "copyright_text": ""
+          "copyright_text": "",
+          "social_instagram": "",
+          "social_facebook": "",
+          "social_tiktok": "",
+          "social_youtube": "",
+          "social_twitter": "",
+          "social_whatsapp": "",
+          "social_pinterest": ""
         }
       },
       "cart-drawer": {
@@ -154,7 +168,14 @@
       },
       "floating-whatsapp": {
         "type": "floating-whatsapp",
-        "settings": {}
+        "settings": {
+          "enable_whatsapp": true,
+          "whatsapp_number": "+201080214330",
+          "whatsapp_message": "Hello Never Mind Store, I have an inquiry about my order / sizing.",
+          "tooltip_text": "Chat on WhatsApp",
+          "enable_pulse": true,
+          "position": "bottom-right"
+        }
       }
     },
     "content_for_index": []
