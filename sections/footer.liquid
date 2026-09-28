@@ -28,23 +28,7 @@
                 </p>
 
                 {%- if block.settings.show_social -%}
-                  <div style="display: flex; align-items: center; gap: 14px;">
-                    {%- if settings.social_instagram != blank -%}
-                      <a href="{{ settings.social_instagram }}" target="_blank" rel="noopener noreferrer" style="color: var(--color-foreground);" aria-label="Instagram">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-                      </a>
-                    {%- endif -%}
-                    {%- if settings.social_facebook != blank -%}
-                      <a href="{{ settings.social_facebook }}" target="_blank" rel="noopener noreferrer" style="color: var(--color-foreground);" aria-label="Facebook">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
-                      </a>
-                    {%- endif -%}
-                    {%- if settings.social_tiktok != blank -%}
-                      <a href="{{ settings.social_tiktok }}" target="_blank" rel="noopener noreferrer" style="color: var(--color-foreground);" aria-label="TikTok">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.24 1.07-.14 1.61.24 1.64 1.82 2.92 3.5 2.7 1.48-.1 2.71-1.09 3.1-2.52.2-.61.26-1.25.24-1.89l.05-14.86z"/></svg>
-                      </a>
-                    {%- endif -%}
-                  </div>
+                  {% render 'social-icons', block: block %}
                 {%- endif -%}
               </div>
 
@@ -127,6 +111,20 @@
                 {%- endif -%}
               </div>
 
+            {%- when 'social' -%}
+              <div class="footer-col" {{ block.shopify_attributes }}>
+                {%- assign s_heading = block.settings.heading -%}
+                {%- if s_heading != blank -%}
+                  <h4 class="footer-col__title">{{ s_heading }}</h4>
+                {%- endif -%}
+                {%- if block.settings.subtext != blank -%}
+                  <p style="font-size: 0.9rem; color: var(--color-foreground-secondary); line-height: 1.6; margin-bottom: 16px;">
+                    {{ block.settings.subtext }}
+                  </p>
+                {%- endif -%}
+                {% render 'social-icons', block: block %}
+              </div>
+
           {%- endcase -%}
         {%- endfor -%}
 
@@ -139,23 +137,7 @@
           <p style="font-size: 0.9rem; color: var(--color-foreground-secondary); line-height: 1.6; margin-bottom: 20px; max-width: 320px;">
             {{ 'sections.footer.brand_bio' | t }}
           </p>
-          <div style="display: flex; align-items: center; gap: 14px;">
-            {%- if settings.social_instagram != blank -%}
-              <a href="{{ settings.social_instagram }}" target="_blank" rel="noopener noreferrer" style="color: var(--color-foreground);" aria-label="Instagram">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-              </a>
-            {%- endif -%}
-            {%- if settings.social_facebook != blank -%}
-              <a href="{{ settings.social_facebook }}" target="_blank" rel="noopener noreferrer" style="color: var(--color-foreground);" aria-label="Facebook">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
-              </a>
-            {%- endif -%}
-            {%- if settings.social_tiktok != blank -%}
-              <a href="{{ settings.social_tiktok }}" target="_blank" rel="noopener noreferrer" style="color: var(--color-foreground);" aria-label="TikTok">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.24 1.07-.14 1.61.24 1.64 1.82 2.92 3.5 2.7 1.48-.1 2.71-1.09 3.1-2.52.2-.61.26-1.25.24-1.89l.05-14.86z"/></svg>
-              </a>
-            {%- endif -%}
-          </div>
+          {% render 'social-icons' %}
         </div>
 
         <div class="footer-col">
@@ -252,6 +234,49 @@
       "type": "text",
       "id": "copyright_text",
       "label": "Custom Copyright Text"
+    },
+    {
+      "type": "header",
+      "content": "Social Media Links (Global Fallback)"
+    },
+    {
+      "type": "paragraph",
+      "content": "Enter links here, or configure them under Theme Settings > Social Media Links."
+    },
+    {
+      "type": "text",
+      "id": "social_instagram",
+      "label": "Instagram URL"
+    },
+    {
+      "type": "text",
+      "id": "social_facebook",
+      "label": "Facebook URL"
+    },
+    {
+      "type": "text",
+      "id": "social_tiktok",
+      "label": "TikTok URL"
+    },
+    {
+      "type": "text",
+      "id": "social_youtube",
+      "label": "YouTube URL"
+    },
+    {
+      "type": "text",
+      "id": "social_twitter",
+      "label": "X / Twitter URL"
+    },
+    {
+      "type": "text",
+      "id": "social_whatsapp",
+      "label": "WhatsApp Link or Phone Number"
+    },
+    {
+      "type": "text",
+      "id": "social_pinterest",
+      "label": "Pinterest URL"
     }
   ],
   "blocks": [
@@ -272,10 +297,110 @@
           "default": "Contemporary Egyptian luxury streetwear and minimalist fashion designed with premium fabrics and tailored cuts."
         },
         {
+          "type": "header",
+          "content": "Social Media Links"
+        },
+        {
           "type": "checkbox",
           "id": "show_social",
           "label": "Show Social Media Icons",
           "default": true
+        },
+        {
+          "type": "paragraph",
+          "content": "Enter specific links for this block, or leave blank to inherit from Theme Settings."
+        },
+        {
+          "type": "text",
+          "id": "social_instagram",
+          "label": "Instagram URL"
+        },
+        {
+          "type": "text",
+          "id": "social_facebook",
+          "label": "Facebook URL"
+        },
+        {
+          "type": "text",
+          "id": "social_tiktok",
+          "label": "TikTok URL"
+        },
+        {
+          "type": "text",
+          "id": "social_youtube",
+          "label": "YouTube URL"
+        },
+        {
+          "type": "text",
+          "id": "social_twitter",
+          "label": "X / Twitter URL"
+        },
+        {
+          "type": "text",
+          "id": "social_whatsapp",
+          "label": "WhatsApp Link or Phone Number"
+        },
+        {
+          "type": "text",
+          "id": "social_pinterest",
+          "label": "Pinterest URL"
+        }
+      ]
+    },
+    {
+      "type": "social",
+      "name": "Social Media Column",
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Follow Us"
+        },
+        {
+          "type": "text",
+          "id": "subtext",
+          "label": "Subtext",
+          "default": "Follow Never Mind on social media for new drops and styling stories."
+        },
+        {
+          "type": "paragraph",
+          "content": "Enter specific links for this block, or leave blank to inherit from Theme Settings."
+        },
+        {
+          "type": "text",
+          "id": "social_instagram",
+          "label": "Instagram URL"
+        },
+        {
+          "type": "text",
+          "id": "social_facebook",
+          "label": "Facebook URL"
+        },
+        {
+          "type": "text",
+          "id": "social_tiktok",
+          "label": "TikTok URL"
+        },
+        {
+          "type": "text",
+          "id": "social_youtube",
+          "label": "YouTube URL"
+        },
+        {
+          "type": "text",
+          "id": "social_twitter",
+          "label": "X / Twitter URL"
+        },
+        {
+          "type": "text",
+          "id": "social_whatsapp",
+          "label": "WhatsApp Link or Phone Number"
+        },
+        {
+          "type": "text",
+          "id": "social_pinterest",
+          "label": "Pinterest URL"
         }
       ]
     },

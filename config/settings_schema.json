@@ -177,6 +177,27 @@
         "type": "text",
         "id": "social_tiktok",
         "label": "TikTok URL"
+      },
+      {
+        "type": "text",
+        "id": "social_youtube",
+        "label": "YouTube URL"
+      },
+      {
+        "type": "text",
+        "id": "social_twitter",
+        "label": "X / Twitter URL"
+      },
+      {
+        "type": "text",
+        "id": "social_whatsapp",
+        "label": "WhatsApp URL or Phone Number",
+        "info": "Enter URL (https://wa.me/...) or phone number (e.g. +201080214330)"
+      },
+      {
+        "type": "text",
+        "id": "social_pinterest",
+        "label": "Pinterest URL"
       }
     ]
   }
