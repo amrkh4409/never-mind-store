@@ -1,20 +1,114 @@
-{%- if settings.enable_whatsapp -%}
-  {%- assign wa_num = settings.whatsapp_number | default: '201000000000' -%}
-  {%- assign wa_msg = settings.whatsapp_message | url_encode -%}
+{%- liquid
+  assign enable_wa = true
+  if section.settings.enable_whatsapp != nil
+    assign enable_wa = section.settings.enable_whatsapp
+  elsif settings.enable_whatsapp != nil
+    assign enable_wa = settings.enable_whatsapp
+  endif
+
+  assign raw_wa_num = section.settings.whatsapp_number
+  if raw_wa_num == blank
+    assign raw_wa_num = settings.whatsapp_number
+  endif
+  if raw_wa_num == blank
+    assign raw_wa_num = '+201080214330'
+  endif
+
+  # Clean phone number for wa.me link: remove +, spaces, dashes, parentheses
+  assign wa_num = raw_wa_num | replace: '+', '' | replace: ' ', '' | replace: '-', '' | replace: '(', '' | replace: ')', ''
+
+  assign raw_msg = section.settings.whatsapp_message
+  if raw_msg == blank
+    assign raw_msg = settings.whatsapp_message
+  endif
+  if raw_msg == blank
+    assign raw_msg = 'Hello Never Mind Store, I have an inquiry about my order / sizing.'
+  endif
+  assign wa_msg = raw_msg | url_encode
+
+  assign position_class = 'floating-whatsapp--bottom-right'
+  if section.settings.position == 'bottom-left'
+    assign position_class = 'floating-whatsapp--bottom-left'
+  endif
+
+  assign tooltip_label = section.settings.tooltip_text
+  if tooltip_label == blank and request.locale.iso_code == 'ar'
+    assign tooltip_label = 'تواصل عبر واتساب'
+  endif
+-%}
+
+{%- if enable_wa -%}
   <a
     href="https://wa.me/{{ wa_num }}?text={{ wa_msg }}"
     target="_blank"
     rel="noopener noreferrer"
-    class="floating-whatsapp"
-    aria-label="Contact us on WhatsApp"
+    class="floating-whatsapp {{ position_class }} {% if section.settings.enable_pulse %}has-pulse{% endif %}"
+    aria-label="{{ 'sections.contact.whatsapp_btn' | t | default: 'Contact us on WhatsApp' }}"
   >
     {% render 'icon-whatsapp' %}
+    {%- if tooltip_label != blank -%}
+      <span class="floating-whatsapp__tooltip">{{ tooltip_label }}</span>
+    {%- endif -%}
   </a>
 {%- endif -%}
 
 {% schema %}
 {
   "name": "Floating WhatsApp",
-  "settings": []
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable_whatsapp",
+      "label": "Enable Floating WhatsApp Button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "whatsapp_number",
+      "label": "WhatsApp Phone Number",
+      "info": "Enter phone number with country code (e.g. +201080214330 or 201080214330)",
+      "default": "+201080214330"
+    },
+    {
+      "type": "text",
+      "id": "whatsapp_message",
+      "label": "Default WhatsApp Message",
+      "default": "Hello Never Mind Store, I have an inquiry about my order / sizing."
+    },
+    {
+      "type": "text",
+      "id": "tooltip_text",
+      "label": "Tooltip Hover Text",
+      "default": "Chat on WhatsApp"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_pulse",
+      "label": "Enable Pulse Animation Effect",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "position",
+      "label": "Button Position",
+      "options": [
+        {
+          "value": "bottom-right",
+          "label": "Bottom Right"
+        },
+        {
+          "value": "bottom-left",
+          "label": "Bottom Left"
+        }
+      ],
+      "default": "bottom-right"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Floating WhatsApp"
+    }
+  ]
 }
 {% endschema %}
+

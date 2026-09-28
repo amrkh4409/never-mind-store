@@ -46,10 +46,13 @@
 
   <!-- WhatsApp Alternative Prompt -->
   {%- if settings.enable_whatsapp -%}
+    {%- assign contact_wa_raw = settings.whatsapp_number | default: '+201080214330' -%}
+    {%- assign contact_wa_num = contact_wa_raw | replace: '+', '' | replace: ' ', '' | replace: '-', '' | replace: '(', '' | replace: ')', '' -%}
+    {%- assign contact_wa_msg = settings.whatsapp_message | default: 'Hello Never Mind Store, I have an inquiry about my order / sizing.' | url_encode -%}
     <div style="text-align: center; margin-top: 32px; padding: 20px; background-color: var(--color-bg-secondary); border-radius: var(--radius-sm);">
       <p style="font-size: 0.95rem; margin-bottom: 12px;">{{ 'sections.contact.whatsapp_prompt' | t }}</p>
       <a
-        href="https://wa.me/{{ settings.whatsapp_number }}?text={{ settings.whatsapp_message | url_encode }}"
+        href="https://wa.me/{{ contact_wa_num }}?text={{ contact_wa_msg }}"
         target="_blank"
         rel="noopener noreferrer"
         class="btn btn-secondary btn-sm"

@@ -149,7 +149,8 @@
         "type": "text",
         "id": "whatsapp_number",
         "label": "WhatsApp Phone Number",
-        "default": "201000000000"
+        "info": "Enter phone number with country code (e.g. +201080214330 or 201080214330)",
+        "default": "+201080214330"
       },
       {
         "type": "text",
