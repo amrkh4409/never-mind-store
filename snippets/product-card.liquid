@@ -106,39 +106,32 @@
     {%- for option in product.options_with_values -%}
       {%- assign downcased_option = option.name | downcase -%}
       {%- if downcased_option contains 'color' or downcased_option contains 'colour' or downcased_option contains 'لون' -%}
+        {%- assign option_index = forloop.index0 -%}
         <div class="product-card__swatches">
-          {%- for value in option.values limit: 5 -%}
-            {%- liquid
-              assign swatch_color = value | downcase
-              case swatch_color
-                when 'black', 'أسود'
-                  assign bg_color = '#121212'
-                when 'white', 'أبيض'
-                  assign bg_color = '#FFFFFF'
-                when 'grey', 'gray', 'رمادي'
-                  assign bg_color = '#9CA3AF'
-                when 'beige', 'بيج'
-                  assign bg_color = '#D2B48C'
-                when 'navy', 'كحلي'
-                  assign bg_color = '#1E3A8A'
-                when 'green', 'olive', 'زيتي', 'أخضر'
-                  assign bg_color = '#4D5D4E'
-                when 'brown', 'بني'
-                  assign bg_color = '#78350F'
-                when 'red', 'burgundy', 'أحمر'
-                  assign bg_color = '#991B1B'
-                else
-                  assign bg_color = '#E5E7EB'
-              endcase
-            -%}
-            <span
-              class="color-swatch-dot"
+          {%- for value in option.values limit: 6 -%}
+            {%- assign variant_image = '' -%}
+            {%- for variant in product.variants -%}
+              {%- if variant.options[option_index] == value and variant.featured_media != blank -%}
+                {%- assign variant_image = variant.featured_media | image_url: width: 600 -%}
+                {%- break -%}
+              {%- endif -%}
+            {%- endfor -%}
+
+            {%- capture bg_color -%}{% render 'color-swatch-value', value: value %}{%- endcapture -%}
+            {%- assign bg_color = bg_color | strip -%}
+
+            <button
+              type="button"
+              class="product-card__swatch-dot {% if forloop.first %}is-active{% endif %}"
               style="background-color: {{ bg_color }};"
-              title="{{ value }}"
-            ></span>
+              data-card-swatch
+              {% if variant_image != blank %}data-variant-image="{{ variant_image }}"{% endif %}
+              aria-label="{{ value | escape }}"
+              title="{{ value | escape }}"
+            ></button>
           {%- endfor -%}
-          {%- if option.values.size > 5 -%}
-            <span style="font-size: 0.72rem; color: var(--color-foreground-muted);">+{{ option.values.size | minus: 5 }}</span>
+          {%- if option.values.size > 6 -%}
+            <span style="font-size: 0.72rem; color: var(--color-foreground-muted); margin-left: 2px;">+{{ option.values.size | minus: 6 }}</span>
           {%- endif -%}
         </div>
       {%- endif -%}

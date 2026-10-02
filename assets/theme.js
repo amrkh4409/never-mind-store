@@ -1786,6 +1786,37 @@
     });
   }
 
+  // --- Product Card Swatches Interactive Image Switcher ---
+  function initProductCardSwatches() {
+    document.addEventListener('click', (e) => {
+      const swatch = e.target.closest('[data-card-swatch]');
+      if (!swatch) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      const card = swatch.closest('[data-product-card]');
+      if (!card) return;
+
+      // Update active state among swatches in this card
+      card.querySelectorAll('[data-card-swatch]').forEach(s => s.classList.remove('is-active'));
+      swatch.classList.add('is-active');
+
+      // Update image
+      const newImgSrc = swatch.dataset.variantImage;
+      if (newImgSrc) {
+        const primaryImg = card.querySelector('.product-card__img--primary, [data-product-card-img]');
+        if (primaryImg) {
+          primaryImg.src = newImgSrc;
+        }
+        const secondaryImg = card.querySelector('.product-card__img--secondary');
+        if (secondaryImg) {
+          secondaryImg.src = newImgSrc;
+        }
+      }
+    });
+  }
+
   // --- Initialize All Theme Features on DOM Ready ---
   document.addEventListener('DOMContentLoaded', () => {
     window.NeverMindCart = new CartDrawer();
@@ -1799,6 +1830,7 @@
     initRecentlyViewed();
     initCollectionFilters();
     initStickyHeader();
+    initProductCardSwatches();
   });
 })();
 

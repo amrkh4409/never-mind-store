@@ -1601,6 +1601,27 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
   flex-wrap: wrap;
 }
 
+.product-card__swatch-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  padding: 0;
+  cursor: pointer;
+  background: transparent;
+  outline: none;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.product-card__swatch-dot:hover {
+  transform: scale(1.2);
+}
+
+.product-card__swatch-dot.is-active {
+  box-shadow: 0 0 0 1.5px var(--color-background, #FFFFFF), 0 0 0 3px var(--color-foreground);
+  transform: scale(1.15);
+}
+
 .color-swatch-dot {
   width: 14px;
   height: 14px;
