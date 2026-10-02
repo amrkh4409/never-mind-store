@@ -2418,10 +2418,7 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
   border-radius: 50%;
   display: inline-block;
   flex-shrink: 0;
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
+  border: 1px solid rgba(0, 0, 0, 0.18);
   transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 

@@ -197,14 +197,14 @@
 
                     {%- if is_color -%}
                       {%- assign color_variant_media_id = '' -%}
-                      {%- assign color_variant_image = '' -%}
                       {%- for variant in product.variants -%}
                         {%- if variant.options[option_index] == value and variant.featured_media != blank -%}
-                          {%- assign color_variant_image = variant.featured_media | image_url: width: 100 -%}
                           {%- assign color_variant_media_id = variant.featured_media.id -%}
                           {%- break -%}
                         {%- endif -%}
                       {%- endfor -%}
+
+                      {%- assign swatch_color = value.swatch.color | default: value | handleize -%}
 
                       <button
                         type="button"
@@ -218,7 +218,7 @@
                       >
                         <span
                           class="color-swatch-dot"
-                          style="{% if value.swatch.image != blank %}background-image: url('{{ value.swatch.image | image_url: width: 80 }}');{% elsif color_variant_image != blank %}background-image: url('{{ color_variant_image }}');{% elsif value.swatch.color != blank %}background-color: {{ value.swatch.color }};{% else %}background-color: {{ value | handleize }};{% endif %}"
+                          style="background-color: {{ swatch_color }};"
                         ></span>
                         <span class="color-swatch-label">{{ value }}</span>
                       </button>
