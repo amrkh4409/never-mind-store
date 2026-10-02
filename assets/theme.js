@@ -248,6 +248,143 @@
     }
   }
 
+  // --- Product Media Gallery Slider Manager ---
+  class ProductGallery {
+    constructor(container) {
+      this.container = container;
+      this.slider = this.container.querySelector('[data-gallery-slider]');
+      this.slides = Array.from(this.container.querySelectorAll('[data-gallery-slide]'));
+      this.thumbs = Array.from(this.container.querySelectorAll('[data-gallery-thumb]'));
+      this.prevBtn = this.container.querySelector('[data-gallery-prev]');
+      this.nextBtn = this.container.querySelector('[data-gallery-next]');
+      this.currentIndex = 0;
+      this.isScrolling = false;
+
+      this.bindEvents();
+    }
+
+    bindEvents() {
+      // Thumbnail clicks
+      this.thumbs.forEach((thumb, index) => {
+        thumb.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.slideToIndex(index);
+        });
+      });
+
+      // Prev / Next arrow buttons
+      if (this.prevBtn) {
+        this.prevBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const isRtl = document.documentElement.dir === 'rtl';
+          this.slideStep(isRtl ? 1 : -1);
+        });
+      }
+
+      if (this.nextBtn) {
+        this.nextBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const isRtl = document.documentElement.dir === 'rtl';
+          this.slideStep(isRtl ? -1 : 1);
+        });
+      }
+
+      // Slider scroll listener for touch swipe / manual swipe synchronization
+      if (this.slider) {
+        let scrollTimeout;
+        this.slider.addEventListener('scroll', () => {
+          if (this.isScrolling) return;
+          clearTimeout(scrollTimeout);
+          scrollTimeout = setTimeout(() => {
+            this.syncActiveOnScroll();
+          }, 60);
+        }, { passive: true });
+      }
+    }
+
+    syncActiveOnScroll() {
+      if (!this.slider || this.slides.length <= 1) return;
+      const sliderRect = this.slider.getBoundingClientRect();
+      const sliderCenter = sliderRect.left + sliderRect.width / 2;
+
+      let closestIndex = 0;
+      let minDistance = Infinity;
+
+      this.slides.forEach((slide, idx) => {
+        const slideRect = slide.getBoundingClientRect();
+        const slideCenter = slideRect.left + slideRect.width / 2;
+        const distance = Math.abs(sliderCenter - slideCenter);
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestIndex = idx;
+        }
+      });
+
+      this.setActiveState(closestIndex, false);
+    }
+
+    slideStep(step) {
+      const targetIndex = Math.max(0, Math.min(this.slides.length - 1, this.currentIndex + step));
+      this.slideToIndex(targetIndex);
+    }
+
+    slideToIndex(index) {
+      if (index < 0 || index >= this.slides.length) return;
+      const targetSlide = this.slides[index];
+      if (!targetSlide || !this.slider) return;
+
+      this.currentIndex = index;
+      this.isScrolling = true;
+
+      const targetLeft = targetSlide.offsetLeft;
+      this.slider.scrollTo({ left: targetLeft, behavior: 'smooth' });
+
+      this.setActiveState(index, true);
+
+      setTimeout(() => {
+        this.isScrolling = false;
+      }, 350);
+    }
+
+    slideToMediaId(mediaId) {
+      if (!mediaId || this.slides.length === 0) return false;
+      const stringId = mediaId.toString();
+
+      // Find slide matching data-media-id
+      let slideIndex = this.slides.findIndex(s => s.dataset.mediaId === stringId);
+
+      // Fallback: match by URL if needed
+      if (slideIndex === -1) {
+        slideIndex = this.slides.findIndex(s => {
+          const img = s.querySelector('img');
+          return img && img.src && (img.src.includes(`/${stringId}`) || img.src.includes(`_${stringId}_`));
+        });
+      }
+
+      if (slideIndex !== -1) {
+        this.slideToIndex(slideIndex);
+        return true;
+      }
+      return false;
+    }
+
+    setActiveState(index, scrollThumb = true) {
+      this.currentIndex = index;
+
+      this.slides.forEach((slide, idx) => {
+        slide.classList.toggle('is-active', idx === index);
+      });
+
+      this.thumbs.forEach((thumb, idx) => {
+        const isActive = idx === index;
+        thumb.classList.toggle('is-active', isActive);
+        if (isActive && scrollThumb) {
+          thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+      });
+    }
+  }
+
   // --- Product Variant Selector Manager ---
   class VariantPicker {
     constructor(container) {
@@ -262,9 +399,15 @@
       this.submitBtnText = this.container.querySelector('[data-add-to-cart-text]');
       this.wishlistBtn = this.container.querySelector('[data-wishlist-btn]');
 
+      // Initialize Product Media Gallery Slider
+      const galleryEl = this.container.querySelector('[data-product-gallery]') || document.querySelector('[data-product-gallery]');
+      if (galleryEl) {
+        this.gallery = new ProductGallery(galleryEl);
+      }
+
       this.initSelectedStates();
       this.bindEvents();
-      this.updateVariant();
+      this.updateVariant(false);
     }
 
     initSelectedStates() {
@@ -279,6 +422,14 @@
           const labelVal = group.querySelector('[data-option-selected-label]');
           if (labelVal) labelVal.textContent = active.dataset.optionValue;
         }
+      });
+    }
+
+    getColorOptionIndex() {
+      if (!this.productData.options) return -1;
+      return this.productData.options.findIndex(opt => {
+        const o = opt.toString().trim().toLowerCase();
+        return o.includes('color') || o.includes('colour') || o.includes('لون') || o.includes('اللون');
       });
     }
 
@@ -300,7 +451,12 @@
             if (labelVal) labelVal.textContent = value;
           }
 
-          this.updateVariant();
+          // If pill has an associated media ID, slide to it immediately
+          if (this.gallery && pill.dataset.mediaId) {
+            this.gallery.slideToMediaId(pill.dataset.mediaId);
+          }
+
+          this.updateVariant(true);
         });
       });
     }
@@ -392,7 +548,7 @@
       });
     }
 
-    updateVariant() {
+    updateVariant(shouldSlide = true) {
       const selected = this.getSelectedOptions();
       this.updateOptionAvailability(selected);
 
@@ -407,6 +563,34 @@
       });
 
       const moneyFormat = this.priceEl?.dataset.currencyFormat || window.NeverMindConfig?.moneyFormat;
+
+      // Shopify Variant -> Media Navigation
+      if (this.gallery && shouldSlide) {
+        let targetMediaId = variant?.featured_media?.id || variant?.featured_image?.id || variant?.image_id;
+
+        // If this specific variant combination (e.g. Black / L) has no media assigned in Shopify,
+        // find a sibling variant with the same color that has media assigned in Shopify!
+        if (!targetMediaId && variant && selected.length > 0) {
+          const colorOptionIndex = this.getColorOptionIndex();
+          if (colorOptionIndex !== -1) {
+            const selectedColorVal = (selected[colorOptionIndex] || '').trim().toLowerCase();
+            const siblingWithMedia = this.productData.variants.find(v => {
+              if (!v.options) return false;
+              const vColor = (v.options[colorOptionIndex] || '').toString().trim().toLowerCase();
+              const hasMedia = v.featured_media?.id || v.featured_image?.id || v.image_id;
+              return vColor === selectedColorVal && hasMedia;
+            });
+            if (siblingWithMedia) {
+              targetMediaId = siblingWithMedia.featured_media?.id || siblingWithMedia.featured_image?.id || siblingWithMedia.image_id;
+            }
+          }
+        }
+
+        // If target media found, navigate the slider to that media
+        if (targetMediaId) {
+          this.gallery.slideToMediaId(targetMediaId);
+        }
+      }
 
       if (!variant) {
         if (this.submitBtn) this.submitBtn.disabled = true;
@@ -453,12 +637,6 @@
           this.submitBtn.disabled = true;
           this.submitBtnText.textContent = window.NeverMindConfig?.translations?.soldOut || 'Sold Out';
         }
-      }
-
-      // Switch gallery image if variant has featured_image
-      if (variant.featured_image && variant.featured_image.src) {
-        const mainImg = document.querySelector('[data-product-main-img]');
-        if (mainImg) mainImg.src = variant.featured_image.src;
       }
 
       // Update wishlist button state for active variant

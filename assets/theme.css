@@ -2145,17 +2145,47 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
   }
 }
 
-/* Product Media Gallery */
+/* Product Media Gallery & Slider */
 .product-gallery {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
+  position: relative;
 }
 
-.product-gallery__main {
+.product-gallery__viewport {
+  position: relative;
+  width: 100%;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background-color: var(--color-bg-secondary);
+}
+
+.product-gallery__slider {
+  display: flex;
   width: 100%;
   aspect-ratio: 3 / 4;
-  border-radius: var(--radius-sm);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.product-gallery__slider::-webkit-scrollbar {
+  display: none;
+}
+
+.product-gallery__slide {
+  flex: 0 0 100%;
+  width: 100%;
+  height: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
   background-color: var(--color-bg-secondary);
 }
@@ -2164,14 +2194,82 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
   transition: transform var(--transition-smooth);
+}
+
+.product-gallery__video,
+.product-gallery__model {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Gallery Slider Navigation Arrows */
+.product-gallery__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-foreground);
+  z-index: 5;
+  transition: all var(--transition-fast);
+  backdrop-filter: blur(8px);
+}
+
+.product-gallery__arrow:hover {
+  background: #FFFFFF;
+  transform: translateY(-50%) scale(1.08);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
+}
+
+.product-gallery__arrow--prev {
+  left: 12px;
+}
+
+.product-gallery__arrow--next {
+  right: 12px;
+}
+
+[dir="rtl"] .product-gallery__arrow--prev {
+  left: auto;
+  right: 12px;
+  transform: translateY(-50%) rotate(180deg);
+}
+
+[dir="rtl"] .product-gallery__arrow--prev:hover {
+  transform: translateY(-50%) rotate(180deg) scale(1.08);
+}
+
+[dir="rtl"] .product-gallery__arrow--next {
+  right: auto;
+  left: 12px;
+  transform: translateY(-50%) rotate(180deg);
+}
+
+[dir="rtl"] .product-gallery__arrow--next:hover {
+  transform: translateY(-50%) rotate(180deg) scale(1.08);
 }
 
 .product-gallery__thumbnails {
   display: flex;
   gap: 10px;
   overflow-x: auto;
-  padding-bottom: 6px;
+  padding: 4px 2px 8px 2px;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
 }
 
 .product-gallery__thumb {
@@ -2182,13 +2280,24 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
   border: 2px solid transparent;
   cursor: pointer;
   flex-shrink: 0;
-  opacity: 0.65;
+  opacity: 0.6;
   transition: all var(--transition-fast);
+  padding: 0;
+  background: none;
 }
 
-.product-gallery__thumb:hover, .product-gallery__thumb.is-active {
+.product-gallery__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.product-gallery__thumb:hover,
+.product-gallery__thumb.is-active {
   opacity: 1;
   border-color: var(--color-foreground);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
 
 /* Product Info Box */
@@ -2304,24 +2413,21 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
 }
 
 .color-swatch-dot {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   display: inline-block;
   flex-shrink: 0;
-  border: 1px solid rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(0, 0, 0, 0.15);
   background-position: center;
   background-size: cover;
+  background-repeat: no-repeat;
   transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-}
-
-.color-swatch-dot--light {
-  border: 1px solid rgba(0, 0, 0, 0.22);
 }
 
 .variant-pill--color.is-selected .color-swatch-dot {
   box-shadow: 0 0 0 2px var(--color-background, #FFFFFF);
-  transform: scale(1.05);
+  transform: scale(1.06);
 }
 
 .color-swatch-label {

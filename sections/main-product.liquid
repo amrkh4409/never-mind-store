@@ -10,32 +10,95 @@
 <section class="product-main-section" data-variant-picker>
   <div class="container">
     <div class="product-layout">
-      <!-- Media Gallery -->
-      <div class="product-gallery">
-        <div class="product-gallery__main">
-          {%- if featured_image -%}
-            <img
-              src="{{ featured_image | image_url: width: 1200 }}"
-              alt="{{ featured_image.alt | default: product.title | escape }}"
-              class="product-gallery__main-img"
-              data-product-main-img
-              width="1200"
-              height="1600"
+      <!-- Media Gallery Slider -->
+      <div class="product-gallery" data-product-gallery>
+        <div class="product-gallery__viewport">
+          <div class="product-gallery__slider" data-gallery-slider>
+            {%- if product.media.size > 0 -%}
+              {%- for media in product.media -%}
+                {%- assign is_featured = false -%}
+                {%- if media.id == featured_image.id or forloop.first and featured_image == blank -%}
+                  {%- assign is_featured = true -%}
+                {%- endif -%}
+                <div
+                  class="product-gallery__slide {% if is_featured %}is-active{% endif %}"
+                  data-gallery-slide
+                  data-media-id="{{ media.id }}"
+                  data-slide-index="{{ forloop.index0 }}"
+                >
+                  {%- case media.media_type -%}
+                    {%- when 'image' -%}
+                      <img
+                        src="{{ media | image_url: width: 1200 }}"
+                        alt="{{ media.alt | default: product.title | escape }}"
+                        class="product-gallery__main-img"
+                        loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
+                        width="1200"
+                        height="1600"
+                      >
+                    {%- when 'video' -%}
+                      {{ media | video_tag: controls: true, class: 'product-gallery__video', image_size: '1200x' }}
+                    {%- when 'external_video' -%}
+                      {{ media | external_video_tag: class: 'product-gallery__video' }}
+                    {%- when 'model' -%}
+                      {{ media | model_viewer_tag: class: 'product-gallery__model' }}
+                    {%- else -%}
+                      <img
+                        src="{{ media.preview_image | image_url: width: 1200 }}"
+                        alt="{{ media.alt | default: product.title | escape }}"
+                        class="product-gallery__main-img"
+                        loading="lazy"
+                        width="1200"
+                        height="1600"
+                      >
+                  {%- endcase -%}
+                </div>
+              {%- endfor -%}
+            {%- else -%}
+              <div class="product-gallery__slide is-active" data-gallery-slide data-slide-index="0">
+                {{ 'product-1' | placeholder_svg_tag: 'product-gallery__main-img' }}
+              </div>
+            {%- endif -%}
+          </div>
+
+          {%- if product.media.size > 1 -%}
+            <!-- Slider Navigation Arrows -->
+            <button
+              type="button"
+              class="product-gallery__arrow product-gallery__arrow--prev"
+              data-gallery-prev
+              aria-label="{{ 'accessibility.previous_slide' | default: 'Previous image' | t }}"
             >
-          {%- else -%}
-            {{ 'product-1' | placeholder_svg_tag: 'product-gallery__main-img' }}
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            </button>
+            <button
+              type="button"
+              class="product-gallery__arrow product-gallery__arrow--next"
+              data-gallery-next
+              aria-label="{{ 'accessibility.next_slide' | default: 'Next image' | t }}"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
           {%- endif -%}
         </div>
 
         {%- if product.media.size > 1 -%}
-          <div class="product-gallery__thumbnails">
+          <div class="product-gallery__thumbnails" data-gallery-thumbnails>
             {%- for media in product.media -%}
-              <div
-                class="product-gallery__thumb {% if forloop.first %}is-active{% endif %}"
-                onclick="document.querySelector('[data-product-main-img]').src='{{ media | image_url: width: 1200 }}'; document.querySelectorAll('.product-gallery__thumb').forEach(t => t.classList.remove('is-active')); this.classList.add('is-active');"
+              {%- assign is_thumb_active = false -%}
+              {%- if media.id == featured_image.id or forloop.first and featured_image == blank -%}
+                {%- assign is_thumb_active = true -%}
+              {%- endif -%}
+              <button
+                type="button"
+                class="product-gallery__thumb {% if is_thumb_active %}is-active{% endif %}"
+                data-gallery-thumb
+                data-media-id="{{ media.id }}"
+                data-thumb-index="{{ forloop.index0 }}"
+                aria-label="{{ 'products.product.media.load_image' | default: 'View image' | t }} {{ forloop.index }}"
               >
-                <img src="{{ media | image_url: width: 150 }}" alt="{{ media.alt | default: product.title | escape }}" loading="lazy">
-              </div>
+                <img src="{{ media.preview_image | image_url: width: 160 }}" alt="{{ media.alt | default: product.title | escape }}" loading="lazy" width="80" height="106">
+              </button>
             {%- endfor -%}
           </div>
         {%- endif -%}
@@ -133,19 +196,15 @@
                     {%- endfor -%}
 
                     {%- if is_color -%}
-                      {%- capture color_hex -%}{% render 'color-swatch-hex', color_name: value %}{%- endcapture -%}
-                      {%- assign color_hex = color_hex | strip -%}
+                      {%- assign color_variant_media_id = '' -%}
                       {%- assign color_variant_image = '' -%}
                       {%- for variant in product.variants -%}
-                        {%- if variant.options[option_index] == value and variant.featured_image != blank -%}
-                          {%- assign color_variant_image = variant.featured_image | image_url: width: 80 -%}
+                        {%- if variant.options[option_index] == value and variant.featured_media != blank -%}
+                          {%- assign color_variant_image = variant.featured_media | image_url: width: 100 -%}
+                          {%- assign color_variant_media_id = variant.featured_media.id -%}
                           {%- break -%}
                         {%- endif -%}
                       {%- endfor -%}
-                      {%- assign is_light = false -%}
-                      {%- if color_hex == '#FFFFFF' or color_hex == '#E6D7C3' or color_hex == '#C19A6B' -%}
-                        {%- assign is_light = true -%}
-                      {%- endif -%}
 
                       <button
                         type="button"
@@ -153,12 +212,13 @@
                         data-variant-option
                         data-option-index="{{ option_index }}"
                         data-option-value="{{ value | escape }}"
+                        {% if color_variant_media_id != blank %}data-media-id="{{ color_variant_media_id }}"{% endif %}
                         aria-label="{{ value | escape }}"
                         title="{{ value | escape }}"
                       >
                         <span
-                          class="color-swatch-dot {% if is_light %}color-swatch-dot--light{% endif %}"
-                          style="background-color: {{ color_hex }};{% if color_variant_image != blank %} background-image: url('{{ color_variant_image }}');{% endif %}"
+                          class="color-swatch-dot"
+                          style="{% if value.swatch.image != blank %}background-image: url('{{ value.swatch.image | image_url: width: 80 }}');{% elsif color_variant_image != blank %}background-image: url('{{ color_variant_image }}');{% elsif value.swatch.color != blank %}background-color: {{ value.swatch.color }};{% else %}background-color: {{ value | handleize }};{% endif %}"
                         ></span>
                         <span class="color-swatch-label">{{ value }}</span>
                       </button>
