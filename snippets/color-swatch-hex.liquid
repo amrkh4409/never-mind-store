@@ -1,0 +1,79 @@
+{%- comment -%}
+  Translates a color name (English or Arabic) into a clean HEX color code.
+  Usage:
+  {% render 'color-swatch-hex', color_name: value %}
+{%- endcomment -%}
+
+{%- liquid
+  assign color_clean = color_name | downcase | strip | replace: '-', ' ' | replace: '_', ' '
+  assign hex_result = '#111111'
+
+  case color_clean
+    when 'white', 'snow', 'pure white', 'off white', 'off-white', 'أبيض', 'ابيض', 'اوف وايت'
+      assign hex_result = '#FFFFFF'
+    when 'black', 'noir', 'nero', 'midnight black', 'أسود', 'اسود'
+      assign hex_result = '#111111'
+    when 'charcoal', 'dark grey', 'dark gray', 'فحم', 'شحم'
+      assign hex_result = '#2C2D30'
+    when 'grey', 'gray', 'heather grey', 'heather gray', 'light grey', 'light gray', 'رمادي', 'رصاصي', 'فيراني'
+      assign hex_result = '#9E9E9E'
+    when 'beige', 'sand', 'cream', 'creme', 'ivory', 'nude', 'بيج', 'كريمي', 'عاجي'
+      assign hex_result = '#E6D7C3'
+    when 'camel', 'tan', 'جملي'
+      assign hex_result = '#C19A6B'
+    when 'brown', 'chocolate', 'dark brown', 'mocha', 'coffee', 'بني', 'هافان', 'شوكولاتة'
+      assign hex_result = '#5C3A21'
+    when 'navy', 'navy blue', 'dark blue', 'كحلي', 'أزرق داكن', 'ازرق داكن'
+      assign hex_result = '#0F1E36'
+    when 'blue', 'royal blue', 'sky blue', 'أزرق', 'ازرق', 'نيلي', 'سماوي'
+      assign hex_result = '#2563EB'
+    when 'olive', 'olive green', 'army green', 'army', 'khaki', 'زيتي', 'زتوني', 'كاكي'
+      assign hex_result = '#4D5638'
+    when 'green', 'forest green', 'emerald', 'dark green', 'أخضر', 'اخضر', 'زيتي فاتح'
+      assign hex_result = '#15803D'
+    when 'burgundy', 'maroon', 'wine', 'bordeaux', 'نبيتي', 'عنابي', 'مارون'
+      assign hex_result = '#5B1422'
+    when 'red', 'crimson', 'ruby', 'أحمر', 'احمر'
+      assign hex_result = '#DC2626'
+    when 'orange', 'rust', 'terracotta', 'برتقالي', 'أورانج', 'اورانج'
+      assign hex_result = '#EA580C'
+    when 'yellow', 'mustard', 'gold', 'أصفر', 'اصفر', 'مسطردة'
+      assign hex_result = '#EAB308'
+    when 'pink', 'rose', 'blush', 'dusty pink', 'وردي', 'روز', 'بمبي', 'كشمير'
+      assign hex_result = '#F472B6'
+    when 'purple', 'violet', 'lavender', 'lilac', 'بنفسجي', 'موف', 'لافندر'
+      assign hex_result = '#7E22CE'
+    else
+      if color_clean contains 'black' or color_clean contains 'أسود' or color_clean contains 'اسود'
+        assign hex_result = '#111111'
+      elsif color_clean contains 'white' or color_clean contains 'أبيض' or color_clean contains 'ابيض'
+        assign hex_result = '#FFFFFF'
+      elsif color_clean contains 'beige' or color_clean contains 'بيج' or color_clean contains 'cream' or color_clean contains 'sand'
+        assign hex_result = '#E6D7C3'
+      elsif color_clean contains 'camel' or color_clean contains 'جملي'
+        assign hex_result = '#C19A6B'
+      elsif color_clean contains 'gray' or color_clean contains 'grey' or color_clean contains 'رمادي'
+        assign hex_result = '#9E9E9E'
+      elsif color_clean contains 'navy' or color_clean contains 'كحلي'
+        assign hex_result = '#0F1E36'
+      elsif color_clean contains 'blue' or color_clean contains 'أزرق' or color_clean contains 'ازرق'
+        assign hex_result = '#2563EB'
+      elsif color_clean contains 'olive' or color_clean contains 'زيتي'
+        assign hex_result = '#4D5638'
+      elsif color_clean contains 'green' or color_clean contains 'أخضر' or color_clean contains 'اخضر'
+        assign hex_result = '#15803D'
+      elsif color_clean contains 'brown' or color_clean contains 'بني' or color_clean contains 'هافان'
+        assign hex_result = '#5C3A21'
+      elsif color_clean contains 'burgundy' or color_clean contains 'نبيتي' or color_clean contains 'maroon'
+        assign hex_result = '#5B1422'
+      elsif color_clean contains 'red' or color_clean contains 'أحمر' or color_clean contains 'احمر'
+        assign hex_result = '#DC2626'
+      elsif color_clean contains 'pink' or color_clean contains 'وردي' or color_clean contains 'كشمير'
+        assign hex_result = '#F472B6'
+      else
+        assign hex_result = '#111111'
+      endif
+  endcase
+
+  echo hex_result
+-%}

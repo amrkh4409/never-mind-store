@@ -54,7 +54,9 @@
         freeShippingThreshold: {{ settings.free_shipping_threshold | default: 1000 }},
         freeShippingUnlockedMsg: {{ 'sections.cart_drawer.free_shipping_achieved' | t | json }},
         currency: {{ cart.currency.iso_code | default: 'EGP' | json }},
+        currencySymbol: {{ cart.currency.symbol | json }},
         moneyFormat: {{ shop.money_format | json }},
+        moneyWithCurrencyFormat: {{ shop.money_with_currency_format | json }},
         translations: {
           addToCart: {{ 'products.product.add_to_cart' | t | json }},
           soldOut: {{ 'products.product.sold_out' | t | json }},

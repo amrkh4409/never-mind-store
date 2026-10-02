@@ -65,14 +65,17 @@
 
         <!-- Price Display -->
         <div style="display: flex; align-items: baseline; gap: 12px; margin-top: 4px;">
-          <span class="product-price" style="font-size: 1.5rem;" data-product-price>
+          <span class="product-price" style="font-size: 1.5rem;" data-product-price data-currency-format="{{ shop.money_format | escape }}">
             {{ current_variant.price | money }}
           </span>
           {%- if current_variant.compare_at_price > current_variant.price -%}
             <s class="product-price product-price--compare" style="font-size: 1.15rem;" data-product-compare-price>
               {{ current_variant.compare_at_price | money }}
             </s>
-            <span class="badge badge-sale">-{{ discount_percent }}% OFF</span>
+            <span class="badge badge-sale" data-discount-badge>-{{ discount_percent }}% OFF</span>
+          {%- else -%}
+            <s class="product-price product-price--compare" style="font-size: 1.15rem; display: none;" data-product-compare-price></s>
+            <span class="badge badge-sale" style="display: none;" data-discount-badge></span>
           {%- endif -%}
         </div>
 
@@ -99,11 +102,18 @@
           <!-- Variant Options (Color, Size) -->
           {%- unless product.has_only_default_variant -%}
             {%- for option in product.options_with_values -%}
+              {%- assign option_index = forloop.index0 -%}
               {%- assign downcased_opt = option.name | downcase -%}
-              <div class="variant-option-group">
+              {%- assign is_color = false -%}
+              {%- if downcased_opt contains 'color' or downcased_opt contains 'colour' or downcased_opt contains 'لون' or downcased_opt contains 'اللون' -%}
+                {%- assign is_color = true -%}
+              {%- endif -%}
+              {%- assign current_selected_val = current_variant.options[option_index] | default: option.selected_value -%}
+
+              <div class="variant-option-group {% if is_color %}variant-option-group--color{% endif %}">
                 <div class="variant-option-label">
                   <span>
-                    {{ option.name }}: <strong data-option-selected-label>{{ option.selected_value }}</strong>
+                    {{ option.name }}: <strong data-option-selected-label>{{ current_selected_val }}</strong>
                   </span>
                   {%- if downcased_opt contains 'size' or downcased_opt contains 'مقاس' -%}
                     <button type="button" data-size-guide-open style="font-size: 0.82rem; font-weight: 600; text-decoration: underline; color: var(--color-foreground);">
@@ -112,24 +122,57 @@
                   {%- endif -%}
                 </div>
 
-                <div class="variant-pill-list">
+                <div class="variant-pill-list {% if is_color %}variant-pill-list--color{% endif %}">
                   {%- for value in option.values -%}
-                    {%- assign option_disabled = true -%}
+                    {%- assign value_available = false -%}
                     {%- for variant in product.variants -%}
-                      {%- if variant.options[forloop.parentloop.index0] == value and variant.available -%}
-                        {%- assign option_disabled = false -%}
+                      {%- if variant.options[option_index] == value and variant.available -%}
+                        {%- assign value_available = true -%}
+                        {%- break -%}
                       {%- endif -%}
                     {%- endfor -%}
 
-                    <button
-                      type="button"
-                      class="variant-pill {% if option.selected_value == value %}is-selected{% endif %} {% if option_disabled %}is-unavailable{% endif %}"
-                      data-variant-option
-                      data-option-index="{{ forloop.parentloop.index0 }}"
-                      data-option-value="{{ value | escape }}"
-                    >
-                      {{ value }}
-                    </button>
+                    {%- if is_color -%}
+                      {%- capture color_hex -%}{% render 'color-swatch-hex', color_name: value %}{%- endcapture -%}
+                      {%- assign color_hex = color_hex | strip -%}
+                      {%- assign color_variant_image = '' -%}
+                      {%- for variant in product.variants -%}
+                        {%- if variant.options[option_index] == value and variant.featured_image != blank -%}
+                          {%- assign color_variant_image = variant.featured_image | image_url: width: 80 -%}
+                          {%- break -%}
+                        {%- endif -%}
+                      {%- endfor -%}
+                      {%- assign is_light = false -%}
+                      {%- if color_hex == '#FFFFFF' or color_hex == '#E6D7C3' or color_hex == '#C19A6B' -%}
+                        {%- assign is_light = true -%}
+                      {%- endif -%}
+
+                      <button
+                        type="button"
+                        class="variant-pill variant-pill--color {% if current_selected_val == value %}is-selected{% endif %} {% unless value_available %}is-unavailable{% endunless %}"
+                        data-variant-option
+                        data-option-index="{{ option_index }}"
+                        data-option-value="{{ value | escape }}"
+                        aria-label="{{ value | escape }}"
+                        title="{{ value | escape }}"
+                      >
+                        <span
+                          class="color-swatch-dot {% if is_light %}color-swatch-dot--light{% endif %}"
+                          style="background-color: {{ color_hex }};{% if color_variant_image != blank %} background-image: url('{{ color_variant_image }}');{% endif %}"
+                        ></span>
+                        <span class="color-swatch-label">{{ value }}</span>
+                      </button>
+                    {%- else -%}
+                      <button
+                        type="button"
+                        class="variant-pill {% if current_selected_val == value %}is-selected{% endif %} {% unless value_available %}is-unavailable{% endunless %}"
+                        data-variant-option
+                        data-option-index="{{ option_index }}"
+                        data-option-value="{{ value | escape }}"
+                      >
+                        {{ value }}
+                      </button>
+                    {%- endif -%}
                   {%- endfor -%}
                 </div>
               </div>

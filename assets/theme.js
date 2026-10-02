@@ -9,12 +9,67 @@
 
   // --- Global Utility & Event Helpers ---
   const formatMoney = (cents, format) => {
-    if (typeof cents === 'string') cents = cents.replace('.', '');
-    const value = (cents / 100).toLocaleString('en-US', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 2
-    });
-    return `${value} EGP`;
+    if (cents == null || cents === '') return '';
+    if (typeof cents === 'string') cents = cents.replace(/[^0-9.-]+/g, '');
+    let value = '';
+    const placeholderRegex = /\{\{\s*(\w+)\s*\}\}/;
+    const formatString = format || window.NeverMindConfig?.moneyFormat || '{{ amount }} EGP';
+
+    function defaultOption(opt, def) {
+      return typeof opt === 'undefined' ? def : opt;
+    }
+
+    function formatWithDelimiters(number, precision, thousands, decimal) {
+      precision = defaultOption(precision, 2);
+      thousands = defaultOption(thousands, ',');
+      decimal = defaultOption(decimal, '.');
+
+      if (isNaN(number) || number == null) return '0';
+
+      number = (Number(number) / 100.0).toFixed(precision);
+
+      const parts = number.split('.');
+      const dollars = parts[0].replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1' + thousands);
+      const centsPart = parts[1] ? decimal + parts[1] : '';
+
+      return dollars + centsPart;
+    }
+
+    const match = formatString.match(placeholderRegex);
+    const placeholder = match ? match[1] : 'amount';
+
+    switch (placeholder) {
+      case 'amount':
+        value = formatWithDelimiters(cents, 2);
+        break;
+      case 'amount_no_decimals':
+        value = formatWithDelimiters(cents, 0);
+        break;
+      case 'amount_with_comma_separator':
+        value = formatWithDelimiters(cents, 2, '.', ',');
+        break;
+      case 'amount_no_decimals_with_comma_separator':
+        value = formatWithDelimiters(cents, 0, '.', ',');
+        break;
+      case 'amount_with_space_separator':
+        value = formatWithDelimiters(cents, 2, ' ', ',');
+        break;
+      case 'amount_no_decimals_with_space_separator':
+        value = formatWithDelimiters(cents, 0, ' ', ',');
+        break;
+      case 'amount_with_apostrophe_separator':
+        value = formatWithDelimiters(cents, 2, "'", '.');
+        break;
+      default:
+        value = formatWithDelimiters(cents, 2);
+        break;
+    }
+
+    if (match) {
+      return formatString.replace(placeholderRegex, value);
+    }
+    const currency = window.NeverMindConfig?.currency || 'EGP';
+    return `${value} ${currency}`;
   };
 
   // --- Cart Drawer Manager ---
@@ -202,11 +257,29 @@
       this.masterSelect = this.container.querySelector('[name="id"]');
       this.priceEl = this.container.querySelector('[data-product-price]');
       this.comparePriceEl = this.container.querySelector('[data-product-compare-price]');
+      this.discountBadge = this.container.querySelector('[data-discount-badge]');
       this.submitBtn = this.container.querySelector('[data-add-to-cart]');
       this.submitBtnText = this.container.querySelector('[data-add-to-cart-text]');
       this.wishlistBtn = this.container.querySelector('[data-wishlist-btn]');
 
+      this.initSelectedStates();
       this.bindEvents();
+      this.updateVariant();
+    }
+
+    initSelectedStates() {
+      const groups = this.container.querySelectorAll('.variant-option-group');
+      groups.forEach((group, index) => {
+        let active = group.querySelector('[data-variant-option].is-selected');
+        if (!active) {
+          active = group.querySelector('[data-variant-option]:not(.is-unavailable)') || group.querySelector('[data-variant-option]');
+          if (active) active.classList.add('is-selected');
+        }
+        if (active) {
+          const labelVal = group.querySelector('[data-option-selected-label]');
+          if (labelVal) labelVal.textContent = active.dataset.optionValue;
+        }
+      });
     }
 
     bindEvents() {
@@ -217,13 +290,15 @@
           const value = pill.dataset.optionValue;
 
           // Update active state in current group
-          const group = pill.closest('.variant-pill-list');
-          group.querySelectorAll('[data-variant-option]').forEach(p => p.classList.remove('is-selected'));
-          pill.classList.add('is-selected');
+          const group = pill.closest('.variant-option-group') || pill.closest('.variant-pill-list');
+          if (group) {
+            group.querySelectorAll('[data-variant-option]').forEach(p => p.classList.remove('is-selected'));
+            pill.classList.add('is-selected');
 
-          // Update label text if present
-          const labelVal = group.parentElement.querySelector('[data-option-selected-label]');
-          if (labelVal) labelVal.textContent = value;
+            // Update label text if present
+            const labelVal = group.querySelector('[data-option-selected-label]');
+            if (labelVal) labelVal.textContent = value;
+          }
 
           this.updateVariant();
         });
@@ -232,36 +307,140 @@
 
     getSelectedOptions() {
       const selected = [];
-      this.container.querySelectorAll('.variant-pill-list').forEach(list => {
-        const active = list.querySelector('.is-selected');
-        if (active) selected.push(active.dataset.optionValue);
-      });
+      const groups = this.container.querySelectorAll('.variant-option-group');
+      if (groups.length > 0) {
+        groups.forEach((group, index) => {
+          let active = group.querySelector('[data-variant-option].is-selected');
+          if (!active) {
+            active = group.querySelector('[data-variant-option]');
+            if (active) active.classList.add('is-selected');
+          }
+          if (active) {
+            const optIdx = parseInt(active.dataset.optionIndex ?? index, 10);
+            selected[optIdx] = (active.dataset.optionValue || '').trim();
+          }
+        });
+      } else {
+        this.container.querySelectorAll('.variant-pill-list').forEach(list => {
+          const active = list.querySelector('.is-selected');
+          if (active) selected.push((active.dataset.optionValue || '').trim());
+        });
+      }
       return selected;
+    }
+
+    updateOptionAvailability(selected) {
+      if (!this.productData.variants || this.productData.variants.length === 0) return;
+
+      const groups = this.container.querySelectorAll('.variant-option-group');
+      groups.forEach((group, groupIdx) => {
+        const pills = group.querySelectorAll('[data-variant-option]');
+        pills.forEach(pill => {
+          const pillVal = (pill.dataset.optionValue || '').trim().toLowerCase();
+          const pillIdx = parseInt(pill.dataset.optionIndex ?? groupIdx, 10);
+
+          // Check if there is an in-stock variant with this option value matching other currently selected options
+          const matchVariant = this.productData.variants.find(v => {
+            if (!v.options) return false;
+            const currentOpt = (v.options[pillIdx] || '').toString().trim().toLowerCase();
+            if (currentOpt !== pillVal) return false;
+
+            for (let i = 0; i < selected.length; i++) {
+              if (i === pillIdx) continue;
+              const selVal = (selected[i] || '').trim().toLowerCase();
+              const vOptVal = (v.options[i] || '').toString().trim().toLowerCase();
+              if (selVal && vOptVal && vOptVal !== selVal) {
+                return false;
+              }
+            }
+            return v.available;
+          });
+
+          if (matchVariant) {
+            pill.classList.remove('is-unavailable');
+          } else {
+            const existsVariant = this.productData.variants.find(v => {
+              if (!v.options) return false;
+              const currentOpt = (v.options[pillIdx] || '').toString().trim().toLowerCase();
+              return currentOpt === pillVal;
+            });
+
+            if (!existsVariant) {
+              pill.classList.add('is-unavailable');
+            } else {
+              const comboExists = this.productData.variants.find(v => {
+                if (!v.options) return false;
+                const currentOpt = (v.options[pillIdx] || '').toString().trim().toLowerCase();
+                if (currentOpt !== pillVal) return false;
+                for (let i = 0; i < selected.length; i++) {
+                  if (i === pillIdx) continue;
+                  const selVal = (selected[i] || '').trim().toLowerCase();
+                  const vOptVal = (v.options[i] || '').toString().trim().toLowerCase();
+                  if (selVal && vOptVal && vOptVal !== selVal) return false;
+                }
+                return true;
+              });
+
+              if (!comboExists || !comboExists.available) {
+                pill.classList.add('is-unavailable');
+              } else {
+                pill.classList.remove('is-unavailable');
+              }
+            }
+          }
+        });
+      });
     }
 
     updateVariant() {
       const selected = this.getSelectedOptions();
-      const variant = this.productData.variants?.find(v => 
-        v.options.every((opt, i) => opt === selected[i])
-      );
+      this.updateOptionAvailability(selected);
+
+      // Find matching variant
+      const variant = this.productData.variants?.find(v => {
+        if (!v.options || v.options.length !== selected.length) return false;
+        return v.options.every((opt, i) => {
+          const sel = selected[i];
+          if (!sel) return false;
+          return opt.toString().trim().toLowerCase() === sel.toString().trim().toLowerCase();
+        });
+      });
+
+      const moneyFormat = this.priceEl?.dataset.currencyFormat || window.NeverMindConfig?.moneyFormat;
 
       if (!variant) {
         if (this.submitBtn) this.submitBtn.disabled = true;
-        if (this.submitBtnText) this.submitBtnText.textContent = 'Unavailable';
+        if (this.submitBtnText) {
+          this.submitBtnText.textContent = window.NeverMindConfig?.translations?.unavailable || 'Unavailable';
+        }
         return;
       }
 
       // Update hidden master ID
       if (this.masterSelect) this.masterSelect.value = variant.id;
 
-      // Update price
-      if (this.priceEl) this.priceEl.textContent = formatMoney(variant.price);
+      // Update price using proper money format
+      if (this.priceEl) {
+        this.priceEl.textContent = formatMoney(variant.price, moneyFormat);
+      }
+
       if (this.comparePriceEl) {
         if (variant.compare_at_price && variant.compare_at_price > variant.price) {
-          this.comparePriceEl.textContent = formatMoney(variant.compare_at_price);
+          this.comparePriceEl.textContent = formatMoney(variant.compare_at_price, moneyFormat);
           this.comparePriceEl.style.display = 'inline';
         } else {
           this.comparePriceEl.style.display = 'none';
+        }
+      }
+
+      // Update discount badge
+      if (this.discountBadge) {
+        if (variant.compare_at_price && variant.compare_at_price > variant.price) {
+          const discountPercent = Math.round(((variant.compare_at_price - variant.price) / variant.compare_at_price) * 100);
+          this.discountBadge.textContent = `-${discountPercent}% OFF`;
+          this.discountBadge.style.display = 'inline-flex';
+        } else {
+          this.discountBadge.style.display = 'none';
         }
       }
 
@@ -285,9 +464,9 @@
       // Update wishlist button state for active variant
       if (this.wishlistBtn) {
         this.wishlistBtn.dataset.productId = variant.id;
-        this.wishlistBtn.dataset.productPrice = formatMoney(variant.price);
+        this.wishlistBtn.dataset.productPrice = formatMoney(variant.price, moneyFormat);
         if (variant.compare_at_price && variant.compare_at_price > variant.price) {
-          this.wishlistBtn.dataset.productComparePrice = formatMoney(variant.compare_at_price);
+          this.wishlistBtn.dataset.productComparePrice = formatMoney(variant.compare_at_price, moneyFormat);
         } else {
           this.wishlistBtn.dataset.productComparePrice = '';
         }

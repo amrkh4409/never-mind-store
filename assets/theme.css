@@ -2272,6 +2272,68 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
   cursor: not-allowed;
 }
 
+/* Color Swatch Options */
+.variant-pill-list--color {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.variant-pill--color {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px 6px 8px;
+  border-radius: 9999px;
+  border: 1.5px solid var(--color-border);
+  background-color: var(--color-bg);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.variant-pill--color:hover {
+  border-color: var(--color-foreground);
+  transform: translateY(-1px);
+}
+
+.variant-pill--color.is-selected {
+  background-color: var(--color-foreground);
+  color: var(--color-background, #FFFFFF);
+  border-color: var(--color-foreground);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+}
+
+.color-swatch-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background-position: center;
+  background-size: cover;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.color-swatch-dot--light {
+  border: 1px solid rgba(0, 0, 0, 0.22);
+}
+
+.variant-pill--color.is-selected .color-swatch-dot {
+  box-shadow: 0 0 0 2px var(--color-background, #FFFFFF);
+  transform: scale(1.05);
+}
+
+.color-swatch-label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+[dir="rtl"] .variant-pill--color {
+  padding: 6px 8px 6px 14px;
+}
+
 /* Product Accordions / Tabs */
 .product-accordion {
   border-top: 1px solid var(--color-border);
