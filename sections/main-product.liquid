@@ -204,7 +204,8 @@
                         {%- endif -%}
                       {%- endfor -%}
 
-                      {%- assign swatch_color = value.swatch.color | default: value | handleize -%}
+                      {%- capture swatch_color -%}{% render 'color-swatch-value', value: value %}{%- endcapture -%}
+                      {%- assign swatch_color = swatch_color | strip -%}
 
                       <button
                         type="button"

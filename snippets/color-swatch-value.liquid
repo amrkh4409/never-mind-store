@@ -1,0 +1,78 @@
+{%- comment -%}
+  Dynamically resolves color from Shopify product option value or native swatch data.
+  Usage:
+  {% render 'color-swatch-value', value: value %}
+{%- endcomment -%}
+{%- liquid
+  if value.swatch.color != blank
+    echo value.swatch.color
+  else
+    assign color_clean = value | downcase | strip | replace: '-', ' ' | replace: '_', ' '
+    case color_clean
+      when 'white', 'snow', 'pure white', 'off white', 'offwhite', 'أبيض', 'ابيض', 'اوف وايت'
+        echo '#FFFFFF'
+      when 'black', 'noir', 'nero', 'midnight black', 'أسود', 'اسود'
+        echo '#111111'
+      when 'charcoal', 'dark grey', 'dark gray', 'فحم', 'شحم'
+        echo '#2C2D30'
+      when 'grey', 'gray', 'heather grey', 'heather gray', 'light grey', 'light gray', 'رمادي', 'رصاصي', 'فيراني'
+        echo '#9E9E9E'
+      when 'beige', 'sand', 'cream', 'creme', 'ivory', 'nude', 'بيج', 'كريمي', 'عاجي'
+        echo '#E6D7C3'
+      when 'camel', 'tan', 'جملي'
+        echo '#C19A6B'
+      when 'brown', 'chocolate', 'dark brown', 'mocha', 'coffee', 'بني', 'هافان', 'شوكولاتة'
+        echo '#5C3A21'
+      when 'navy', 'navy blue', 'dark blue', 'كحلي', 'أزرق داكن', 'ازرق داكن'
+        echo '#0F1E36'
+      when 'blue', 'royal blue', 'sky blue', 'أزرق', 'ازرق', 'نيلي', 'سماوي'
+        echo '#2563EB'
+      when 'olive', 'olive green', 'army green', 'army', 'khaki', 'زيتي', 'زتوني', 'كاكي'
+        echo '#4D5638'
+      when 'green', 'forest green', 'emerald', 'dark green', 'أخضر', 'اخضر', 'زيتي فاتح'
+        echo '#15803D'
+      when 'burgundy', 'maroon', 'wine', 'bordeaux', 'نبيتي', 'عنابي', 'مارون'
+        echo '#5B1422'
+      when 'red', 'crimson', 'ruby', 'أحمر', 'احمر'
+        echo '#DC2626'
+      when 'orange', 'rust', 'terracotta', 'برتقالي', 'أورانج', 'اورانج'
+        echo '#EA580C'
+      when 'yellow', 'mustard', 'gold', 'أصفر', 'اصفر', 'مسطردة'
+        echo '#EAB308'
+      when 'pink', 'rose', 'blush', 'dusty pink', 'وردي', 'روز', 'بمبي', 'كشمير'
+        echo '#F472B6'
+      when 'purple', 'violet', 'lavender', 'lilac', 'بنفسجي', 'موف', 'لافندر'
+        echo '#7E22CE'
+      else
+        if color_clean contains 'black' or color_clean contains 'أسود' or color_clean contains 'اسود'
+          echo '#111111'
+        elsif color_clean contains 'white' or color_clean contains 'أبيض' or color_clean contains 'ابيض'
+          echo '#FFFFFF'
+        elsif color_clean contains 'beige' or color_clean contains 'بيج' or color_clean contains 'cream' or color_clean contains 'sand'
+          echo '#E6D7C3'
+        elsif color_clean contains 'camel' or color_clean contains 'جملي'
+          echo '#C19A6B'
+        elsif color_clean contains 'gray' or color_clean contains 'grey' or color_clean contains 'رمادي'
+          echo '#9E9E9E'
+        elsif color_clean contains 'navy' or color_clean contains 'كحلي'
+          echo '#0F1E36'
+        elsif color_clean contains 'blue' or color_clean contains 'أزرق' or color_clean contains 'ازرق'
+          echo '#2563EB'
+        elsif color_clean contains 'olive' or color_clean contains 'زيتي'
+          echo '#4D5638'
+        elsif color_clean contains 'green' or color_clean contains 'أخضر' or color_clean contains 'اخضر'
+          echo '#15803D'
+        elsif color_clean contains 'brown' or color_clean contains 'بني' or color_clean contains 'هافان'
+          echo '#5C3A21'
+        elsif color_clean contains 'burgundy' or color_clean contains 'نبيتي' or color_clean contains 'maroon'
+          echo '#5B1422'
+        elsif color_clean contains 'red' or color_clean contains 'أحمر' or color_clean contains 'احمر'
+          echo '#DC2626'
+        elsif color_clean contains 'pink' or color_clean contains 'وردي' or color_clean contains 'كشمير'
+          echo '#F472B6'
+        else
+          echo color_clean | handleize
+        endif
+    endcase
+  endif
+-%}
