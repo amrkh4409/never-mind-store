@@ -2261,8 +2261,8 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transform: scale(0.85);
-  transition: opacity 0.25s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease, border-color 0.2s ease;
+  transform: scale(0.8);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease, visibility 0.28s ease, background 0.2s ease, border-color 0.2s ease;
 }
 
 .product-gallery__viewport:hover .product-gallery__zoom-trigger {
@@ -2270,6 +2270,7 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
   visibility: visible;
   pointer-events: auto;
   transform: scale(1);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease, background 0.2s ease, border-color 0.2s ease;
 }
 
 .product-gallery__zoom-trigger:hover {
@@ -2292,7 +2293,7 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
   object-fit: cover;
 }
 
-/* Gallery Slider Navigation Arrows - Slide In from Sides Animation */
+/* Gallery Slider Navigation Arrows - Slide In & Slide Out Animation */
 .product-gallery__arrow {
   position: absolute;
   top: 50%;
@@ -2311,26 +2312,30 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.28s ease, visibility 0.3s ease, background 0.2s ease, border-color 0.2s ease;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
 
 .product-gallery__arrow--prev {
   left: 12px;
-  transform: translate(-20px, -50%);
+  transform: translate(-32px, -50%);
 }
 
 .product-gallery__arrow--next {
   right: 12px;
-  transform: translate(20px, -50%);
+  transform: translate(32px, -50%);
+}
+
+.product-gallery__viewport:hover .product-gallery__arrow {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease, background 0.2s ease, border-color 0.2s ease;
 }
 
 .product-gallery__viewport:hover .product-gallery__arrow--prev,
 .product-gallery__viewport:hover .product-gallery__arrow--next {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
   transform: translate(0, -50%);
 }
 
@@ -2348,11 +2353,11 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
   transform: translate(0, -50%) scale(1.12);
 }
 
-/* RTL Arrow Positions and Slide-In */
+/* RTL Arrow Positions and Slide-In/Out */
 [dir="rtl"] .product-gallery__arrow--prev {
   left: auto;
   right: 12px;
-  transform: translate(20px, -50%) rotate(180deg);
+  transform: translate(32px, -50%) rotate(180deg);
 }
 
 [dir="rtl"] .product-gallery__viewport:hover .product-gallery__arrow--prev {
@@ -2366,7 +2371,7 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
 [dir="rtl"] .product-gallery__arrow--next {
   right: auto;
   left: 12px;
-  transform: translate(-20px, -50%) rotate(180deg);
+  transform: translate(-32px, -50%) rotate(180deg);
 }
 
 [dir="rtl"] .product-gallery__viewport:hover .product-gallery__arrow--next {
