@@ -251,6 +251,8 @@
   // --- Product Media Gallery Slider Manager ---
   class ProductGallery {
     constructor(container) {
+      if (!container || container.dataset.galleryInitialized === 'true') return;
+      container.dataset.galleryInitialized = 'true';
       this.container = container;
       this.slider = this.container.querySelector('[data-gallery-slider]');
       this.slides = Array.from(this.container.querySelectorAll('[data-gallery-slide]'));
@@ -260,7 +262,24 @@
       this.currentIndex = 0;
       this.isScrolling = false;
 
+      // Lightbox / Image Preview Modal elements
+      const sectionEl = this.container.closest('[data-section-id]') || this.container.closest('section');
+      const sectionId = sectionEl ? sectionEl.dataset.sectionId : '';
+      this.modal = (sectionId ? document.getElementById(`ProductMediaModal-${sectionId}`) : null) ||
+                   document.querySelector('.product-media-modal');
+
+      if (this.modal) {
+        this.modalImg = this.modal.querySelector('[data-media-modal-img]');
+        this.modalPrevBtn = this.modal.querySelector('[data-media-modal-prev]');
+        this.modalNextBtn = this.modal.querySelector('[data-media-modal-next]');
+        this.modalCloseBtns = this.modal.querySelectorAll('[data-media-modal-close]');
+        this.modalCurrentEl = this.modal.querySelector('[data-media-modal-current]');
+        this.modalTotalEl = this.modal.querySelector('[data-media-modal-total]');
+        this.modalCurrentIndex = 0;
+      }
+
       this.bindEvents();
+      this.bindModalEvents();
     }
 
     bindEvents() {
@@ -299,6 +318,137 @@
             this.syncActiveOnScroll();
           }, 60);
         }, { passive: true });
+      }
+
+      // Image click & zoom trigger for preview lightbox modal
+      let isDragging = false;
+      let startX = 0;
+      let startY = 0;
+
+      if (this.slider) {
+        this.slider.addEventListener('pointerdown', (e) => {
+          startX = e.clientX;
+          startY = e.clientY;
+          isDragging = false;
+        });
+
+        this.slider.addEventListener('pointermove', (e) => {
+          if (Math.abs(e.clientX - startX) > 6 || Math.abs(e.clientY - startY) > 6) {
+            isDragging = true;
+          }
+        });
+      }
+
+      this.slides.forEach((slide, index) => {
+        const img = slide.querySelector('.product-gallery__main-img');
+        const zoomBtn = slide.querySelector('[data-gallery-zoom]');
+
+        const handlePreviewClick = (e) => {
+          if (isDragging) return;
+          e.preventDefault();
+          this.openModal(index);
+        };
+
+        if (img) img.addEventListener('click', handlePreviewClick);
+        if (zoomBtn) zoomBtn.addEventListener('click', handlePreviewClick);
+      });
+    }
+
+    bindModalEvents() {
+      if (!this.modal) return;
+
+      // Close buttons and backdrop
+      this.modalCloseBtns?.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.closeModal();
+        });
+      });
+
+      // Prev & Next navigation inside modal
+      if (this.modalPrevBtn) {
+        this.modalPrevBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const isRtl = document.documentElement.dir === 'rtl';
+          this.modalStep(isRtl ? 1 : -1);
+        });
+      }
+
+      if (this.modalNextBtn) {
+        this.modalNextBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          const isRtl = document.documentElement.dir === 'rtl';
+          this.modalStep(isRtl ? -1 : 1);
+        });
+      }
+
+      // Keyboard navigation (Escape, Left, Right)
+      document.addEventListener('keydown', (e) => {
+        if (!this.modal || !this.modal.classList.contains('is-open')) return;
+        if (e.key === 'Escape') {
+          this.closeModal();
+        } else if (e.key === 'ArrowLeft') {
+          const isRtl = document.documentElement.dir === 'rtl';
+          this.modalStep(isRtl ? 1 : -1);
+        } else if (e.key === 'ArrowRight') {
+          const isRtl = document.documentElement.dir === 'rtl';
+          this.modalStep(isRtl ? -1 : 1);
+        }
+      });
+    }
+
+    openModal(index) {
+      if (!this.modal) return;
+      this.modalCurrentIndex = (index >= 0 && index < this.slides.length) ? index : this.currentIndex;
+      this.updateModalContent();
+      this.modal.style.display = 'flex';
+      void this.modal.offsetWidth; // Force reflow
+      this.modal.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    closeModal() {
+      if (!this.modal) return;
+      this.modal.classList.remove('is-open');
+      document.body.style.overflow = '';
+      setTimeout(() => {
+        if (!this.modal.classList.contains('is-open')) {
+          this.modal.style.display = 'none';
+        }
+      }, 250);
+    }
+
+    modalStep(step) {
+      if (!this.slides.length) return;
+      const newIndex = (this.modalCurrentIndex + step + this.slides.length) % this.slides.length;
+      this.modalCurrentIndex = newIndex;
+      this.updateModalContent();
+      this.slideToIndex(newIndex);
+    }
+
+    updateModalContent() {
+      if (!this.modal || !this.slides[this.modalCurrentIndex]) return;
+      const slide = this.slides[this.modalCurrentIndex];
+      const img = slide.querySelector('.product-gallery__main-img');
+      if (img && this.modalImg) {
+        const fullSrc = img.dataset.zoomSrc || img.src;
+        const alt = img.dataset.zoomAlt || img.alt || '';
+        this.modalImg.style.opacity = '0.3';
+        this.modalImg.src = fullSrc;
+        this.modalImg.alt = alt;
+        if (this.modalImg.complete) {
+          this.modalImg.style.opacity = '1';
+        } else {
+          this.modalImg.onload = () => {
+            this.modalImg.style.opacity = '1';
+          };
+        }
+      }
+      if (this.modalCurrentEl) {
+        this.modalCurrentEl.textContent = this.modalCurrentIndex + 1;
+      }
+      if (this.modalTotalEl) {
+        this.modalTotalEl.textContent = this.slides.length;
       }
     }
 
@@ -1828,6 +1978,9 @@
     window.NeverMindWishlist = new WishlistManager();
 
     document.querySelectorAll('[data-variant-picker]').forEach(el => new VariantPicker(el));
+    document.querySelectorAll('[data-product-gallery]').forEach(el => {
+      if (!el.dataset.galleryInitialized) new ProductGallery(el);
+    });
     initAccordions();
     initModals();
     initSliders();

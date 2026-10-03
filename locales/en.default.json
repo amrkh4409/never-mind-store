@@ -217,7 +217,9 @@
       "shipping_alex_delta": "Alexandria & Delta: 2 to 3 business days.",
       "shipping_upper_coastal": "Upper Egypt & Coastal: 3 to 4 business days.",
       "shipping_free_threshold": "Free Shipping: Automatically applied for orders above 1000 EGP.",
-      "returns_policy_text": "We offer a hassle-free 14-day exchange and return policy across all Egyptian governorates. You can also inspect and try the order with the courier before payment."
+      "returns_policy_text": "We offer a hassle-free 14-day exchange and return policy across all Egyptian governorates. You can also inspect and try the order with the courier before payment.",
+      "preview_image": "Preview image",
+      "gallery_viewer": "Product image preview"
     }
   },
   "collections": {

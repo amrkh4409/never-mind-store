@@ -7,7 +7,7 @@
   endif
 -%}
 
-<section class="product-main-section" data-variant-picker>
+<section class="product-main-section" data-variant-picker data-section-id="{{ section.id }}">
   <div class="container">
     <div class="product-layout">
       <!-- Media Gallery Slider -->
@@ -35,7 +35,24 @@
                         loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
                         width="1200"
                         height="1600"
+                        data-zoom-src="{{ media | image_url: width: 2400 }}"
+                        data-zoom-alt="{{ media.alt | default: product.title | escape }}"
                       >
+                      <button
+                        type="button"
+                        class="product-gallery__zoom-trigger"
+                        data-gallery-zoom
+                        data-zoom-index="{{ forloop.index0 }}"
+                        aria-label="{{ 'products.product.preview_image' | t }}"
+                        title="{{ 'products.product.preview_image' | t }}"
+                      >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="11" cy="11" r="8"></circle>
+                          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                          <line x1="11" y1="8" x2="11" y2="14"></line>
+                          <line x1="8" y1="11" x2="14" y2="11"></line>
+                        </svg>
+                      </button>
                     {%- when 'video' -%}
                       {{ media | video_tag: controls: true, class: 'product-gallery__video', image_size: '1200x' }}
                     {%- when 'external_video' -%}
@@ -50,7 +67,24 @@
                         loading="lazy"
                         width="1200"
                         height="1600"
+                        data-zoom-src="{{ media.preview_image | image_url: width: 2400 }}"
+                        data-zoom-alt="{{ media.alt | default: product.title | escape }}"
                       >
+                      <button
+                        type="button"
+                        class="product-gallery__zoom-trigger"
+                        data-gallery-zoom
+                        data-zoom-index="{{ forloop.index0 }}"
+                        aria-label="{{ 'products.product.preview_image' | t }}"
+                        title="{{ 'products.product.preview_image' | t }}"
+                      >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="11" cy="11" r="8"></circle>
+                          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                          <line x1="11" y1="8" x2="11" y2="14"></line>
+                          <line x1="8" y1="11" x2="14" y2="11"></line>
+                        </svg>
+                      </button>
                   {%- endcase -%}
                 </div>
               {%- endfor -%}
@@ -397,6 +431,38 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Product Image Preview / Lightbox Modal -->
+  <div id="ProductMediaModal-{{ section.id }}" class="product-media-modal" role="dialog" aria-modal="true" aria-label="{{ 'products.product.gallery_viewer' | default: 'Product image preview' | t }}" style="display: none;">
+    <div class="product-media-modal__backdrop" data-media-modal-close></div>
+    <div class="product-media-modal__dialog">
+      <button type="button" class="product-media-modal__close" data-media-modal-close aria-label="{{ 'accessibility.close' | default: 'Close' | t }}">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+
+      {%- if product.media.size > 1 -%}
+        <button type="button" class="product-media-modal__arrow product-media-modal__arrow--prev" data-media-modal-prev aria-label="{{ 'accessibility.previous_slide' | default: 'Previous image' | t }}">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <button type="button" class="product-media-modal__arrow product-media-modal__arrow--next" data-media-modal-next aria-label="{{ 'accessibility.next_slide' | default: 'Next image' | t }}">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+      {%- endif -%}
+
+      <div class="product-media-modal__content">
+        <img src="" alt="" class="product-media-modal__img" data-media-modal-img>
+      </div>
+
+      {%- if product.media.size > 1 -%}
+        <div class="product-media-modal__counter" data-media-modal-counter>
+          <span data-media-modal-current>1</span> / <span data-media-modal-total>{{ product.media.size }}</span>
+        </div>
+      {%- endif -%}
     </div>
   </div>
 
