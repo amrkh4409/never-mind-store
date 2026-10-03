@@ -756,9 +756,13 @@
       if (isOpen) {
         content.classList.remove('is-open');
         content.style.maxHeight = '0px';
+        header.classList.remove('is-active');
+        header.setAttribute('aria-expanded', 'false');
       } else {
         content.classList.add('is-open');
         content.style.maxHeight = `${content.scrollHeight + 32}px`;
+        header.classList.add('is-active');
+        header.setAttribute('aria-expanded', 'true');
       }
     });
   }

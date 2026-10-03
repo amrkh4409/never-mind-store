@@ -196,6 +196,7 @@
       "color": "Color",
       "size": "Size",
       "details": "Product Details",
+      "key_features": "Key Features",
       "description": "Description",
       "shipping_info": "Shipping & Governorates",
       "returns_policy": "Returns & 14-Day Exchange",

@@ -295,35 +295,79 @@
         <!-- Information Tabs / Accordions -->
         <div class="product-accordion">
           <!-- Description -->
-          <div class="accordion-item">
-            <button type="button" class="accordion-header">
-              <span>{{ 'products.product.description' | t }}</span>
-              {% render 'icon-chevron' %}
-            </button>
-            <div class="accordion-content is-open" style="max-height: 500px;">
-              {{ product.description }}
+          {%- if product.description != blank -%}
+            <div class="accordion-item">
+              <button type="button" class="accordion-header is-active" aria-expanded="true">
+                <span>{{ 'products.product.description' | t }}</span>
+                {% render 'icon-chevron' %}
+              </button>
+              <div class="accordion-content is-open" style="max-height: 500px;">
+                <div class="rte">
+                  {{ product.description }}
+                </div>
+              </div>
             </div>
-          </div>
+          {%- endif -%}
 
-          <!-- Fabric & Details -->
-          <div class="accordion-item">
-            <button type="button" class="accordion-header">
-              <span>{{ 'products.product.details' | t }}</span>
-              {% render 'icon-chevron' %}
-            </button>
-            <div class="accordion-content">
-              <ul style="padding-left: 20px; line-height: 1.8;">
-                <li>{{ 'products.product.fabric_heavyweight' | t }}</li>
-                <li>{{ 'products.product.fabric_tailored_fit' | t }}</li>
-                <li>{{ 'products.product.fabric_preshrunk' | t }}</li>
-                <li>{{ 'products.product.fabric_wash_instructions' | t }}</li>
-              </ul>
+          <!-- Product Details (Metafield) -->
+          {%- assign product_details_meta = product.metafields.custom.product_details -%}
+          {%- if product_details_meta != blank and product_details_meta.value != blank -%}
+            <div class="accordion-item" data-metafield-section="product-details">
+              <button type="button" class="accordion-header" aria-expanded="false">
+                <span>{{ 'products.product.details' | t }}</span>
+                {% render 'icon-chevron' %}
+              </button>
+              <div class="accordion-content">
+                <div class="product-details__content rte">
+                  {%- if product_details_meta.type == 'rich_text_field' -%}
+                    {{ product_details_meta | metafield_tag }}
+                  {%- elsif product_details_meta.type == 'multi_line_text_field' -%}
+                    <p>{{ product_details_meta.value | newline_to_br }}</p>
+                  {%- elsif product_details_meta.value != blank -%}
+                    {{ product_details_meta | metafield_tag }}
+                  {%- else -%}
+                    {{ product_details_meta }}
+                  {%- endif -%}
+                </div>
+              </div>
             </div>
-          </div>
+          {%- endif -%}
+
+          <!-- Key Features (Metafield) -->
+          {%- assign key_features_meta = product.metafields.custom.key_features -%}
+          {%- if key_features_meta != blank and key_features_meta.value != blank -%}
+            {%- assign key_features_list = key_features_meta.value -%}
+            <div class="accordion-item" data-metafield-section="key-features">
+              <button type="button" class="accordion-header" aria-expanded="false">
+                <span>{{ 'products.product.key_features' | t }}</span>
+                {% render 'icon-chevron' %}
+              </button>
+              <div class="accordion-content">
+                <ul class="product-features-list">
+                  {%- if key_features_list.first -%}
+                    {%- for feature in key_features_list -%}
+                      {%- assign feature_text = feature | strip -%}
+                      {%- if feature_text != blank -%}
+                        <li>{{ feature_text }}</li>
+                      {%- endif -%}
+                    {%- endfor -%}
+                  {%- else -%}
+                    {%- assign features_lines = key_features_list | newline_to_br | split: '<br />' -%}
+                    {%- for feature in features_lines -%}
+                      {%- assign feature_text = feature | strip -%}
+                      {%- if feature_text != blank -%}
+                        <li>{{ feature_text }}</li>
+                      {%- endif -%}
+                    {%- endfor -%}
+                  {%- endif -%}
+                </ul>
+              </div>
+            </div>
+          {%- endif -%}
 
           <!-- Shipping & Delivery -->
           <div class="accordion-item">
-            <button type="button" class="accordion-header">
+            <button type="button" class="accordion-header" aria-expanded="false">
               <span>{{ 'products.product.shipping_info' | t }}</span>
               {% render 'icon-chevron' %}
             </button>
@@ -340,7 +384,7 @@
 
           <!-- Returns & 14-Day Exchange -->
           <div class="accordion-item">
-            <button type="button" class="accordion-header">
+            <button type="button" class="accordion-header" aria-expanded="false">
               <span>{{ 'products.product.returns_policy' | t }}</span>
               {% render 'icon-chevron' %}
             </button>

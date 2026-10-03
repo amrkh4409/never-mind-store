@@ -2481,6 +2481,16 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
   text-align: left;
 }
 
+.accordion-header svg {
+  transition: transform var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.accordion-header.is-active svg,
+.accordion-header[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
 .accordion-content {
   max-height: 0;
   overflow: hidden;
@@ -2492,6 +2502,20 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
 
 .accordion-content.is-open {
   padding-bottom: 16px;
+}
+
+.product-features-list {
+  padding-inline-start: 20px;
+  line-height: 1.8;
+  margin: 0;
+}
+
+.product-details__content {
+  line-height: 1.7;
+}
+
+.product-details__content p:last-child {
+  margin-bottom: 0;
 }
 
 /* --- Floating WhatsApp Button --- */
