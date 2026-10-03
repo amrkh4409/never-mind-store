@@ -2504,20 +2504,111 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
   padding-bottom: 16px;
 }
 
-.product-features-list {
-  padding-inline-start: 20px;
-  line-height: 1.8;
-  margin: 0;
-}
-
+/* --- Rich Text & Accordion Content Typography / List Styling --- */
 .product-details__content,
-.product-features__content {
+.product-features__content,
+.product-accordion .rte,
+.product-accordion .accordion-content {
   line-height: 1.7;
 }
 
+.product-details__content p,
+.product-features__content p,
+.product-accordion .rte p,
+.product-accordion .metafield-rich_text_field p {
+  margin-bottom: 10px;
+}
+
 .product-details__content p:last-child,
-.product-features__content p:last-child {
+.product-features__content p:last-child,
+.product-accordion .rte p:last-child,
+.product-accordion .metafield-rich_text_field p:last-child {
   margin-bottom: 0;
+}
+
+/* Bulleted Lists (Unordered Lists) */
+.product-details__content ul,
+.product-features__content ul,
+.product-accordion .rte ul,
+.product-accordion .metafield-rich_text_field ul,
+.product-features-list {
+  list-style: disc;
+  list-style-type: disc;
+  list-style-position: outside;
+  padding-inline-start: 22px;
+  margin: 10px 0;
+}
+
+/* Numbered Lists (Ordered Lists) */
+.product-details__content ol,
+.product-features__content ol,
+.product-accordion .rte ol,
+.product-accordion .metafield-rich_text_field ol {
+  list-style: decimal;
+  list-style-type: decimal;
+  list-style-position: outside;
+  padding-inline-start: 22px;
+  margin: 10px 0;
+}
+
+/* List Items */
+.product-details__content li,
+.product-features__content li,
+.product-accordion .rte li,
+.product-accordion .metafield-rich_text_field li,
+.product-features-list li {
+  margin-bottom: 6px;
+  line-height: 1.7;
+  color: var(--color-foreground-secondary);
+}
+
+.product-details__content li:last-child,
+.product-features__content li:last-child,
+.product-accordion .rte li:last-child,
+.product-accordion .metafield-rich_text_field li:last-child,
+.product-features-list li:last-child {
+  margin-bottom: 0;
+}
+
+/* Nested lists */
+.product-details__content li > ul,
+.product-features__content li > ul,
+.product-details__content li > ol,
+.product-features__content li > ol,
+.product-accordion .rte li > ul,
+.product-accordion .rte li > ol {
+  margin: 4px 0 6px 0;
+  padding-inline-start: 18px;
+}
+
+/* Bold text inside Rich Text */
+.product-details__content strong,
+.product-features__content strong,
+.product-accordion .rte strong,
+.product-accordion .metafield-rich_text_field strong,
+.product-details__content b,
+.product-features__content b,
+.product-accordion .rte b,
+.product-accordion .metafield-rich_text_field b {
+  color: var(--color-foreground);
+  font-weight: 600;
+}
+
+/* Links inside Rich Text */
+.product-details__content a,
+.product-features__content a,
+.product-accordion .rte a,
+.product-accordion .metafield-rich_text_field a {
+  color: var(--color-foreground);
+  text-decoration: underline;
+  transition: opacity var(--transition-fast);
+}
+
+.product-details__content a:hover,
+.product-features__content a:hover,
+.product-accordion .rte a:hover,
+.product-accordion .metafield-rich_text_field a:hover {
+  opacity: 0.8;
 }
 
 /* --- Floating WhatsApp Button --- */
