@@ -2510,11 +2510,13 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
   margin: 0;
 }
 
-.product-details__content {
+.product-details__content,
+.product-features__content {
   line-height: 1.7;
 }
 
-.product-details__content p:last-child {
+.product-details__content p:last-child,
+.product-features__content p:last-child {
   margin-bottom: 0;
 }
 

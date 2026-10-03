@@ -336,31 +336,32 @@
           <!-- Key Features (Metafield) -->
           {%- assign key_features_meta = product.metafields.custom.key_features -%}
           {%- if key_features_meta != blank and key_features_meta.value != blank -%}
-            {%- assign key_features_list = key_features_meta.value -%}
             <div class="accordion-item" data-metafield-section="key-features">
               <button type="button" class="accordion-header" aria-expanded="false">
                 <span>{{ 'products.product.key_features' | t }}</span>
                 {% render 'icon-chevron' %}
               </button>
               <div class="accordion-content">
-                <ul class="product-features-list">
-                  {%- if key_features_list.first -%}
-                    {%- for feature in key_features_list -%}
-                      {%- assign feature_text = feature | strip -%}
-                      {%- if feature_text != blank -%}
-                        <li>{{ feature_text }}</li>
-                      {%- endif -%}
-                    {%- endfor -%}
+                <div class="product-features__content rte">
+                  {%- if key_features_meta.type == 'rich_text_field' -%}
+                    {{ key_features_meta | metafield_tag }}
+                  {%- elsif key_features_meta.type == 'multi_line_text_field' -%}
+                    <p>{{ key_features_meta.value | newline_to_br }}</p>
+                  {%- elsif key_features_meta.value.first -%}
+                    <ul class="product-features-list">
+                      {%- for feature in key_features_meta.value -%}
+                        {%- assign feature_text = feature | strip -%}
+                        {%- if feature_text != blank -%}
+                          <li>{{ feature_text }}</li>
+                        {%- endif -%}
+                      {%- endfor -%}
+                    </ul>
+                  {%- elsif key_features_meta.value != blank -%}
+                    {{ key_features_meta | metafield_tag }}
                   {%- else -%}
-                    {%- assign features_lines = key_features_list | newline_to_br | split: '<br />' -%}
-                    {%- for feature in features_lines -%}
-                      {%- assign feature_text = feature | strip -%}
-                      {%- if feature_text != blank -%}
-                        <li>{{ feature_text }}</li>
-                      {%- endif -%}
-                    {%- endfor -%}
+                    {{ key_features_meta }}
                   {%- endif -%}
-                </ul>
+                </div>
               </div>
             </div>
           {%- endif -%}
