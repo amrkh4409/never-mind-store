@@ -270,12 +270,15 @@
 
       if (this.modal) {
         this.modalImg = this.modal.querySelector('[data-media-modal-img]');
+        this.modalContent = this.modal.querySelector('[data-media-modal-content]');
+        this.modalZoomBtn = this.modal.querySelector('[data-media-modal-zoom]');
         this.modalPrevBtn = this.modal.querySelector('[data-media-modal-prev]');
         this.modalNextBtn = this.modal.querySelector('[data-media-modal-next]');
         this.modalCloseBtns = this.modal.querySelectorAll('[data-media-modal-close]');
         this.modalCurrentEl = this.modal.querySelector('[data-media-modal-current]');
         this.modalTotalEl = this.modal.querySelector('[data-media-modal-total]');
         this.modalCurrentIndex = 0;
+        this.isModalZoomed = false;
       }
 
       this.bindEvents();
@@ -365,6 +368,44 @@
         });
       });
 
+      // Zoom toggle button in modal header
+      if (this.modalZoomBtn) {
+        this.modalZoomBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          this.toggleModalZoom();
+        });
+      }
+
+      // Click on modal image to zoom in / zoom out
+      if (this.modalImg) {
+        this.modalImg.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (!this.isModalZoomed) {
+            const rect = this.modalImg.getBoundingClientRect();
+            const xPercent = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+            const yPercent = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
+            this.modalImg.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+          }
+          this.toggleModalZoom();
+        });
+
+        // Pan image smoothly when zoomed in
+        const handlePan = (e) => {
+          if (!this.isModalZoomed || !this.modalImg) return;
+          const rect = this.modalContent ? this.modalContent.getBoundingClientRect() : this.modalImg.getBoundingClientRect();
+          const xPercent = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+          const yPercent = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
+          this.modalImg.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+        };
+
+        this.modalImg.addEventListener('mousemove', handlePan);
+        if (this.modalContent) {
+          this.modalContent.addEventListener('mousemove', handlePan);
+        }
+      }
+
       // Prev & Next navigation inside modal
       if (this.modalPrevBtn) {
         this.modalPrevBtn.addEventListener('click', (e) => {
@@ -397,8 +438,31 @@
       });
     }
 
+    toggleModalZoom(forceState) {
+      if (!this.modalImg) return;
+      this.isModalZoomed = typeof forceState === 'boolean' ? forceState : !this.isModalZoomed;
+      this.modalImg.classList.toggle('is-zoomed', this.isModalZoomed);
+
+      if (this.modalZoomBtn) {
+        const inIcon = this.modalZoomBtn.querySelector('.icon-zoom-in');
+        const outIcon = this.modalZoomBtn.querySelector('.icon-zoom-out');
+        if (inIcon) inIcon.style.display = this.isModalZoomed ? 'none' : 'block';
+        if (outIcon) outIcon.style.display = this.isModalZoomed ? 'block' : 'none';
+        this.modalZoomBtn.setAttribute('aria-label', this.isModalZoomed ? 'Zoom out' : 'Zoom in');
+      }
+
+      if (!this.isModalZoomed) {
+        this.modalImg.style.transformOrigin = 'center center';
+      }
+    }
+
+    resetModalZoom() {
+      this.toggleModalZoom(false);
+    }
+
     openModal(index) {
       if (!this.modal) return;
+      this.resetModalZoom();
       this.modalCurrentIndex = (index >= 0 && index < this.slides.length) ? index : this.currentIndex;
       this.updateModalContent();
       this.modal.style.display = 'flex';
@@ -409,6 +473,7 @@
 
     closeModal() {
       if (!this.modal) return;
+      this.resetModalZoom();
       this.modal.classList.remove('is-open');
       document.body.style.overflow = '';
       setTimeout(() => {
@@ -420,6 +485,7 @@
 
     modalStep(step) {
       if (!this.slides.length) return;
+      this.resetModalZoom();
       const newIndex = (this.modalCurrentIndex + step + this.slides.length) % this.slides.length;
       this.modalCurrentIndex = newIndex;
       this.updateModalContent();
