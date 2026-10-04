@@ -1,78 +1,157 @@
 {%- comment -%}
   Dynamically resolves color from Shopify product option value or native swatch data.
+  Supports:
+  - Native Shopify swatches (image or color)
+  - Dual/double colors (e.g. "Black/White", "أسود/أبيض", "Navy & Beige") with 135deg split gradient
+  - Single colors in English and Arabic
+  - Automatic fallback to the variant product image if the color is unadded/unknown
   Usage:
-  {% render 'color-swatch-value', value: value %}
+  {% render 'color-swatch-value', value: value, image: variant_image_url %}
 {%- endcomment -%}
 {%- liquid
-  if value.swatch.color != blank
+  if value.swatch.image != blank
+    assign swatch_img_url = value.swatch.image | image_url: width: 120, height: 120, crop: 'center'
+    echo 'url(' | append: swatch_img_url | append: ') center / cover no-repeat'
+  elsif value.swatch.color != blank
     echo value.swatch.color
   else
-    assign color_clean = value | downcase | strip | replace: '-', ' ' | replace: '_', ' '
-    case color_clean
-      when 'white', 'snow', 'pure white', 'off white', 'offwhite', 'أبيض', 'ابيض', 'اوف وايت'
-        echo '#FFFFFF'
-      when 'black', 'noir', 'nero', 'midnight black', 'أسود', 'اسود'
-        echo '#111111'
-      when 'charcoal', 'dark grey', 'dark gray', 'فحم', 'شحم'
-        echo '#2C2D30'
-      when 'grey', 'gray', 'heather grey', 'heather gray', 'light grey', 'light gray', 'رمادي', 'رصاصي', 'فيراني'
-        echo '#9E9E9E'
-      when 'beige', 'sand', 'cream', 'creme', 'ivory', 'nude', 'بيج', 'كريمي', 'عاجي'
-        echo '#E6D7C3'
-      when 'camel', 'tan', 'جملي'
-        echo '#C19A6B'
-      when 'brown', 'chocolate', 'dark brown', 'mocha', 'coffee', 'بني', 'هافان', 'شوكولاتة'
-        echo '#5C3A21'
-      when 'navy', 'navy blue', 'dark blue', 'كحلي', 'أزرق داكن', 'ازرق داكن'
-        echo '#0F1E36'
-      when 'blue', 'royal blue', 'sky blue', 'أزرق', 'ازرق', 'نيلي', 'سماوي'
-        echo '#2563EB'
-      when 'olive', 'olive green', 'army green', 'army', 'khaki', 'زيتي', 'زتوني', 'كاكي'
-        echo '#4D5638'
-      when 'green', 'forest green', 'emerald', 'dark green', 'أخضر', 'اخضر', 'زيتي فاتح'
-        echo '#15803D'
-      when 'burgundy', 'maroon', 'wine', 'bordeaux', 'نبيتي', 'عنابي', 'مارون'
-        echo '#5B1422'
-      when 'red', 'crimson', 'ruby', 'أحمر', 'احمر'
-        echo '#DC2626'
-      when 'orange', 'rust', 'terracotta', 'برتقالي', 'أورانج', 'اورانج'
-        echo '#EA580C'
-      when 'yellow', 'mustard', 'gold', 'أصفر', 'اصفر', 'مسطردة'
-        echo '#EAB308'
-      when 'pink', 'rose', 'blush', 'dusty pink', 'وردي', 'روز', 'بمبي', 'كشمير'
-        echo '#F472B6'
-      when 'purple', 'violet', 'lavender', 'lilac', 'بنفسجي', 'موف', 'لافندر'
-        echo '#7E22CE'
-      else
-        if color_clean contains 'black' or color_clean contains 'أسود' or color_clean contains 'اسود'
-          echo '#111111'
-        elsif color_clean contains 'white' or color_clean contains 'أبيض' or color_clean contains 'ابيض'
-          echo '#FFFFFF'
-        elsif color_clean contains 'beige' or color_clean contains 'بيج' or color_clean contains 'cream' or color_clean contains 'sand'
-          echo '#E6D7C3'
-        elsif color_clean contains 'camel' or color_clean contains 'جملي'
-          echo '#C19A6B'
-        elsif color_clean contains 'gray' or color_clean contains 'grey' or color_clean contains 'رمادي'
-          echo '#9E9E9E'
-        elsif color_clean contains 'navy' or color_clean contains 'كحلي'
-          echo '#0F1E36'
-        elsif color_clean contains 'blue' or color_clean contains 'أزرق' or color_clean contains 'ازرق'
-          echo '#2563EB'
-        elsif color_clean contains 'olive' or color_clean contains 'زيتي'
-          echo '#4D5638'
-        elsif color_clean contains 'green' or color_clean contains 'أخضر' or color_clean contains 'اخضر'
-          echo '#15803D'
-        elsif color_clean contains 'brown' or color_clean contains 'بني' or color_clean contains 'هافان'
-          echo '#5C3A21'
-        elsif color_clean contains 'burgundy' or color_clean contains 'نبيتي' or color_clean contains 'maroon'
-          echo '#5B1422'
-        elsif color_clean contains 'red' or color_clean contains 'أحمر' or color_clean contains 'احمر'
-          echo '#DC2626'
-        elsif color_clean contains 'pink' or color_clean contains 'وردي' or color_clean contains 'كشمير'
-          echo '#F472B6'
+    assign raw_val = value | strip
+    assign delimiter = ''
+    if raw_val contains '/'
+      assign delimiter = '/'
+    elsif raw_val contains '\'
+      assign delimiter = '\'
+    elsif raw_val contains ' & '
+      assign delimiter = ' & '
+    elsif raw_val contains '&'
+      assign delimiter = '&'
+    elsif raw_val contains ' + '
+      assign delimiter = ' + '
+    elsif raw_val contains '+'
+      assign delimiter = '+'
+    elsif raw_val contains ' مع '
+      assign delimiter = ' مع '
+    elsif raw_val contains ' - '
+      assign delimiter = ' - '
+    endif
+
+    if delimiter != ''
+      assign parts = raw_val | split: delimiter
+    else
+      assign parts = raw_val | split: '|||'
+    endif
+
+    assign hex1 = ''
+    assign hex2 = ''
+    assign idx = 0
+
+    for part in parts limit: 2
+      assign color_clean = part | downcase | strip | replace: '-', ' ' | replace: '_', ' '
+      assign res_hex = ''
+
+      case color_clean
+        when 'white', 'snow', 'pure white', 'off white', 'offwhite', 'أبيض', 'ابيض', 'اوف وايت'
+          assign res_hex = '#FFFFFF'
+        when 'black', 'noir', 'nero', 'midnight black', 'أسود', 'اسود'
+          assign res_hex = '#111111'
+        when 'charcoal', 'dark grey', 'dark gray', 'فحم', 'شحم'
+          assign res_hex = '#2C2D30'
+        when 'grey', 'gray', 'heather grey', 'heather gray', 'light grey', 'light gray', 'رمادي', 'رصاصي', 'فيراني'
+          assign res_hex = '#9E9E9E'
+        when 'beige', 'sand', 'cream', 'creme', 'ivory', 'nude', 'بيج', 'كريمي', 'عاجي', 'سكري'
+          assign res_hex = '#E6D7C3'
+        when 'camel', 'tan', 'جملي'
+          assign res_hex = '#C19A6B'
+        when 'brown', 'chocolate', 'dark brown', 'mocha', 'coffee', 'بني', 'هافان', 'شوكولاتة', 'كافيه'
+          assign res_hex = '#5C3A21'
+        when 'navy', 'navy blue', 'dark blue', 'كحلي', 'أزرق داكن', 'ازرق داكن'
+          assign res_hex = '#0F1E36'
+        when 'blue', 'royal blue', 'sky blue', 'baby blue', 'أزرق', 'ازرق', 'نيلي', 'سماوي', 'بيبي بلو'
+          assign res_hex = '#2563EB'
+        when 'olive', 'olive green', 'army green', 'army', 'khaki', 'زيتي', 'زتوني', 'كاكي'
+          assign res_hex = '#4D5638'
+        when 'green', 'forest green', 'emerald', 'dark green', 'أخضر', 'اخضر', 'فستقي'
+          assign res_hex = '#15803D'
+        when 'mint', 'mint green', 'نعناعي', 'مينت'
+          assign res_hex = '#A7F3D0'
+        when 'burgundy', 'maroon', 'wine', 'bordeaux', 'نبيتي', 'عنابي', 'مارون', 'بورجوندي'
+          assign res_hex = '#5B1422'
+        when 'red', 'crimson', 'ruby', 'أحمر', 'احمر'
+          assign res_hex = '#DC2626'
+        when 'orange', 'rust', 'terracotta', 'peach', 'برتقالي', 'أورانج', 'اورانج', 'خوخي'
+          assign res_hex = '#EA580C'
+        when 'yellow', 'mustard', 'gold', 'أصفر', 'اصفر', 'مسطردة', 'ذهبي'
+          assign res_hex = '#EAB308'
+        when 'pink', 'rose', 'blush', 'dusty pink', 'وردي', 'روز', 'بمبي', 'كشمير', 'زهري'
+          assign res_hex = '#F472B6'
+        when 'purple', 'violet', 'lavender', 'lilac', 'بنفسجي', 'موف', 'لافندر', 'ارجواني'
+          assign res_hex = '#7E22CE'
+        when 'teal', 'turquoise', 'cyan', 'تركواز', 'تيل', 'فيروزي'
+          assign res_hex = '#0D9488'
         else
-          echo color_clean | handleize
-        endif
-    endcase
+          if color_clean contains 'black' or color_clean contains 'أسود' or color_clean contains 'اسود'
+            assign res_hex = '#111111'
+          elsif color_clean contains 'white' or color_clean contains 'أبيض' or color_clean contains 'ابيض'
+            assign res_hex = '#FFFFFF'
+          elsif color_clean contains 'beige' or color_clean contains 'بيج' or color_clean contains 'cream' or color_clean contains 'sand'
+            assign res_hex = '#E6D7C3'
+          elsif color_clean contains 'camel' or color_clean contains 'جملي'
+            assign res_hex = '#C19A6B'
+          elsif color_clean contains 'gray' or color_clean contains 'grey' or color_clean contains 'رمادي'
+            assign res_hex = '#9E9E9E'
+          elsif color_clean contains 'navy' or color_clean contains 'كحلي'
+            assign res_hex = '#0F1E36'
+          elsif color_clean contains 'blue' or color_clean contains 'أزرق' or color_clean contains 'ازرق'
+            assign res_hex = '#2563EB'
+          elsif color_clean contains 'olive' or color_clean contains 'زيتي' or color_clean contains 'khaki' or color_clean contains 'كاكي'
+            assign res_hex = '#4D5638'
+          elsif color_clean contains 'green' or color_clean contains 'أخضر' or color_clean contains 'اخضر'
+            assign res_hex = '#15803D'
+          elsif color_clean contains 'brown' or color_clean contains 'بني' or color_clean contains 'هافان'
+            assign res_hex = '#5C3A21'
+          elsif color_clean contains 'burgundy' or color_clean contains 'نبيتي' or color_clean contains 'maroon' or color_clean contains 'عنابي'
+            assign res_hex = '#5B1422'
+          elsif color_clean contains 'red' or color_clean contains 'أحمر' or color_clean contains 'احمر'
+            assign res_hex = '#DC2626'
+          elsif color_clean contains 'pink' or color_clean contains 'وردي' or color_clean contains 'كشمير'
+            assign res_hex = '#F472B6'
+          elsif color_clean contains 'purple' or color_clean contains 'بنفسجي' or color_clean contains 'موف'
+            assign res_hex = '#7E22CE'
+          elsif color_clean contains 'yellow' or color_clean contains 'أصفر' or color_clean contains 'اصفر'
+            assign res_hex = '#EAB308'
+          elsif color_clean contains 'orange' or color_clean contains 'برتقالي'
+            assign res_hex = '#EA580C'
+          endif
+      endcase
+
+      if idx == 0
+        assign hex1 = res_hex
+      else
+        assign hex2 = res_hex
+      endif
+      assign idx = idx | plus: 1
+    endfor
+
+    if delimiter != '' and parts.size >= 2
+      if hex1 != blank and hex2 != blank
+        echo 'linear-gradient(135deg, ' | append: hex1 | append: ' 50%, ' | append: hex2 | append: ' 50%)'
+      elsif image != blank
+        echo 'url(' | append: image | append: ') center / cover no-repeat'
+      elsif hex1 != blank
+        echo hex1
+      elsif hex2 != blank
+        echo hex2
+      else
+        echo '#E2E8F0'
+      endif
+    else
+      if hex1 != blank
+        echo hex1
+      elsif image != blank
+        echo 'url(' | append: image | append: ') center / cover no-repeat'
+      else
+        echo '#E2E8F0'
+      endif
+    endif
   endif
 -%}

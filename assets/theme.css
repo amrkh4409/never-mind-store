@@ -1608,7 +1608,9 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
   border: 1px solid rgba(0, 0, 0, 0.2);
   padding: 0;
   cursor: pointer;
-  background: transparent;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   outline: none;
   transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
@@ -2788,6 +2790,9 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
   display: inline-block;
   flex-shrink: 0;
   border: 1px solid rgba(0, 0, 0, 0.18);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 

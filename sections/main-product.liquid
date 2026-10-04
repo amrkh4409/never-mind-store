@@ -215,14 +215,22 @@
 
                     {%- if is_color -%}
                       {%- assign color_variant_media_id = '' -%}
+                      {%- assign color_variant_image = '' -%}
                       {%- for variant in product.variants -%}
-                        {%- if variant.options[option_index] == value and variant.featured_media != blank -%}
-                          {%- assign color_variant_media_id = variant.featured_media.id -%}
-                          {%- break -%}
+                        {%- if variant.options[option_index] == value -%}
+                          {%- if variant.featured_media != blank -%}
+                            {%- assign color_variant_media_id = variant.featured_media.id -%}
+                            {%- assign color_variant_image = variant.featured_media | image_url: width: 120, height: 120, crop: 'center' -%}
+                            {%- break -%}
+                          {%- elsif variant.image != blank -%}
+                            {%- assign color_variant_media_id = variant.image.id -%}
+                            {%- assign color_variant_image = variant.image | image_url: width: 120, height: 120, crop: 'center' -%}
+                            {%- break -%}
+                          {%- endif -%}
                         {%- endif -%}
                       {%- endfor -%}
 
-                      {%- capture swatch_color -%}{% render 'color-swatch-value', value: value %}{%- endcapture -%}
+                      {%- capture swatch_color -%}{% render 'color-swatch-value', value: value, image: color_variant_image %}{%- endcapture -%}
                       {%- assign swatch_color = swatch_color | strip -%}
 
                       <button
@@ -237,7 +245,7 @@
                       >
                         <span
                           class="color-swatch-dot"
-                          style="background-color: {{ swatch_color }};"
+                          style="background: {{ swatch_color }};"
                         ></span>
                         <span class="color-swatch-label">{{ value }}</span>
                       </button>
