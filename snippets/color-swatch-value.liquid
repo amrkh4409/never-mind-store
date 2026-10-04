@@ -10,7 +10,7 @@
 {%- endcomment -%}
 {%- liquid
   if value.swatch.image != blank
-    assign swatch_img_url = value.swatch.image | image_url: width: 120, height: 120, crop: 'center'
+    assign swatch_img_url = value.swatch.image | image_url: width: 160, height: 160, crop: 'center'
     if swatch_img_url contains '//' and swatch_img_url contains 'http' == false
       assign swatch_img_url = 'https:' | append: swatch_img_url
     endif

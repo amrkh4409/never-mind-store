@@ -221,7 +221,7 @@
                           {%- assign variant_img = variant.featured_media.preview_image | default: variant.featured_media | default: variant.image | default: variant.featured_image -%}
                           {%- if variant_img != blank -%}
                             {%- assign color_variant_media_id = variant.featured_media.id | default: variant.image.id -%}
-                            {%- assign color_variant_image = variant_img | image_url: width: 120, height: 120, crop: 'center' -%}
+                            {%- assign color_variant_image = variant_img | image_url: width: 160, height: 160, crop: 'center' -%}
                             {%- break -%}
                           {%- endif -%}
                         {%- endif -%}
