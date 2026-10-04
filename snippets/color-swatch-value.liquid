@@ -11,14 +11,21 @@
 {%- liquid
   if value.swatch.image != blank
     assign swatch_img_url = value.swatch.image | image_url: width: 120, height: 120, crop: 'center'
-    echo 'url(' | append: swatch_img_url | append: ') center / cover no-repeat'
+    if swatch_img_url contains '//' and swatch_img_url contains 'http' == false
+      assign swatch_img_url = 'https:' | append: swatch_img_url
+    endif
+    echo "url('" | append: swatch_img_url | append: "') center / cover no-repeat"
   elsif value.swatch.color != blank
     echo value.swatch.color
   else
     assign raw_val = value | strip
     assign delimiter = ''
-    if raw_val contains '/'
+    if raw_val contains ' / '
+      assign delimiter = ' / '
+    elsif raw_val contains '/'
       assign delimiter = '/'
+    elsif raw_val contains ' \ '
+      assign delimiter = ' \ '
     elsif raw_val contains '\'
       assign delimiter = '\'
     elsif raw_val contains ' & '
@@ -29,10 +36,30 @@
       assign delimiter = ' + '
     elsif raw_val contains '+'
       assign delimiter = '+'
-    elsif raw_val contains ' مع '
-      assign delimiter = ' مع '
+    elsif raw_val contains ' and '
+      assign delimiter = ' and '
+    elsif raw_val contains ' AND '
+      assign delimiter = ' AND '
     elsif raw_val contains ' - '
       assign delimiter = ' - '
+    elsif raw_val contains '-'
+      assign delimiter = '-'
+    elsif raw_val contains ' _ '
+      assign delimiter = ' _ '
+    elsif raw_val contains '_'
+      assign delimiter = '_'
+    elsif raw_val contains ' x '
+      assign delimiter = ' x '
+    elsif raw_val contains ' X '
+      assign delimiter = ' X '
+    elsif raw_val contains ','
+      assign delimiter = ','
+    elsif raw_val contains ' مع '
+      assign delimiter = ' مع '
+    elsif raw_val contains ' و '
+      assign delimiter = ' و '
+    elsif raw_val contains ' و'
+      assign delimiter = ' و'
     endif
 
     if delimiter != ''
@@ -50,46 +77,58 @@
       assign res_hex = ''
 
       case color_clean
-        when 'white', 'snow', 'pure white', 'off white', 'offwhite', 'أبيض', 'ابيض', 'اوف وايت'
+        when 'white', 'snow', 'pure white', 'off white', 'offwhite', 'أبيض', 'ابيض', 'الابيض', 'الأبيض', 'اوف وايت'
           assign res_hex = '#FFFFFF'
-        when 'black', 'noir', 'nero', 'midnight black', 'أسود', 'اسود'
+        when 'black', 'noir', 'nero', 'midnight black', 'أسود', 'اسود', 'الأسود', 'الاسود'
           assign res_hex = '#111111'
-        when 'charcoal', 'dark grey', 'dark gray', 'فحم', 'شحم'
+        when 'gold', 'golden', 'metallic gold', 'ذهب', 'ذهبي', 'الذهب', 'الذهبي', 'دهب', 'دهبي', 'الدهب', 'الدهبي', 'جولد', 'الجولد'
+          assign res_hex = '#D4AF37'
+        when 'rose gold', 'روز جولد', 'ذهب وردي', 'دهب وردي'
+          assign res_hex = '#B76E79'
+        when 'silver', 'metallic silver', 'فضة', 'فضي', 'الفضة', 'الفضي', 'سيلفر', 'السيلفر'
+          assign res_hex = '#C0C0C0'
+        when 'charcoal', 'dark grey', 'dark gray', 'فحم', 'شحم', 'فحمي', 'الفحمي'
           assign res_hex = '#2C2D30'
-        when 'grey', 'gray', 'heather grey', 'heather gray', 'light grey', 'light gray', 'رمادي', 'رصاصي', 'فيراني'
+        when 'grey', 'gray', 'heather grey', 'heather gray', 'light grey', 'light gray', 'رمادي', 'رصاصي', 'فيراني', 'الرمادي', 'الرصاصي', 'الفيراني'
           assign res_hex = '#9E9E9E'
-        when 'beige', 'sand', 'cream', 'creme', 'ivory', 'nude', 'بيج', 'كريمي', 'عاجي', 'سكري'
+        when 'beige', 'sand', 'cream', 'creme', 'ivory', 'nude', 'بيج', 'كريمي', 'عاجي', 'سكري', 'البيج', 'الكريمي', 'العاجي', 'السكري'
           assign res_hex = '#E6D7C3'
-        when 'camel', 'tan', 'جملي'
+        when 'camel', 'tan', 'جملي', 'الجملي', 'تان'
           assign res_hex = '#C19A6B'
-        when 'brown', 'chocolate', 'dark brown', 'mocha', 'coffee', 'بني', 'هافان', 'شوكولاتة', 'كافيه'
+        when 'brown', 'chocolate', 'dark brown', 'mocha', 'coffee', 'بني', 'هافان', 'شوكولاتة', 'كافيه', 'البني', 'الهافان', 'الكافيه'
           assign res_hex = '#5C3A21'
-        when 'navy', 'navy blue', 'dark blue', 'كحلي', 'أزرق داكن', 'ازرق داكن'
+        when 'navy', 'navy blue', 'dark blue', 'كحلي', 'أزرق داكن', 'ازرق داكن', 'الكحلي', 'الأزرق الداكن', 'الازرق الداكن'
           assign res_hex = '#0F1E36'
-        when 'blue', 'royal blue', 'sky blue', 'baby blue', 'أزرق', 'ازرق', 'نيلي', 'سماوي', 'بيبي بلو'
+        when 'blue', 'royal blue', 'sky blue', 'baby blue', 'أزرق', 'ازرق', 'نيلي', 'سماوي', 'بيبي بلو', 'الأزرق', 'الازرق', 'السماوي', 'النيلي'
           assign res_hex = '#2563EB'
-        when 'olive', 'olive green', 'army green', 'army', 'khaki', 'زيتي', 'زتوني', 'كاكي'
+        when 'olive', 'olive green', 'army green', 'army', 'khaki', 'زيتي', 'زتوني', 'كاكي', 'الزيتي', 'الكاكي'
           assign res_hex = '#4D5638'
-        when 'green', 'forest green', 'emerald', 'dark green', 'أخضر', 'اخضر', 'فستقي'
+        when 'green', 'forest green', 'emerald', 'dark green', 'أخضر', 'اخضر', 'فستقي', 'الأخضر', 'الاخضر', 'الفستقي'
           assign res_hex = '#15803D'
-        when 'mint', 'mint green', 'نعناعي', 'مينت'
+        when 'mint', 'mint green', 'نعناعي', 'مينت', 'المينت'
           assign res_hex = '#A7F3D0'
-        when 'burgundy', 'maroon', 'wine', 'bordeaux', 'نبيتي', 'عنابي', 'مارون', 'بورجوندي'
+        when 'burgundy', 'maroon', 'wine', 'bordeaux', 'نبيتي', 'عنابي', 'مارون', 'بورجوندي', 'النبيتي', 'العنابي', 'البورجوندي'
           assign res_hex = '#5B1422'
-        when 'red', 'crimson', 'ruby', 'أحمر', 'احمر'
+        when 'red', 'crimson', 'ruby', 'أحمر', 'احمر', 'الأحمر', 'الاحمر'
           assign res_hex = '#DC2626'
-        when 'orange', 'rust', 'terracotta', 'peach', 'برتقالي', 'أورانج', 'اورانج', 'خوخي'
+        when 'orange', 'rust', 'terracotta', 'peach', 'برتقالي', 'أورانج', 'اورانج', 'خوخي', 'البرتقالي', 'الاورانج', 'الأورانج'
           assign res_hex = '#EA580C'
-        when 'yellow', 'mustard', 'gold', 'أصفر', 'اصفر', 'مسطردة', 'ذهبي'
+        when 'yellow', 'mustard', 'أصفر', 'اصفر', 'مسطردة', 'الأصفر', 'الاصفر', 'المسطردة'
           assign res_hex = '#EAB308'
-        when 'pink', 'rose', 'blush', 'dusty pink', 'وردي', 'روز', 'بمبي', 'كشمير', 'زهري'
+        when 'pink', 'rose', 'blush', 'dusty pink', 'وردي', 'روز', 'بمبي', 'كشمير', 'زهري', 'الوردي', 'الروز', 'الكشمير', 'الزهري'
           assign res_hex = '#F472B6'
-        when 'purple', 'violet', 'lavender', 'lilac', 'بنفسجي', 'موف', 'لافندر', 'ارجواني'
+        when 'purple', 'violet', 'lavender', 'lilac', 'بنفسجي', 'موف', 'لافندر', 'ارجواني', 'البنفسجي', 'الموف', 'اللافندر'
           assign res_hex = '#7E22CE'
-        when 'teal', 'turquoise', 'cyan', 'تركواز', 'تيل', 'فيروزي'
+        when 'teal', 'turquoise', 'cyan', 'تركواز', 'تيل', 'فيروزي', 'التركواز', 'الفيروزي'
           assign res_hex = '#0D9488'
         else
-          if color_clean contains 'black' or color_clean contains 'أسود' or color_clean contains 'اسود'
+          if color_clean contains 'rose gold' or color_clean contains 'روز جولد' or color_clean contains 'ذهب وردي' or color_clean contains 'دهب وردي'
+            assign res_hex = '#B76E79'
+          elsif color_clean contains 'gold' or color_clean contains 'ذهب' or color_clean contains 'دهب' or color_clean contains 'جولد'
+            assign res_hex = '#D4AF37'
+          elsif color_clean contains 'silver' or color_clean contains 'فض' or color_clean contains 'سيلفر'
+            assign res_hex = '#C0C0C0'
+          elsif color_clean contains 'black' or color_clean contains 'أسود' or color_clean contains 'اسود'
             assign res_hex = '#111111'
           elsif color_clean contains 'white' or color_clean contains 'أبيض' or color_clean contains 'ابيض'
             assign res_hex = '#FFFFFF'
@@ -97,7 +136,7 @@
             assign res_hex = '#E6D7C3'
           elsif color_clean contains 'camel' or color_clean contains 'جملي'
             assign res_hex = '#C19A6B'
-          elsif color_clean contains 'gray' or color_clean contains 'grey' or color_clean contains 'رمادي'
+          elsif color_clean contains 'gray' or color_clean contains 'grey' or color_clean contains 'رمادي' or color_clean contains 'رصاصي'
             assign res_hex = '#9E9E9E'
           elsif color_clean contains 'navy' or color_clean contains 'كحلي'
             assign res_hex = '#0F1E36'
@@ -113,14 +152,16 @@
             assign res_hex = '#5B1422'
           elsif color_clean contains 'red' or color_clean contains 'أحمر' or color_clean contains 'احمر'
             assign res_hex = '#DC2626'
-          elsif color_clean contains 'pink' or color_clean contains 'وردي' or color_clean contains 'كشمير'
+          elsif color_clean contains 'pink' or color_clean contains 'وردي' or color_clean contains 'كشمير' or color_clean contains 'روز'
             assign res_hex = '#F472B6'
           elsif color_clean contains 'purple' or color_clean contains 'بنفسجي' or color_clean contains 'موف'
             assign res_hex = '#7E22CE'
-          elsif color_clean contains 'yellow' or color_clean contains 'أصفر' or color_clean contains 'اصفر'
+          elsif color_clean contains 'yellow' or color_clean contains 'أصفر' or color_clean contains 'اصفر' or color_clean contains 'مسطردة'
             assign res_hex = '#EAB308'
-          elsif color_clean contains 'orange' or color_clean contains 'برتقالي'
+          elsif color_clean contains 'orange' or color_clean contains 'برتقالي' or color_clean contains 'اورانج'
             assign res_hex = '#EA580C'
+          elsif color_clean contains 'teal' or color_clean contains 'تركواز' or color_clean contains 'فيروزي'
+            assign res_hex = '#0D9488'
           endif
       endcase
 
@@ -132,11 +173,16 @@
       assign idx = idx | plus: 1
     endfor
 
+    assign resolved_img = image
+    if resolved_img != blank and resolved_img contains '//' and resolved_img contains 'http' == false
+      assign resolved_img = 'https:' | append: resolved_img
+    endif
+
     if delimiter != '' and parts.size >= 2
       if hex1 != blank and hex2 != blank
         echo 'linear-gradient(135deg, ' | append: hex1 | append: ' 50%, ' | append: hex2 | append: ' 50%)'
-      elsif image != blank
-        echo 'url(' | append: image | append: ') center / cover no-repeat'
+      elsif resolved_img != blank
+        echo "url('" | append: resolved_img | append: "') center / cover no-repeat"
       elsif hex1 != blank
         echo hex1
       elsif hex2 != blank
@@ -147,8 +193,8 @@
     else
       if hex1 != blank
         echo hex1
-      elsif image != blank
-        echo 'url(' | append: image | append: ') center / cover no-repeat'
+      elsif resolved_img != blank
+        echo "url('" | append: resolved_img | append: "') center / cover no-repeat"
       else
         echo '#E2E8F0'
       endif

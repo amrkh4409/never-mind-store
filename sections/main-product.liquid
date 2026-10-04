@@ -218,13 +218,10 @@
                       {%- assign color_variant_image = '' -%}
                       {%- for variant in product.variants -%}
                         {%- if variant.options[option_index] == value -%}
-                          {%- if variant.featured_media != blank -%}
-                            {%- assign color_variant_media_id = variant.featured_media.id -%}
-                            {%- assign color_variant_image = variant.featured_media | image_url: width: 120, height: 120, crop: 'center' -%}
-                            {%- break -%}
-                          {%- elsif variant.image != blank -%}
-                            {%- assign color_variant_media_id = variant.image.id -%}
-                            {%- assign color_variant_image = variant.image | image_url: width: 120, height: 120, crop: 'center' -%}
+                          {%- assign variant_img = variant.featured_media.preview_image | default: variant.featured_media | default: variant.image | default: variant.featured_image -%}
+                          {%- if variant_img != blank -%}
+                            {%- assign color_variant_media_id = variant.featured_media.id | default: variant.image.id -%}
+                            {%- assign color_variant_image = variant_img | image_url: width: 120, height: 120, crop: 'center' -%}
                             {%- break -%}
                           {%- endif -%}
                         {%- endif -%}
@@ -245,7 +242,7 @@
                       >
                         <span
                           class="color-swatch-dot"
-                          style="background: {{ swatch_color }};"
+                          style="background: {{ swatch_color }}; background-size: cover; background-position: center; background-repeat: no-repeat;"
                         ></span>
                         <span class="color-swatch-label">{{ value }}</span>
                       </button>

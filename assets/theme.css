@@ -1608,9 +1608,10 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
   border: 1px solid rgba(0, 0, 0, 0.2);
   padding: 0;
   cursor: pointer;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  overflow: hidden;
   outline: none;
   transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
@@ -1622,22 +1623,6 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
 .product-card__swatch-dot.is-active {
   box-shadow: 0 0 0 1.5px var(--color-background, #FFFFFF), 0 0 0 3px var(--color-foreground);
   transform: scale(1.15);
-}
-
-.color-swatch-dot {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5);
-  cursor: pointer;
-  transition: transform var(--transition-fast);
-}
-
-.color-swatch-dot:hover, .color-swatch-dot.is-selected {
-  transform: scale(1.25);
-  outline: 1.5px solid var(--color-foreground);
-  outline-offset: 1px;
 }
 
 /* --- Mobile Responsive Enhancements (Main Collection & Product Cards) --- */
@@ -1745,9 +1730,9 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
     margin-top: 3px;
   }
 
-  .color-swatch-dot {
-    width: 11px;
-    height: 11px;
+  .product-card__swatch-dot {
+    width: 12px;
+    height: 12px;
   }
 }
 
@@ -2790,9 +2775,13 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
   display: inline-block;
   flex-shrink: 0;
   border: 1px solid rgba(0, 0, 0, 0.18);
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  overflow: hidden;
+  box-shadow: none;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
   transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
