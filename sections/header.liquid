@@ -38,7 +38,14 @@
 
     <!-- Desktop Main Navigation (Menu & Sub-Menus) -->
     <nav class="header__nav" aria-label="{{ 'accessibility.main_navigation' | t | default: 'Main Navigation' }}">
-      {%- assign nav_links = linklists[section.settings.menu].links -%}
+      {%- assign nav_menu = section.settings.menu -%}
+      {%- assign nav_links = nav_menu.links -%}
+      {%- if nav_links == blank or nav_links.size == 0 -%}
+        {%- assign nav_links = linklists[nav_menu].links -%}
+      {%- endif -%}
+      {%- if nav_links == blank or nav_links.size == 0 -%}
+        {%- assign nav_links = linklists['main-menu'].links -%}
+      {%- endif -%}
 
       {%- if nav_links.size > 0 -%}
         <ul class="header__menu-list" role="menubar">
@@ -191,7 +198,14 @@
 
     <!-- Mobile Navigation Links with Multi-Level Accordions -->
     <div class="mobile-nav__links">
-      {%- assign nav_links = linklists[section.settings.menu].links -%}
+      {%- assign nav_menu = section.settings.menu -%}
+      {%- assign nav_links = nav_menu.links -%}
+      {%- if nav_links == blank or nav_links.size == 0 -%}
+        {%- assign nav_links = linklists[nav_menu].links -%}
+      {%- endif -%}
+      {%- if nav_links == blank or nav_links.size == 0 -%}
+        {%- assign nav_links = linklists['main-menu'].links -%}
+      {%- endif -%}
       {%- assign is_rtl = false -%}
       {%- if request.locale.iso_code == 'ar' -%}{%- assign is_rtl = true -%}{%- endif -%}
 
