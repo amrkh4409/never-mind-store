@@ -70,36 +70,10 @@
       },
       "header": {
         "type": "header",
-        "blocks": {
-          "mega_menu_Paq46t": {
-            "type": "mega_menu",
-            "settings": {
-              "trigger_title": "Catalog",
-              "menu": "",
-              "promo_badge": "NEW DROP 2026",
-              "promo_title": "Never Mind Streetwear Drop",
-              "promo_url": "/collections/all",
-              "promo_button_text": "Shop Now"
-            }
-          }
-        },
-        "block_order": [
-          "mega_menu_Paq46t"
-        ],
         "settings": {
           "logo": "shopify://shop_images/d.png",
           "logo_width": 140,
-          "menu": "main-menu",
-          "enable_mega_menu": false,
-          "mega_menu_trigger": "Catalog",
-          "mega_menu_linklist": "",
-          "show_promo_banner": true,
-          "promo_badge": "NEW DROP 2026",
-          "promo_title": "Never Mind Streetwear Drop",
-          "promo_url": "",
-          "promo_btn": "Shop Now",
-          "show_best_sellers": true,
-          "show_sale": true
+          "menu": "main-menu"
         }
       },
       "footer": {

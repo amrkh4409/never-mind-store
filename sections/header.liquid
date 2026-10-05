@@ -50,9 +50,15 @@
       {%- if nav_links.size > 0 -%}
         <ul class="header__menu-list" role="menubar">
           {%- for link in nav_links -%}
+            {%- assign downcased_title = link.title | downcase | strip -%}
             {%- assign has_dropdown = false -%}
+            {%- assign is_catalog_fallback = false -%}
+
             {%- if link.links.size > 0 -%}
               {%- assign has_dropdown = true -%}
+            {%- elsif downcased_title contains 'catalog' or downcased_title contains 'shop' or downcased_title contains 'collection' or downcased_title contains 'متجر' or downcased_title contains 'منتجات' or downcased_title contains 'تشكيلات' -%}
+              {%- assign has_dropdown = true -%}
+              {%- assign is_catalog_fallback = true -%}
             {%- endif -%}
 
             <li class="header__menu-item{% if has_dropdown %} header__menu-item--has-dropdown{% endif %}{% if link.active %} is-active{% endif %}" role="none">
@@ -74,41 +80,95 @@
               {%- if has_dropdown -%}
                 <!-- Standard Dropdown with Sub-Menus -->
                 <ul class="header__dropdown" role="menu" aria-label="{{ link.title }}">
-                  {%- for child_link in link.links -%}
-                    {%- assign has_submenu = false -%}
-                    {%- if child_link.links.size > 0 -%}
-                      {%- assign has_submenu = true -%}
-                    {%- endif -%}
-
-                    <li class="header__dropdown-item{% if has_submenu %} header__dropdown-item--has-submenu{% endif %}" role="none">
-                      <a
-                        href="{{ child_link.url }}"
-                        class="header__dropdown-link{% if has_submenu %} header__dropdown-link--parent{% endif %}{% if child_link.active %} is-active{% endif %}"
-                        role="menuitem"
-                        {% if has_submenu %}
-                          aria-haspopup="true"
-                          aria-expanded="false"
-                        {% endif %}
-                      >
-                        <span>{% render 'translate-nav', text: child_link.title %}</span>
-                        {%- if has_submenu -%}
-                          <svg class="header__submenu-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                        {%- endif -%}
-                      </a>
-
-                      {%- if has_submenu -%}
-                        <ul class="header__submenu" role="menu" aria-label="{{ child_link.title }}">
-                          {%- for grandchild_link in child_link.links -%}
-                            <li class="header__submenu-item" role="none">
-                              <a href="{{ grandchild_link.url }}" class="header__submenu-link{% if grandchild_link.active %} is-active{% endif %}" role="menuitem">
-                                <span>{% render 'translate-nav', text: grandchild_link.title %}</span>
-                              </a>
-                            </li>
-                          {%- endfor -%}
-                        </ul>
+                  {%- if link.links.size > 0 -%}
+                    {%- for child_link in link.links -%}
+                      {%- assign has_submenu = false -%}
+                      {%- if child_link.links.size > 0 -%}
+                        {%- assign has_submenu = true -%}
                       {%- endif -%}
+
+                      <li class="header__dropdown-item{% if has_submenu %} header__dropdown-item--has-submenu{% endif %}" role="none">
+                        <a
+                          href="{{ child_link.url }}"
+                          class="header__dropdown-link{% if has_submenu %} header__dropdown-link--parent{% endif %}{% if child_link.active %} is-active{% endif %}"
+                          role="menuitem"
+                          {% if has_submenu %}
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                          {% endif %}
+                        >
+                          <span>{% render 'translate-nav', text: child_link.title %}</span>
+                          {%- if has_submenu -%}
+                            <svg class="header__submenu-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                          {%- endif -%}
+                        </a>
+
+                        {%- if has_submenu -%}
+                          <ul class="header__submenu" role="menu" aria-label="{{ child_link.title }}">
+                            {%- for grandchild_link in child_link.links -%}
+                              <li class="header__submenu-item" role="none">
+                                <a href="{{ grandchild_link.url }}" class="header__submenu-link{% if grandchild_link.active %} is-active{% endif %}" role="menuitem">
+                                  <span>{% render 'translate-nav', text: grandchild_link.title %}</span>
+                                </a>
+                              </li>
+                            {%- endfor -%}
+                          </ul>
+                        {%- endif -%}
+                      </li>
+                    {%- endfor -%}
+                  {%- elsif is_catalog_fallback -%}
+                    <!-- Curated Categories Dropdown with Sub-Menus -->
+                    <li class="header__dropdown-item header__dropdown-item--has-submenu" role="none">
+                      <a href="/collections/men" class="header__dropdown-link header__dropdown-link--parent" role="menuitem" aria-haspopup="true" aria-expanded="false">
+                        <span>{% render 'translate-nav', text: "Men's Streetwear" %}</span>
+                        <svg class="header__submenu-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                      </a>
+                      <ul class="header__submenu" role="menu" aria-label="Men's Streetwear">
+                        <li class="header__submenu-item" role="none"><a href="/collections/men" class="header__submenu-link" role="menuitem"><span>{% render 'translate-nav', text: 'Oversized T-Shirts' %}</span></a></li>
+                        <li class="header__submenu-item" role="none"><a href="/collections/men" class="header__submenu-link" role="menuitem"><span>{% render 'translate-nav', text: 'Graphic & Printed Tees' %}</span></a></li>
+                        <li class="header__submenu-item" role="none"><a href="/collections/men" class="header__submenu-link" role="menuitem"><span>{% render 'translate-nav', text: 'Heavyweight Hoodies' %}</span></a></li>
+                        <li class="header__submenu-item" role="none"><a href="/collections/men" class="header__submenu-link" role="menuitem"><span>{% render 'translate-nav', text: 'Tactical Cargo & Pants' %}</span></a></li>
+                        <li class="header__submenu-item" role="none"><a href="/collections/men" class="header__submenu-link" role="menuitem"><span>{% render 'translate-nav', text: 'Matching Sets & Tracksuits' %}</span></a></li>
+                      </ul>
                     </li>
-                  {%- endfor -%}
+
+                    <li class="header__dropdown-item header__dropdown-item--has-submenu" role="none">
+                      <a href="/collections/women" class="header__dropdown-link header__dropdown-link--parent" role="menuitem" aria-haspopup="true" aria-expanded="false">
+                        <span>{% render 'translate-nav', text: "Women's Collection" %}</span>
+                        <svg class="header__submenu-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                      </a>
+                      <ul class="header__submenu" role="menu" aria-label="Women's Collection">
+                        <li class="header__submenu-item" role="none"><a href="/collections/women" class="header__submenu-link" role="menuitem"><span>{% render 'translate-nav', text: 'Cropped & Oversized Tops' %}</span></a></li>
+                        <li class="header__submenu-item" role="none"><a href="/collections/women" class="header__submenu-link" role="menuitem"><span>{% render 'translate-nav', text: 'Minimalist Lounge Hoodies' %}</span></a></li>
+                        <li class="header__submenu-item" role="none"><a href="/collections/women" class="header__submenu-link" role="menuitem"><span>{% render 'translate-nav', text: 'Wide-Leg Pants & Cargo' %}</span></a></li>
+                        <li class="header__submenu-item" role="none"><a href="/collections/women" class="header__submenu-link" role="menuitem"><span>{% render 'translate-nav', text: 'Comfort Matching Sets' %}</span></a></li>
+                      </ul>
+                    </li>
+
+                    <li class="header__dropdown-item header__dropdown-item--has-submenu" role="none">
+                      <a href="/collections/kids" class="header__dropdown-link header__dropdown-link--parent" role="menuitem" aria-haspopup="true" aria-expanded="false">
+                        <span>{% render 'translate-nav', text: 'Kids & Teens' %}</span>
+                        <svg class="header__submenu-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                      </a>
+                      <ul class="header__submenu" role="menu" aria-label="Kids & Teens">
+                        <li class="header__submenu-item" role="none"><a href="/collections/kids" class="header__submenu-link" role="menuitem"><span>{% render 'translate-nav', text: 'Boys Graphic Tees' %}</span></a></li>
+                        <li class="header__submenu-item" role="none"><a href="/collections/kids" class="header__submenu-link" role="menuitem"><span>{% render 'translate-nav', text: 'Girls Casual & Tops' %}</span></a></li>
+                        <li class="header__submenu-item" role="none"><a href="/collections/kids" class="header__submenu-link" role="menuitem"><span>{% render 'translate-nav', text: 'Kids Hoodies & Sweats' %}</span></a></li>
+                      </ul>
+                    </li>
+
+                    <li class="header__dropdown-item" role="none">
+                      <a href="/collections/best-sellers" class="header__dropdown-link" role="menuitem">
+                        <span>{% render 'translate-nav', text: 'Top Best Sellers 🔥' %}</span>
+                      </a>
+                    </li>
+
+                    <li class="header__dropdown-item" role="none">
+                      <a href="/collections/all" class="header__dropdown-link" role="menuitem">
+                        <span>{% render 'translate-nav', text: 'Browse All Collections →' %}</span>
+                      </a>
+                    </li>
+                  {%- endif -%}
                 </ul>
               {%- endif -%}
             </li>
@@ -207,10 +267,21 @@
         {%- assign nav_links = linklists['main-menu'].links -%}
       {%- endif -%}
       {%- assign is_rtl = false -%}
-      {%- if request.locale.iso_code == 'ar' -%}{%- assign is_rtl = true -%}{%- endif -%}
+      {%- if request.locale.iso_code == 'ar' or localization.language.iso_code == 'ar' -%}{%- assign is_rtl = true -%}{%- endif -%}
 
       {%- for link in nav_links -%}
+        {%- assign downcased_title = link.title | downcase | strip -%}
+        {%- assign has_dropdown = false -%}
+        {%- assign is_catalog_fallback = false -%}
+
         {%- if link.links.size > 0 -%}
+          {%- assign has_dropdown = true -%}
+        {%- elsif downcased_title contains 'catalog' or downcased_title contains 'shop' or downcased_title contains 'collection' or downcased_title contains 'متجر' or downcased_title contains 'منتجات' or downcased_title contains 'تشكيلات' -%}
+          {%- assign has_dropdown = true -%}
+          {%- assign is_catalog_fallback = true -%}
+        {%- endif -%}
+
+        {%- if has_dropdown -%}
           <!-- Mobile Accordion Menu -->
           <div class="mobile-nav__item mobile-nav__item--accordion">
             <button type="button" class="mobile-nav__accordion-header" data-mobile-accordion-trigger aria-expanded="false">
@@ -227,34 +298,82 @@
                 </a>
               {%- endif -%}
 
-              {%- for child in link.links -%}
-                {%- if child.links.size > 0 -%}
-                  <!-- Level 2 Sub-Accordion -->
-                  <div class="mobile-nav__sub-accordion">
-                    <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
-                      <span>{% render 'translate-nav', text: child.title %}</span>
-                      <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                    </button>
-                    <div class="mobile-nav__sub-accordion-content">
-                      {%- if child.url != blank and child.url != '#' -%}
-                        <a href="{{ child.url }}" class="mobile-nav__sub-link" style="font-weight: 600;">
-                          {{ 'collections.general.all_of_collection' | t: collection: child.title | default: 'All' }}
-                        </a>
-                      {%- endif -%}
-                      {%- for grandchild in child.links -%}
-                        <a href="{{ grandchild.url }}" class="mobile-nav__sub-link">
-                          {% render 'translate-nav', text: grandchild.title %}
-                        </a>
-                      {%- endfor -%}
+              {%- if link.links.size > 0 -%}
+                {%- for child in link.links -%}
+                  {%- if child.links.size > 0 -%}
+                    <!-- Level 2 Sub-Accordion -->
+                    <div class="mobile-nav__sub-accordion">
+                      <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
+                        <span>{% render 'translate-nav', text: child.title %}</span>
+                        <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                      </button>
+                      <div class="mobile-nav__sub-accordion-content">
+                        {%- if child.url != blank and child.url != '#' -%}
+                          <a href="{{ child.url }}" class="mobile-nav__sub-link" style="font-weight: 600;">
+                            {{ 'collections.general.all_of_collection' | t: collection: child.title | default: 'All' }}
+                          </a>
+                        {%- endif -%}
+                        {%- for grandchild in child.links -%}
+                          <a href="{{ grandchild.url }}" class="mobile-nav__sub-link">
+                            {% render 'translate-nav', text: grandchild.title %}
+                          </a>
+                        {%- endfor -%}
+                      </div>
                     </div>
+                  {%- else -%}
+                    <!-- Single Child Link -->
+                    <a href="{{ child.url }}" class="mobile-nav__child-link">
+                      {% render 'translate-nav', text: child.title %}
+                    </a>
+                  {%- endif -%}
+                {%- endfor -%}
+              {%- elsif is_catalog_fallback -%}
+                <!-- Curated Mobile Sub-Accordions -->
+                <div class="mobile-nav__sub-accordion">
+                  <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
+                    <span>{% render 'translate-nav', text: "Men's Streetwear" %}</span>
+                    <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                  </button>
+                  <div class="mobile-nav__sub-accordion-content">
+                    <a href="/collections/men" class="mobile-nav__sub-link" style="font-weight: 600;">Shop All Men's &rarr;</a>
+                    <a href="/collections/men" class="mobile-nav__sub-link">{% render 'translate-nav', text: 'Oversized T-Shirts' %}</a>
+                    <a href="/collections/men" class="mobile-nav__sub-link">{% render 'translate-nav', text: 'Graphic & Printed Tees' %}</a>
+                    <a href="/collections/men" class="mobile-nav__sub-link">{% render 'translate-nav', text: 'Heavyweight Hoodies' %}</a>
+                    <a href="/collections/men" class="mobile-nav__sub-link">{% render 'translate-nav', text: 'Tactical Cargo & Pants' %}</a>
+                    <a href="/collections/men" class="mobile-nav__sub-link">{% render 'translate-nav', text: 'Matching Sets & Tracksuits' %}</a>
                   </div>
-                {%- else -%}
-                  <!-- Single Child Link -->
-                  <a href="{{ child.url }}" class="mobile-nav__child-link">
-                    {% render 'translate-nav', text: child.title %}
-                  </a>
-                {%- endif -%}
-              {%- endfor -%}
+                </div>
+
+                <div class="mobile-nav__sub-accordion">
+                  <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
+                    <span>{% render 'translate-nav', text: "Women's Collection" %}</span>
+                    <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                  </button>
+                  <div class="mobile-nav__sub-accordion-content">
+                    <a href="/collections/women" class="mobile-nav__sub-link" style="font-weight: 600;">Shop All Women's &rarr;</a>
+                    <a href="/collections/women" class="mobile-nav__sub-link">{% render 'translate-nav', text: 'Cropped & Oversized Tops' %}</a>
+                    <a href="/collections/women" class="mobile-nav__sub-link">{% render 'translate-nav', text: 'Minimalist Lounge Hoodies' %}</a>
+                    <a href="/collections/women" class="mobile-nav__sub-link">{% render 'translate-nav', text: 'Wide-Leg Pants & Cargo' %}</a>
+                    <a href="/collections/women" class="mobile-nav__sub-link">{% render 'translate-nav', text: 'Comfort Matching Sets' %}</a>
+                  </div>
+                </div>
+
+                <div class="mobile-nav__sub-accordion">
+                  <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
+                    <span>{% render 'translate-nav', text: 'Kids & Teens' %}</span>
+                    <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                  </button>
+                  <div class="mobile-nav__sub-accordion-content">
+                    <a href="/collections/kids" class="mobile-nav__sub-link" style="font-weight: 600;">Shop All Kids &rarr;</a>
+                    <a href="/collections/kids" class="mobile-nav__sub-link">{% render 'translate-nav', text: 'Boys Graphic Tees' %}</a>
+                    <a href="/collections/kids" class="mobile-nav__sub-link">{% render 'translate-nav', text: 'Girls Casual & Tops' %}</a>
+                    <a href="/collections/kids" class="mobile-nav__sub-link">{% render 'translate-nav', text: 'Kids Hoodies & Sweats' %}</a>
+                  </div>
+                </div>
+
+                <a href="/collections/best-sellers" class="mobile-nav__child-link">{% render 'translate-nav', text: 'Top Best Sellers 🔥' %}</a>
+                <a href="/collections/all" class="mobile-nav__child-link">{% render 'translate-nav', text: 'Browse All Collections →' %}</a>
+              {%- endif -%}
             </div>
           </div>
         {%- else -%}
@@ -329,849 +448,6 @@
       "label": "Main Navigation Menu",
       "default": "main-menu",
       "info": "Online Store > Navigation > Main menu"
-    },
-    {
-      "type": "header",
-      "content": "Main Mega Menu"
-    },
-    {
-      "type": "checkbox",
-      "id": "enable_mega_menu",
-      "label": "Enable Main Mega Menu",
-      "default": true,
-      "info": "Displays a multi-column mega menu with sub-collections and promotional banner card on desktop."
-    },
-    {
-      "type": "text",
-      "id": "mega_menu_trigger",
-      "label": "Menu Item to Open Mega Menu",
-      "default": "Catalog",
-      "info": "Name of the link in your Main Menu that opens this mega menu (e.g. Catalog, Shop, Collections, or المتجر)."
-    },
-    {
-      "type": "select",
-      "id": "mega_menu_width",
-      "label": "Mega Menu Dropdown Width",
-      "options": [
-        {
-          "value": "container",
-          "label": "Container Width (1320px)"
-        },
-        {
-          "value": "full",
-          "label": "Full Screen Width"
-        }
-      ],
-      "default": "container"
-    },
-    {
-      "type": "select",
-      "id": "mega_menu_source",
-      "label": "Mega Menu Content Source",
-      "options": [
-        {
-          "value": "auto",
-          "label": "Auto (Use Navigation 3-Level Menu if nested, else Blocks)"
-        },
-        {
-          "value": "navigation",
-          "label": "Shopify Navigation (Online Store > Navigation 3-Level Menu)"
-        },
-        {
-          "value": "blocks",
-          "label": "Theme Customizer Blocks (Mega Menu Column blocks)"
-        }
-      ],
-      "default": "auto",
-      "info": "Choose whether columns are populated from your standard Shopify Navigation menu hierarchy or individual Theme Customizer blocks."
-    },
-    {
-      "type": "link_list",
-      "id": "mega_menu_linklist",
-      "label": "Custom Mega Menu Columns Menu (Optional)",
-      "info": "Select a menu with child links to customize the columns. If left blank or if blocks are added, custom settings take effect."
-    },
-    {
-      "type": "header",
-      "content": "Mega Menu Promotional Banner (Fallback)"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_promo_banner",
-      "label": "Show Promotional Banner Card",
-      "default": true
-    },
-    {
-      "type": "image_picker",
-      "id": "promo_image",
-      "label": "Promotional Banner Image"
-    },
-    {
-      "type": "text",
-      "id": "promo_badge",
-      "label": "Promo Badge Pill Text",
-      "default": "NEW DROP 2026"
-    },
-    {
-      "type": "text",
-      "id": "promo_title",
-      "label": "Promotional Heading",
-      "default": "Never Mind Streetwear Drop"
-    },
-    {
-      "type": "url",
-      "id": "promo_url",
-      "label": "Promotional Destination Link"
-    },
-    {
-      "type": "text",
-      "id": "promo_btn",
-      "label": "Promotional Button Text",
-      "default": "Shop Now"
-    },
-    {
-      "type": "header",
-      "content": "Featured Quick Links"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_best_sellers",
-      "label": "Show Best Sellers Link",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "show_sale",
-      "label": "Show Sale Link (Highlighted)",
-      "default": true
-    }
-  ],
-  "max_blocks": 25,
-  "blocks": [
-    {
-      "type": "mega_column",
-      "name": "Mega Menu Column",
-      "settings": [
-        {
-          "type": "header",
-          "content": "Menu Assignment"
-        },
-        {
-          "type": "text",
-          "id": "menu_trigger",
-          "label": "Menu Item to Open Mega Menu",
-          "default": "Catalog",
-          "info": "Name of the link in your Main Menu (e.g. Catalog, Shop, or Collections)"
-        },
-        {
-          "type": "header",
-          "content": "Column Header"
-        },
-        {
-          "type": "text",
-          "id": "title",
-          "label": "Column Title",
-          "default": "Men's Streetwear",
-          "info": "Leave blank to use Collection title if selected below"
-        },
-        {
-          "type": "url",
-          "id": "url",
-          "label": "Column Title Link"
-        },
-        {
-          "type": "collection",
-          "id": "collection",
-          "label": "Shopify Collection (Optional)",
-          "info": "Automatically supplies Title, Link, and Image if left blank"
-        },
-        {
-          "type": "header",
-          "content": "Column Image (Optional)"
-        },
-        {
-          "type": "checkbox",
-          "id": "show_collection_image",
-          "label": "Show Image Above Column",
-          "default": false
-        },
-        {
-          "type": "image_picker",
-          "id": "custom_image",
-          "label": "Custom Column Thumbnail (Overrides collection image)"
-        },
-        {
-          "type": "header",
-          "content": "Column Badge (Optional)"
-        },
-        {
-          "type": "text",
-          "id": "badge_text",
-          "label": "Badge Text",
-          "info": "e.g. HOT, NEW, SALE"
-        },
-        {
-          "type": "color",
-          "id": "badge_color",
-          "label": "Badge Text Color",
-          "default": "#FFFFFF"
-        },
-        {
-          "type": "color",
-          "id": "badge_bg",
-          "label": "Badge Background Color",
-          "default": "#E05A47"
-        },
-        {
-          "type": "header",
-          "content": "Sub-Links (Navigation Menu or Manual)"
-        },
-        {
-          "type": "link_list",
-          "id": "menu",
-          "label": "Sub-Links Menu (Optional)",
-          "info": "Select any navigation menu from Shopify Admin > Navigation"
-        },
-        {
-          "type": "textarea",
-          "id": "sub_links_text",
-          "label": "Quick Links (One per line: Title | URL)",
-          "info": "Example: Oversized Tees | /collections/men"
-        },
-        {
-          "type": "text",
-          "id": "link_1_title",
-          "label": "Sub-link 1 Title",
-          "default": "Oversized T-Shirts"
-        },
-        {
-          "type": "url",
-          "id": "link_1_url",
-          "label": "Sub-link 1 Link"
-        },
-        {
-          "type": "text",
-          "id": "link_2_title",
-          "label": "Sub-link 2 Title",
-          "default": "Graphic & Printed Tees"
-        },
-        {
-          "type": "url",
-          "id": "link_2_url",
-          "label": "Sub-link 2 Link"
-        },
-        {
-          "type": "text",
-          "id": "link_3_title",
-          "label": "Sub-link 3 Title",
-          "default": "Heavyweight Hoodies"
-        },
-        {
-          "type": "url",
-          "id": "link_3_url",
-          "label": "Sub-link 3 Link"
-        },
-        {
-          "type": "text",
-          "id": "link_4_title",
-          "label": "Sub-link 4 Title",
-          "default": "Tactical Cargo & Pants"
-        },
-        {
-          "type": "url",
-          "id": "link_4_url",
-          "label": "Sub-link 4 Link"
-        },
-        {
-          "type": "text",
-          "id": "link_5_title",
-          "label": "Sub-link 5 Title",
-          "default": "Matching Sets & Tracksuits"
-        },
-        {
-          "type": "url",
-          "id": "link_5_url",
-          "label": "Sub-link 5 Link"
-        },
-        {
-          "type": "text",
-          "id": "link_6_title",
-          "label": "Sub-link 6 Title"
-        },
-        {
-          "type": "url",
-          "id": "link_6_url",
-          "label": "Sub-link 6 Link"
-        },
-        {
-          "type": "text",
-          "id": "link_7_title",
-          "label": "Sub-link 7 Title"
-        },
-        {
-          "type": "url",
-          "id": "link_7_url",
-          "label": "Sub-link 7 Link"
-        },
-        {
-          "type": "text",
-          "id": "link_8_title",
-          "label": "Sub-link 8 Title"
-        },
-        {
-          "type": "url",
-          "id": "link_8_url",
-          "label": "Sub-link 8 Link"
-        },
-        {
-          "type": "header",
-          "content": "Shop All CTA Link"
-        },
-        {
-          "type": "checkbox",
-          "id": "show_shop_all",
-          "label": "Show 'Shop All' Link at Bottom",
-          "default": true
-        },
-        {
-          "type": "text",
-          "id": "shop_all_text",
-          "label": "Shop All Label (Leave blank for auto)",
-          "placeholder": "Shop All Men's →"
-        },
-        {
-          "type": "url",
-          "id": "shop_all_url",
-          "label": "Shop All Destination URL (Leave blank to use column URL)"
-        }
-      ]
-    },
-    {
-      "type": "featured_card",
-      "name": "Mega Menu Featured Banner",
-      "settings": [
-        {
-          "type": "header",
-          "content": "Menu Assignment"
-        },
-        {
-          "type": "text",
-          "id": "menu_trigger",
-          "label": "Menu Item to Open Mega Menu",
-          "default": "Catalog",
-          "info": "Name of the link in your Main Menu (e.g. Catalog, Shop, or Collections)"
-        },
-        {
-          "type": "header",
-          "content": "Banner Content"
-        },
-        {
-          "type": "image_picker",
-          "id": "image",
-          "label": "Banner Image"
-        },
-        {
-          "type": "select",
-          "id": "image_aspect_ratio",
-          "label": "Image Aspect Ratio",
-          "options": [
-            {
-              "value": "3/4",
-              "label": "3:4 Portrait"
-            },
-            {
-              "value": "4/5",
-              "label": "4:5 Tall"
-            },
-            {
-              "value": "1/1",
-              "label": "1:1 Square"
-            },
-            {
-              "value": "16/9",
-              "label": "16:9 Landscape"
-            }
-          ],
-          "default": "4/5"
-        },
-        {
-          "type": "range",
-          "id": "overlay_opacity",
-          "min": 0,
-          "max": 90,
-          "step": 10,
-          "unit": "%",
-          "label": "Dark Gradient Overlay Opacity",
-          "default": 60
-        },
-        {
-          "type": "text",
-          "id": "badge",
-          "label": "Badge Pill / Small Label",
-          "default": "NEW DROP 2026"
-        },
-        {
-          "type": "text",
-          "id": "title",
-          "label": "Main Promotional Heading",
-          "default": "Never Mind Streetwear Drop"
-        },
-        {
-          "type": "text",
-          "id": "description",
-          "label": "Short Description / Offer (Optional)"
-        },
-        {
-          "type": "text",
-          "id": "button_text",
-          "label": "Button Label",
-          "default": "Shop Now"
-        },
-        {
-          "type": "url",
-          "id": "button_url",
-          "label": "Button Destination URL"
-        },
-        {
-          "type": "header",
-          "content": "Banner Dimensions & Styling"
-        },
-        {
-          "type": "range",
-          "id": "card_width",
-          "min": 220,
-          "max": 380,
-          "step": 10,
-          "unit": "px",
-          "label": "Desktop Card Width",
-          "default": 280
-        },
-        {
-          "type": "range",
-          "id": "border_radius",
-          "min": 0,
-          "max": 24,
-          "step": 2,
-          "unit": "px",
-          "label": "Card Border Radius",
-          "default": 6
-        }
-      ]
-    },
-    {
-      "type": "mega_menu",
-      "name": "Custom Mega Menu Block",
-      "settings": [
-        {
-          "type": "header",
-          "content": "Menu Trigger"
-        },
-        {
-          "type": "text",
-          "id": "trigger_title",
-          "label": "Menu Item to Open Mega Menu",
-          "default": "Catalog",
-          "info": "Name of the link in your Main Menu (e.g. Catalog, Shop, Collections, or المتجر). If blank, applies to Catalog automatically."
-        },
-        {
-          "type": "header",
-          "content": "Column 1 (Title & Sub-links)"
-        },
-        {
-          "type": "text",
-          "id": "col_1_title",
-          "label": "Column 1 Title",
-          "default": "Men's Streetwear"
-        },
-        {
-          "type": "url",
-          "id": "col_1_url",
-          "label": "Column 1 Title Link",
-          "default": "/collections/men"
-        },
-        {
-          "type": "link_list",
-          "id": "col_1_menu",
-          "label": "Column 1 Menu Linklist (Optional)"
-        },
-        {
-          "type": "text",
-          "id": "col_1_link_1_title",
-          "label": "Sub-link 1 Title",
-          "default": "Oversized T-Shirts"
-        },
-        {
-          "type": "url",
-          "id": "col_1_link_1_url",
-          "label": "Sub-link 1 Link",
-          "default": "/collections/men"
-        },
-        {
-          "type": "text",
-          "id": "col_1_link_2_title",
-          "label": "Sub-link 2 Title",
-          "default": "Graphic & Printed Tees"
-        },
-        {
-          "type": "url",
-          "id": "col_1_link_2_url",
-          "label": "Sub-link 2 Link",
-          "default": "/collections/men"
-        },
-        {
-          "type": "text",
-          "id": "col_1_link_3_title",
-          "label": "Sub-link 3 Title",
-          "default": "Heavyweight Hoodies"
-        },
-        {
-          "type": "url",
-          "id": "col_1_link_3_url",
-          "label": "Sub-link 3 Link",
-          "default": "/collections/men"
-        },
-        {
-          "type": "text",
-          "id": "col_1_link_4_title",
-          "label": "Sub-link 4 Title",
-          "default": "Tactical Cargo & Pants"
-        },
-        {
-          "type": "url",
-          "id": "col_1_link_4_url",
-          "label": "Sub-link 4 Link",
-          "default": "/collections/men"
-        },
-        {
-          "type": "text",
-          "id": "col_1_link_5_title",
-          "label": "Sub-link 5 Title",
-          "default": "Matching Sets & Tracksuits"
-        },
-        {
-          "type": "url",
-          "id": "col_1_link_5_url",
-          "label": "Sub-link 5 Link",
-          "default": "/collections/men"
-        },
-        {
-          "type": "text",
-          "id": "col_1_link_6_title",
-          "label": "Sub-link 6 Title (Highlighted)",
-          "default": "Shop All Men's →"
-        },
-        {
-          "type": "url",
-          "id": "col_1_link_6_url",
-          "label": "Sub-link 6 Link",
-          "default": "/collections/men"
-        },
-        {
-          "type": "header",
-          "content": "Column 2 (Title & Sub-links)"
-        },
-        {
-          "type": "text",
-          "id": "col_2_title",
-          "label": "Column 2 Title",
-          "default": "Women's Collection"
-        },
-        {
-          "type": "url",
-          "id": "col_2_url",
-          "label": "Column 2 Title Link",
-          "default": "/collections/women"
-        },
-        {
-          "type": "link_list",
-          "id": "col_2_menu",
-          "label": "Column 2 Menu Linklist (Optional)"
-        },
-        {
-          "type": "text",
-          "id": "col_2_link_1_title",
-          "label": "Sub-link 1 Title",
-          "default": "Cropped & Oversized Tops"
-        },
-        {
-          "type": "url",
-          "id": "col_2_link_1_url",
-          "label": "Sub-link 1 Link",
-          "default": "/collections/women"
-        },
-        {
-          "type": "text",
-          "id": "col_2_link_2_title",
-          "label": "Sub-link 2 Title",
-          "default": "Minimalist Lounge Hoodies"
-        },
-        {
-          "type": "url",
-          "id": "col_2_link_2_url",
-          "label": "Sub-link 2 Link",
-          "default": "/collections/women"
-        },
-        {
-          "type": "text",
-          "id": "col_2_link_3_title",
-          "label": "Sub-link 3 Title",
-          "default": "Wide-Leg Pants & Cargo"
-        },
-        {
-          "type": "url",
-          "id": "col_2_link_3_url",
-          "label": "Sub-link 3 Link",
-          "default": "/collections/women"
-        },
-        {
-          "type": "text",
-          "id": "col_2_link_4_title",
-          "label": "Sub-link 4 Title",
-          "default": "Comfort Matching Sets"
-        },
-        {
-          "type": "url",
-          "id": "col_2_link_4_url",
-          "label": "Sub-link 4 Link",
-          "default": "/collections/women"
-        },
-        {
-          "type": "text",
-          "id": "col_2_link_5_title",
-          "label": "Sub-link 5 Title",
-          "default": "Bags & Accessories"
-        },
-        {
-          "type": "url",
-          "id": "col_2_link_5_url",
-          "label": "Sub-link 5 Link",
-          "default": "/collections/women"
-        },
-        {
-          "type": "text",
-          "id": "col_2_link_6_title",
-          "label": "Sub-link 6 Title (Highlighted)",
-          "default": "Shop All Women's →"
-        },
-        {
-          "type": "url",
-          "id": "col_2_link_6_url",
-          "label": "Sub-link 6 Link",
-          "default": "/collections/women"
-        },
-        {
-          "type": "header",
-          "content": "Column 3 (Title & Sub-links)"
-        },
-        {
-          "type": "text",
-          "id": "col_3_title",
-          "label": "Column 3 Title",
-          "default": "Kids & Teens"
-        },
-        {
-          "type": "url",
-          "id": "col_3_url",
-          "label": "Column 3 Title Link",
-          "default": "/collections/kids"
-        },
-        {
-          "type": "link_list",
-          "id": "col_3_menu",
-          "label": "Column 3 Menu Linklist (Optional)"
-        },
-        {
-          "type": "text",
-          "id": "col_3_link_1_title",
-          "label": "Sub-link 1 Title",
-          "default": "Boys Graphic Tees"
-        },
-        {
-          "type": "url",
-          "id": "col_3_link_1_url",
-          "label": "Sub-link 1 Link",
-          "default": "/collections/kids"
-        },
-        {
-          "type": "text",
-          "id": "col_3_link_2_title",
-          "label": "Sub-link 2 Title",
-          "default": "Girls Casual & Tops"
-        },
-        {
-          "type": "url",
-          "id": "col_3_link_2_url",
-          "label": "Sub-link 2 Link",
-          "default": "/collections/kids"
-        },
-        {
-          "type": "text",
-          "id": "col_3_link_3_title",
-          "label": "Sub-link 3 Title",
-          "default": "Kids Hoodies & Sweats"
-        },
-        {
-          "type": "url",
-          "id": "col_3_link_3_url",
-          "label": "Sub-link 3 Link",
-          "default": "/collections/kids"
-        },
-        {
-          "type": "text",
-          "id": "col_3_link_4_title",
-          "label": "Sub-link 4 Title",
-          "default": "Comfort Shorts & Pants"
-        },
-        {
-          "type": "url",
-          "id": "col_3_link_4_url",
-          "label": "Sub-link 4 Link",
-          "default": "/collections/kids"
-        },
-        {
-          "type": "text",
-          "id": "col_3_link_5_title",
-          "label": "Sub-link 5 Title",
-          "default": "Teen Streetwear Essentials"
-        },
-        {
-          "type": "url",
-          "id": "col_3_link_5_url",
-          "label": "Sub-link 5 Link",
-          "default": "/collections/kids"
-        },
-        {
-          "type": "text",
-          "id": "col_3_link_6_title",
-          "label": "Sub-link 6 Title (Highlighted)",
-          "default": "Shop All Kids →"
-        },
-        {
-          "type": "url",
-          "id": "col_3_link_6_url",
-          "label": "Sub-link 6 Link",
-          "default": "/collections/kids"
-        },
-        {
-          "type": "header",
-          "content": "Column 4 (Title & Sub-links)"
-        },
-        {
-          "type": "text",
-          "id": "col_4_title",
-          "label": "Column 4 Title",
-          "default": "Trending & Highlights"
-        },
-        {
-          "type": "url",
-          "id": "col_4_url",
-          "label": "Column 4 Title Link",
-          "default": "/collections/best-sellers"
-        },
-        {
-          "type": "link_list",
-          "id": "col_4_menu",
-          "label": "Column 4 Menu Linklist (Optional)"
-        },
-        {
-          "type": "text",
-          "id": "col_4_link_1_title",
-          "label": "Sub-link 1 Title",
-          "default": "Top Best Sellers 🔥"
-        },
-        {
-          "type": "url",
-          "id": "col_4_link_1_url",
-          "label": "Sub-link 1 Link",
-          "default": "/collections/best-sellers"
-        },
-        {
-          "type": "text",
-          "id": "col_4_link_2_title",
-          "label": "Sub-link 2 Title",
-          "default": "Summer Drop 2026"
-        },
-        {
-          "type": "url",
-          "id": "col_4_link_2_url",
-          "label": "Sub-link 2 Link",
-          "default": "/collections/all"
-        },
-        {
-          "type": "text",
-          "id": "col_4_link_3_title",
-          "label": "Sub-link 3 Title",
-          "default": "Heavyweight Essentials"
-        },
-        {
-          "type": "url",
-          "id": "col_4_link_3_url",
-          "label": "Sub-link 3 Link",
-          "default": "/collections/men"
-        },
-        {
-          "type": "text",
-          "id": "col_4_link_4_title",
-          "label": "Sub-link 4 Title",
-          "default": "Clearance Sale Up to 50% 🏷️"
-        },
-        {
-          "type": "url",
-          "id": "col_4_link_4_url",
-          "label": "Sub-link 4 Link",
-          "default": "/collections/sale"
-        },
-        {
-          "type": "text",
-          "id": "col_4_link_5_title",
-          "label": "Sub-link 5 Title (Highlighted)",
-          "default": "Browse All Collections →"
-        },
-        {
-          "type": "url",
-          "id": "col_4_link_5_url",
-          "label": "Sub-link 5 Link",
-          "default": "/collections/all"
-        },
-        {
-          "type": "header",
-          "content": "Promotional Banner Card"
-        },
-        {
-          "type": "checkbox",
-          "id": "show_promo",
-          "label": "Show Promotional Banner",
-          "default": true
-        },
-        {
-          "type": "image_picker",
-          "id": "promo_image",
-          "label": "Banner Image"
-        },
-        {
-          "type": "text",
-          "id": "promo_badge",
-          "label": "Badge Pill Text",
-          "default": "NEW DROP 2026"
-        },
-        {
-          "type": "text",
-          "id": "promo_title",
-          "label": "Promotional Heading",
-          "default": "Never Mind Streetwear Drop"
-        },
-        {
-          "type": "url",
-          "id": "promo_url",
-          "label": "Banner Destination Link"
-        },
-        {
-          "type": "text",
-          "id": "promo_button_text",
-          "label": "Button Label",
-          "default": "Shop Now"
-        }
-      ]
     }
   ]
 }

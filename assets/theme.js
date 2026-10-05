@@ -1358,7 +1358,7 @@
     }
 
     // Desktop Menu Dropdowns persistent hover, click toggle, keyboard accessibility & Shopify Theme Editor support
-    const menuDropdownItems = document.querySelectorAll('.header__menu-item--has-dropdown, .header__menu-item--has-mega');
+    const menuDropdownItems = document.querySelectorAll('.header__menu-item--has-dropdown');
     let hoverTimeouts = new Map();
 
     menuDropdownItems.forEach(item => {
@@ -1368,7 +1368,7 @@
       if (link) {
         link.addEventListener('click', (e) => {
           if (window.innerWidth >= 1024) {
-            const hasMenu = item.querySelector('.header__dropdown, .mega-menu');
+            const hasMenu = item.querySelector('.header__dropdown');
             if (hasMenu) {
               const wasOpen = item.classList.contains('is-open');
               menuDropdownItems.forEach(m => {
@@ -1460,7 +1460,7 @@
 
     // Close when clicking outside
     document.addEventListener('click', (e) => {
-      const clickedMenu = e.target.closest('.header__menu-item--has-dropdown, .header__menu-item--has-mega');
+      const clickedMenu = e.target.closest('.header__menu-item--has-dropdown');
       if (!clickedMenu) {
         menuDropdownItems.forEach(item => {
           item.classList.remove('is-open');
