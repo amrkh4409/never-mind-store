@@ -36,104 +36,77 @@
       </a>
     </div>
 
-    <!-- Desktop Main Navigation -->
     <!-- Desktop Main Navigation (Menu & Sub-Menus) -->
-    <nav class="header__nav" aria-label="{{ 'accessibility.main_navigation' | t }}">
+    <nav class="header__nav" aria-label="{{ 'accessibility.main_navigation' | t | default: 'Main Navigation' }}">
       {%- assign nav_links = linklists[section.settings.menu].links -%}
 
       {%- if nav_links.size > 0 -%}
-        {%- for link in nav_links -%}
-          {%- assign downcased_title = link.title | downcase | strip -%}
-          {%- assign is_sale = false -%}
-          {%- assign is_hot = false -%}
-          {%- assign is_new = false -%}
-          {%- if downcased_title contains 'sale' or downcased_title contains 'تخفيض' or downcased_title contains 'عروض' -%}
-            {%- assign is_sale = true -%}
-          {%- elsif downcased_title contains 'best' or downcased_title contains 'الأكثر' or downcased_title contains 'top' -%}
-            {%- assign is_hot = true -%}
-          {%- elsif downcased_title contains 'new' or downcased_title contains 'جديد' -%}
-            {%- assign is_new = true -%}
-          {%- endif -%}
-
-          {%- assign has_dropdown = false -%}
-          {%- if link.links.size > 0 -%}
-            {%- assign has_dropdown = true -%}
-          {%- endif -%}
-
-          <div class="header__menu-item {% if has_dropdown %}header__menu-item--has-dropdown{% endif %} {% if is_sale %}header__menu-item--sale{% endif %}">
-            <a href="{{ link.url }}" class="header__menu-link" {% if has_dropdown %}aria-expanded="false" aria-haspopup="true"{% endif %}>
-              <span>{% render 'translate-nav', text: link.title %}</span>
-              {%- if is_sale -%}
-                <span class="nav-badge nav-badge--sale">{{ 'sections.header.sale' | t | default: 'SALE' }}</span>
-              {%- elsif is_hot -%}
-                <span class="nav-badge nav-badge--hot">{{ 'sections.header.hot' | t | default: 'HOT' }}</span>
-              {%- elsif is_new -%}
-                <span class="nav-badge nav-badge--new">{{ 'sections.header.new' | t | default: 'NEW' }}</span>
-              {%- endif -%}
-              {%- if has_dropdown -%}
-                <svg class="header__chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-              {%- endif -%}
-            </a>
-
-            {%- if has_dropdown -%}
-              <!-- Standard Dropdown with Sub-Menus -->
-              <div class="header__dropdown">
-                {%- for child_link in link.links -%}
-                  {%- assign has_submenu = false -%}
-                  {%- if child_link.links.size > 0 -%}
-                    {%- assign has_submenu = true -%}
-                  {%- endif -%}
-
-                  <div class="header__dropdown-item {% if has_submenu %}header__dropdown-item--has-submenu{% endif %}">
-                    <a href="{{ child_link.url }}" class="header__dropdown-link {% if has_submenu %}header__dropdown-link--parent{% endif %}">
-                      <span>{% render 'translate-nav', text: child_link.title %}</span>
-                      {%- if has_submenu -%}
-                        <svg class="header__submenu-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                      {%- endif -%}
-                    </a>
-
-                    {%- if has_submenu -%}
-                      <div class="header__submenu">
-                        {%- for grandchild_link in child_link.links -%}
-                          <a href="{{ grandchild_link.url }}" class="header__submenu-link">
-                            {% render 'translate-nav', text: grandchild_link.title %}
-                          </a>
-                        {%- endfor -%}
-                      </div>
-                    {%- endif -%}
-                  </div>
-                {%- endfor -%}
-              </div>
+        <ul class="header__menu-list" role="menubar">
+          {%- for link in nav_links -%}
+            {%- assign has_dropdown = false -%}
+            {%- if link.links.size > 0 -%}
+              {%- assign has_dropdown = true -%}
             {%- endif -%}
-          </div>
-        {%- endfor -%}
 
-        <!-- Standalone Best Sellers & Sale if not in menu -->
-        {%- assign has_bestsellers_in_menu = false -%}
-        {%- assign has_sale_in_menu = false -%}
-        {%- for link in nav_links -%}
-          {%- assign dt = link.title | downcase -%}
-          {%- if dt contains 'best' or dt contains 'الأكثر' -%}{%- assign has_bestsellers_in_menu = true -%}{%- endif -%}
-          {%- if dt contains 'sale' or dt contains 'تخفيض' or dt contains 'عروض' -%}{%- assign has_sale_in_menu = true -%}{%- endif -%}
-        {%- endfor -%}
+            <li class="header__menu-item{% if has_dropdown %} header__menu-item--has-dropdown{% endif %}{% if link.active %} is-active{% endif %}" role="none">
+              <a
+                href="{{ link.url }}"
+                class="header__menu-link"
+                role="menuitem"
+                {% if has_dropdown %}
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                {% endif %}
+              >
+                <span>{% render 'translate-nav', text: link.title %}</span>
+                {%- if has_dropdown -%}
+                  <svg class="header__chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                {%- endif -%}
+              </a>
 
-        {%- if section.settings.show_best_sellers and has_bestsellers_in_menu == false -%}
-          <div class="header__menu-item">
-            <a href="/collections/best-sellers" class="header__menu-link">
-              <span>{{ 'collections.sorting.best_selling' | t }}</span>
-              <span class="nav-badge nav-badge--hot">{{ 'sections.header.hot' | t | default: 'HOT' }}</span>
-            </a>
-          </div>
-        {%- endif -%}
+              {%- if has_dropdown -%}
+                <!-- Standard Dropdown with Sub-Menus -->
+                <ul class="header__dropdown" role="menu" aria-label="{{ link.title }}">
+                  {%- for child_link in link.links -%}
+                    {%- assign has_submenu = false -%}
+                    {%- if child_link.links.size > 0 -%}
+                      {%- assign has_submenu = true -%}
+                    {%- endif -%}
 
-        {%- if section.settings.show_sale and has_sale_in_menu == false -%}
-          <div class="header__menu-item header__menu-item--sale">
-            <a href="/collections/sale" class="header__menu-link">
-              <span>{{ 'sections.header.sale' | t }}</span>
-              <span class="nav-badge nav-badge--sale">{{ 'sections.header.sale' | t | default: 'SALE' }}</span>
-            </a>
-          </div>
-        {%- endif -%}
+                    <li class="header__dropdown-item{% if has_submenu %} header__dropdown-item--has-submenu{% endif %}" role="none">
+                      <a
+                        href="{{ child_link.url }}"
+                        class="header__dropdown-link{% if has_submenu %} header__dropdown-link--parent{% endif %}{% if child_link.active %} is-active{% endif %}"
+                        role="menuitem"
+                        {% if has_submenu %}
+                          aria-haspopup="true"
+                          aria-expanded="false"
+                        {% endif %}
+                      >
+                        <span>{% render 'translate-nav', text: child_link.title %}</span>
+                        {%- if has_submenu -%}
+                          <svg class="header__submenu-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        {%- endif -%}
+                      </a>
+
+                      {%- if has_submenu -%}
+                        <ul class="header__submenu" role="menu" aria-label="{{ child_link.title }}">
+                          {%- for grandchild_link in child_link.links -%}
+                            <li class="header__submenu-item" role="none">
+                              <a href="{{ grandchild_link.url }}" class="header__submenu-link{% if grandchild_link.active %} is-active{% endif %}" role="menuitem">
+                                <span>{% render 'translate-nav', text: grandchild_link.title %}</span>
+                              </a>
+                            </li>
+                          {%- endfor -%}
+                        </ul>
+                      {%- endif -%}
+                    </li>
+                  {%- endfor -%}
+                </ul>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
       {%- endif -%}
     </nav>
 
@@ -223,39 +196,20 @@
       {%- if request.locale.iso_code == 'ar' -%}{%- assign is_rtl = true -%}{%- endif -%}
 
       {%- for link in nav_links -%}
-        {%- assign downcased_title = link.title | downcase | strip -%}
-        {%- assign is_sale = false -%}
-        {%- assign is_hot = false -%}
-        {%- assign is_new = false -%}
-        {%- if downcased_title contains 'sale' or downcased_title contains 'تخفيض' or downcased_title contains 'عروض' -%}
-          {%- assign is_sale = true -%}
-        {%- elsif downcased_title contains 'best' or downcased_title contains 'الأكثر' or downcased_title contains 'top' -%}
-          {%- assign is_hot = true -%}
-        {%- elsif downcased_title contains 'new' or downcased_title contains 'جديد' -%}
-          {%- assign is_new = true -%}
-        {%- endif -%}
-
         {%- if link.links.size > 0 -%}
           <!-- Mobile Accordion Menu -->
           <div class="mobile-nav__item mobile-nav__item--accordion">
             <button type="button" class="mobile-nav__accordion-header" data-mobile-accordion-trigger aria-expanded="false">
               <span class="mobile-nav__title-wrap">
                 <span class="mobile-nav__item-title">{% render 'translate-nav', text: link.title %}</span>
-                {%- if is_sale -%}
-                  <span class="nav-badge nav-badge--sale">{{ 'sections.header.sale' | t | default: 'SALE' }}</span>
-                {%- elsif is_hot -%}
-                  <span class="nav-badge nav-badge--hot">{{ 'sections.header.hot' | t | default: 'HOT' }}</span>
-                {%- elsif is_new -%}
-                  <span class="nav-badge nav-badge--new">{{ 'sections.header.new' | t | default: 'NEW' }}</span>
-                {%- endif -%}
               </span>
-              <svg class="mobile-nav__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              <svg class="mobile-nav__arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
             </button>
             <div class="mobile-nav__accordion-content">
               {%- if link.url != blank and link.url != '#' -%}
                 <a href="{{ link.url }}" class="mobile-nav__shop-all-link">
                   <span>{{ 'collections.general.all_of_collection' | t: collection: link.title | default: 'Shop All' }}</span>
-                  <span>{% if is_rtl %}&larr;{% else %}&rarr;{% endif %}</span>
+                  <span aria-hidden="true">{% if is_rtl %}&larr;{% else %}&rarr;{% endif %}</span>
                 </a>
               {%- endif -%}
 
@@ -265,7 +219,7 @@
                   <div class="mobile-nav__sub-accordion">
                     <button type="button" class="mobile-nav__sub-accordion-header" data-mobile-sub-accordion-trigger aria-expanded="false">
                       <span>{% render 'translate-nav', text: child.title %}</span>
-                      <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                      <svg class="mobile-nav__sub-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
                     </button>
                     <div class="mobile-nav__sub-accordion-content">
                       {%- if child.url != blank and child.url != '#' -%}
@@ -292,38 +246,12 @@
         {%- else -%}
           <!-- Single Top-Level Link -->
           <div class="mobile-nav__item">
-            <a href="{{ link.url }}" class="mobile-nav__single-link{% if is_sale %} mobile-nav__single-link--sale{% endif %}">
+            <a href="{{ link.url }}" class="mobile-nav__single-link">
               <span>{% render 'translate-nav', text: link.title %}</span>
-              {%- if is_sale -%}
-                <span class="nav-badge nav-badge--sale">{{ 'sections.header.sale' | t | default: 'SALE' }}</span>
-              {%- elsif is_hot -%}
-                <span class="nav-badge nav-badge--hot">{{ 'sections.header.hot' | t | default: 'HOT' }}</span>
-              {%- elsif is_new -%}
-                <span class="nav-badge nav-badge--new">{{ 'sections.header.new' | t | default: 'NEW' }}</span>
-              {%- endif -%}
             </a>
           </div>
         {%- endif -%}
       {%- endfor -%}
-
-      <!-- Standalone Best Sellers & Sale if not in menu -->
-      {%- if section.settings.show_best_sellers and has_bestsellers_in_menu == false -%}
-        <div class="mobile-nav__item">
-          <a href="/collections/best-sellers" class="mobile-nav__item-link">
-            <span>{{ 'collections.sorting.best_selling' | t }}</span>
-            <span class="nav-badge nav-badge--hot">{{ 'sections.header.hot' | t | default: 'HOT' }}</span>
-          </a>
-        </div>
-      {%- endif -%}
-
-      {%- if section.settings.show_sale and has_sale_in_menu == false -%}
-        <div class="mobile-nav__item">
-          <a href="/collections/sale" class="mobile-nav__item-link" style="color: var(--color-sale);">
-            <span>{{ 'sections.header.sale' | t }}</span>
-            <span class="nav-badge nav-badge--sale">{{ 'sections.header.sale' | t | default: 'SALE' }}</span>
-          </a>
-        </div>
-      {%- endif -%}
     </div>
 
     <!-- Mobile Bottom Utilities (Account, Wishlist, Egypt COD Guarantee) -->

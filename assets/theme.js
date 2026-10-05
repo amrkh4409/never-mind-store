@@ -1364,7 +1364,7 @@
     menuDropdownItems.forEach(item => {
       const link = item.querySelector('.header__menu-link');
 
-      // Click toggle for desktop / touch laptops
+      // Click toggle for desktop / touch screens
       if (link) {
         link.addEventListener('click', (e) => {
           if (window.innerWidth >= 1024) {
@@ -1384,7 +1384,59 @@
             }
           }
         });
+
+        // Keyboard arrow down / enter opens dropdown and focuses first item
+        link.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+            const firstSubLink = item.querySelector('.header__dropdown-link');
+            if (firstSubLink) {
+              e.preventDefault();
+              item.classList.add('is-open');
+              link.setAttribute('aria-expanded', 'true');
+              firstSubLink.focus();
+            }
+          }
+        });
       }
+
+      // Accessible Focus-in and Focus-out
+      item.addEventListener('focusin', () => {
+        item.classList.add('is-open');
+        if (link) link.setAttribute('aria-expanded', 'true');
+      });
+
+      item.addEventListener('focusout', (e) => {
+        if (!item.contains(e.relatedTarget)) {
+          item.classList.remove('is-open');
+          if (link) link.setAttribute('aria-expanded', 'false');
+        }
+      });
+
+      // Keyboard navigation inside dropdown links
+      const dropdownLinks = Array.from(item.querySelectorAll('.header__dropdown-link'));
+      dropdownLinks.forEach((dLink, idx) => {
+        dLink.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            const next = dropdownLinks[idx + 1];
+            if (next) next.focus();
+          } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (idx > 0) {
+              dropdownLinks[idx - 1].focus();
+            } else if (link) {
+              link.focus();
+            }
+          } else if (e.key === 'Escape') {
+            e.preventDefault();
+            item.classList.remove('is-open');
+            if (link) {
+              link.setAttribute('aria-expanded', 'false');
+              link.focus();
+            }
+          }
+        });
+      });
 
       // Debounced hover bridge (prevents flickering)
       item.addEventListener('mouseenter', () => {
@@ -1401,7 +1453,7 @@
           item.classList.remove('is-open');
           if (link) link.setAttribute('aria-expanded', 'false');
           hoverTimeouts.delete(item);
-        }, 120);
+        }, 140);
         hoverTimeouts.set(item, timer);
       });
     });
