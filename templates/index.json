@@ -31,9 +31,10 @@
           "type": "collection",
           "settings": {
             "collection": "",
+            "image": "shopify://shop_images/shop-all.jpg",
             "title": "MEN",
             "subtitle": "T-Shirts, Pants & Sets",
-            "link": "",
+            "link": "shopify://collections/mens-collection",
             "btn_text": "Shop Men"
           }
         },
