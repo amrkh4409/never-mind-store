@@ -30,7 +30,7 @@
         "collection_Ywk3yU": {
           "type": "collection",
           "settings": {
-            "collection": "",
+            "collection": "mens-collection",
             "image": "shopify://shop_images/shop-all.jpg",
             "title": "MEN",
             "subtitle": "T-Shirts, Pants & Sets",
@@ -41,20 +41,22 @@
         "collection_AjdfBi": {
           "type": "collection",
           "settings": {
-            "collection": "",
+            "collection": "womens-collection",
+            "image": "shopify://shop_images/womens-style-collective.jpg",
             "title": "WOMEN",
             "subtitle": "Tops, Dresses & Sets",
-            "link": "",
+            "link": "shopify://collections/womens-collection",
             "btn_text": "Shop Women"
           }
         },
         "collection_xhTqN3": {
           "type": "collection",
           "settings": {
-            "collection": "",
+            "collection": "kids-collection",
+            "image": "shopify://shop_images/kids-collection.jpg",
             "title": "KIDS & TEENS",
             "subtitle": "Sets & Casuals",
-            "link": "",
+            "link": "shopify://collections/kids-collection",
             "btn_text": "Shop Kids"
           }
         },
@@ -146,7 +148,7 @@
       "settings": {
         "title": "Kids Collection",
         "subtitle": "",
-        "collection": "kids",
+        "collection": "kids-collection",
         "products_to_show": 12,
         "enable_slider": true,
         "columns_desktop": 4,
