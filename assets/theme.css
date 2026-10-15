@@ -496,8 +496,7 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
   margin: 0;
   opacity: 0;
   visibility: hidden;
-  transform: translateY(3px);
-  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
   z-index: 60;
   pointer-events: none;
 }
@@ -523,7 +522,6 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
 .header__menu-item--has-dropdown:focus-within > .header__dropdown {
   opacity: 1;
   visibility: visible;
-  transform: translateY(0);
   pointer-events: auto;
 }
 
@@ -533,7 +531,7 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
   margin: 0;
   padding: 0;
   width: 100%;
-  transition: background-color 0.15s ease;
+  transition: background-color 0.3s ease;
 }
 
 .header__dropdown-item:first-child,
@@ -561,7 +559,7 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
   font-weight: 500;
   color: var(--color-foreground);
   text-decoration: none;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .header__dropdown-link:hover,
@@ -576,7 +574,7 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
 .header__submenu-chevron {
   flex-shrink: 0;
   opacity: 0.45;
-  transition: opacity 0.15s ease;
+  transition: opacity 0.3s ease;
 }
 
 .header__dropdown-item:hover > .header__dropdown-link .header__submenu-chevron,
@@ -603,8 +601,7 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
   margin: 0;
   opacity: 0;
   visibility: hidden;
-  transform: translateY(2px);
-  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
   z-index: 70;
   pointer-events: none;
 }
@@ -635,7 +632,6 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
 .header__dropdown-item--has-submenu:focus-within > .header__submenu {
   opacity: 1;
   visibility: visible;
-  transform: translateY(0);
   pointer-events: auto;
 }
 
@@ -645,7 +641,7 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
   margin: 0;
   padding: 0;
   width: 100%;
-  transition: background-color 0.15s ease;
+  transition: background-color 0.3s ease;
 }
 
 .header__submenu-item:first-child,
@@ -670,7 +666,7 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
   font-weight: 500;
   color: var(--color-foreground-secondary);
   text-decoration: none;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .header__submenu-link:hover,
