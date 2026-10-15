@@ -124,7 +124,12 @@
       "shop_collections": "Shop Collections",
       "customer_service": "Customer Service",
       "faq": "FAQ",
-      "cod_inspection": "Cash on Delivery with package inspection across all Egypt"
+      "cod_inspection": "Cash on Delivery with package inspection across all Egypt",
+      "refund_policy": "Return & Refund Policy",
+      "shipping_policy": "Shipping Policy",
+      "privacy_policy": "Privacy Policy",
+      "terms_of_service": "Terms of Service",
+      "legal_notice": "Legal Notice"
     },
     "testimonials": {
       "heading": "What Our Customers Say",
@@ -212,12 +217,12 @@
       "fabric_tailored_fit": "Tailored fit with reinforced drop-shoulder seams",
       "fabric_preshrunk": "Pre-shrunk fabric to prevent post-wash deformation",
       "fabric_wash_instructions": "Machine wash cold with like colors; do not tumble dry",
-      "shipping_gov_title": "Shipping across all Egyptian Governorates:",
-      "shipping_cairo_giza": "Cairo & Giza: Delivered within 24 to 48 hours.",
-      "shipping_alex_delta": "Alexandria & Delta: 2 to 3 business days.",
-      "shipping_upper_coastal": "Upper Egypt & Coastal: 3 to 4 business days.",
+      "shipping_gov_title": "Shipping across all Egyptian Governorates (80 EGP Flat Rate):",
+      "shipping_cairo_giza": "Cairo & Giza: Delivered within 2 to 3 business days.",
+      "shipping_alex_delta": "Alexandria & Delta: Delivered within 3 to 4 business days.",
+      "shipping_upper_coastal": "Canal, Upper Egypt & Coastal: Delivered within 4 to 5 business days.",
       "shipping_free_threshold": "Free Shipping: Automatically applied for orders above {{ threshold }}.",
-      "returns_policy_text": "We offer a hassle-free 14-day exchange and return policy across all Egyptian governorates. You can also inspect and try the order with the courier before payment.",
+      "returns_policy_text": "We offer a 14-day return and exchange policy across Egypt. You can open and inspect the package with the courier before paying (0 EGP if defective/wrong item; 60 EGP courier fee if refused without defect). Underwear is strictly excluded for hygiene.",
       "preview_image": "Preview image",
       "gallery_viewer": "Product image preview",
       "media": {

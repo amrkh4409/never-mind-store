@@ -18,11 +18,11 @@
               {%- if t_title contains 'Inspect' -%}{%- assign t_title = 'معاينة وفحص الطلب قبل الدفع' -%}{%- endif -%}
               {%- if t_text contains 'Open and review' -%}{%- assign t_text = 'افتح الشحنة وتأكد من جودة ومقاسات المنتجات بحضور المندوب قبل السداد' -%}{%- endif -%}
             {%- when 'shipping' -%}
-              {%- if t_title contains 'Shipping' or t_title contains 'Delivery' -%}{%- assign t_title = 'شحن سريع لجميع محافظات مصر' -%}{%- endif -%}
-              {%- if t_text contains 'Cairo' or t_text contains '24-48' -%}{%- assign t_text = 'القاهرة والجيزة خلال ٢٤-٤٨ ساعة | باقي المحافظات خلال ٢-٤ أيام عمل' -%}{%- endif -%}
+              {%- if t_title contains 'Shipping' or t_title contains 'Delivery' -%}{%- assign t_title = 'شحن موحد لجميع محافظات مصر (80 ج)' -%}{%- endif -%}
+              {%- if t_text contains 'Cairo' or t_text contains '24-48' or t_text contains 'القاهرة' -%}{%- assign t_text = 'القاهرة والجيزة خلال ٢-٣ أيام عمل | باقي المحافظات خلال ٣-٥ أيام عمل' -%}{%- endif -%}
             {%- when 'exchange' -%}
-              {%- if t_title contains 'Exchange' -%}{%- assign t_title = 'استبدال مقاسات خلال 14 يوماً' -%}{%- endif -%}
-              {%- if t_text contains 'WhatsApp' or t_text contains 'replacement' -%}{%- assign t_text = 'استبدال سهل وسريع للمقاسات وخدمة عملاء مباشرة عبر واتساب' -%}{%- endif -%}
+              {%- if t_title contains 'Exchange' or t_title contains 'استبدال' -%}{%- assign t_title = 'استبدال واسترجاع خلال 14 يوماً' -%}{%- endif -%}
+              {%- if t_text contains 'WhatsApp' or t_text contains 'replacement' or t_text contains 'استبدال' -%}{%- assign t_text = 'استبدال واسترجاع سهل للمقاسات وخدمة عملاء مباشرة عبر واتساب' -%}{%- endif -%}
           {%- endcase -%}
         {%- endif -%}
 
@@ -100,13 +100,13 @@
           "type": "text",
           "id": "title",
           "label": "Title",
-          "default": "Fast Shipping Across Egypt"
+          "default": "Fast Shipping (80 EGP Flat)"
         },
         {
           "type": "text",
           "id": "text",
           "label": "Description",
-          "default": "Cairo & Giza 24-48 hours | All governorates 2-4 business days"
+          "default": "Cairo & Giza 2-3 days | All governorates 3-5 business days"
         }
       ]
     },
@@ -118,13 +118,13 @@
           "type": "text",
           "id": "title",
           "label": "Title",
-          "default": "14-Day Size Exchange"
+          "default": "14-Day Return & Exchange"
         },
         {
           "type": "text",
           "id": "text",
           "label": "Description",
-          "default": "Effortless size replacement and customer care via WhatsApp"
+          "default": "Hassle-free 14-day exchange and return policy via WhatsApp"
         }
       ]
     }

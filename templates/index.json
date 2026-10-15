@@ -192,15 +192,15 @@
         "shipping_aPijA9": {
           "type": "shipping",
           "settings": {
-            "title": "Fast Shipping Across Egypt",
-            "text": "Cairo & Giza 24-48 hours | All governorates 2-4 business days"
+            "title": "Fast Delivery (80 EGP)",
+            "text": "Cairo & Giza 2-3 days | All governorates 3-5 business days"
           }
         },
         "exchange_nbKa7L": {
           "type": "exchange",
           "settings": {
-            "title": "14-Day Size Exchange",
-            "text": "Effortless size replacement and customer care via WhatsApp"
+            "title": "14-Day Return & Exchange",
+            "text": "Hassle-free 14-day exchange and return policy via WhatsApp"
           }
         }
       },

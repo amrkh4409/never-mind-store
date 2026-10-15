@@ -31,15 +31,15 @@
         "badge_shipping": {
           "type": "shipping",
           "settings": {
-            "title": "Express Shipping",
-            "text": "24-48h Cairo & Giza • 2-4 days governorates"
+            "title": "Fast Delivery (80 EGP)",
+            "text": "Cairo & Giza 2-3 days • Governorates 3-5 days"
           }
         },
         "badge_exchange": {
           "type": "exchange",
           "settings": {
-            "title": "14-Day Exchange",
-            "text": "Hassle-free size replacement at your door"
+            "title": "14-Day Return & Exchange",
+            "text": "Hassle-free 14-day exchange and return policy"
           }
         }
       },

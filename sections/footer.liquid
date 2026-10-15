@@ -156,8 +156,11 @@
           <h4 class="footer-col__title">{{ 'sections.footer.customer_service' | t }}</h4>
           <ul class="footer-links">
             <li><a href="/pages/contact">{{ 'sections.contact.title' | t }}</a></li>
-            <li><a href="/pages/faq">{{ 'sections.footer.faq' | t }}</a></li>
-            <li><a href="#" data-size-guide-open>{{ 'products.product.size_guide' | t }}</a></li>
+            <li><a href="/pages/refund-policy">{{ 'sections.footer.refund_policy' | t }}</a></li>
+            <li><a href="/pages/shipping-policy">{{ 'sections.footer.shipping_policy' | t }}</a></li>
+            <li><a href="/pages/privacy-policy">{{ 'sections.footer.privacy_policy' | t }}</a></li>
+            <li><a href="/pages/terms-of-service">{{ 'sections.footer.terms_of_service' | t }}</a></li>
+            <li><a href="/pages/legal-notice">{{ 'sections.footer.legal_notice' | t }}</a></li>
           </ul>
         </div>
 
@@ -200,6 +203,18 @@
         {%- else -%}
           {{ 'sections.footer.copyright' | t }}
         {%- endif -%}
+      </div>
+
+      <div class="footer-bottom__policies" style="display: flex; gap: 14px; flex-wrap: wrap; font-size: 0.82rem; align-items: center;">
+        <a href="/pages/refund-policy" style="color: var(--color-foreground-secondary); text-decoration: none;">{{ 'sections.footer.refund_policy' | t }}</a>
+        <span style="opacity: 0.3;">&bull;</span>
+        <a href="/pages/shipping-policy" style="color: var(--color-foreground-secondary); text-decoration: none;">{{ 'sections.footer.shipping_policy' | t }}</a>
+        <span style="opacity: 0.3;">&bull;</span>
+        <a href="/pages/privacy-policy" style="color: var(--color-foreground-secondary); text-decoration: none;">{{ 'sections.footer.privacy_policy' | t }}</a>
+        <span style="opacity: 0.3;">&bull;</span>
+        <a href="/pages/terms-of-service" style="color: var(--color-foreground-secondary); text-decoration: none;">{{ 'sections.footer.terms_of_service' | t }}</a>
+        <span style="opacity: 0.3;">&bull;</span>
+        <a href="/pages/legal-notice" style="color: var(--color-foreground-secondary); text-decoration: none;">{{ 'sections.footer.legal_notice' | t }}</a>
       </div>
 
       {%- if section.settings.show_payment_cod -%}
