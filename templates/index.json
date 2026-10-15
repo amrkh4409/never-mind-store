@@ -63,7 +63,7 @@
         "collection_MjeLV8": {
           "type": "collection",
           "settings": {
-            "collection": "",
+            "collection": "accessories-collection",
             "title": "NEW ARRIVALS",
             "subtitle": "Fresh Drops",
             "link": "",
@@ -157,6 +157,21 @@
         "view_all_link": ""
       }
     },
+    "featured_collection_pp8eRp": {
+      "type": "featured-collection",
+      "name": "Featured Products Slider",
+      "settings": {
+        "title": "Accessories Collection ",
+        "subtitle": "",
+        "collection": "accessories-collection",
+        "products_to_show": 12,
+        "enable_slider": true,
+        "columns_desktop": 4,
+        "show_vendor": true,
+        "view_all_text": "View All",
+        "view_all_link": ""
+      }
+    },
     "trust_badges_HgT8PN": {
       "type": "trust-badges",
       "blocks": {
@@ -206,6 +221,7 @@
     "featured_collection_gykm3D",
     "featured_collection_Rk4AeN",
     "featured_collection_nmWkJn",
+    "featured_collection_pp8eRp",
     "trust_badges_HgT8PN"
   ]
 }
