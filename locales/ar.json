@@ -219,7 +219,10 @@
       "shipping_free_threshold": "شحن مجاني: يُطبق تلقائياً على الطلبات التي تتجاوز 1000 جنيه مصري.",
       "returns_policy_text": "نقدم سياسة استبدال واسترجاع ميسرة خلال 14 يوماً في جميع محافظات مصر. كما يمكنك معاينة وقياس المنتج مع مندوب الشحن قبل إتمام الدفع.",
       "preview_image": "معاينة الصورة",
-      "gallery_viewer": "معاينة صور المنتج"
+      "gallery_viewer": "معاينة صور المنتج",
+      "media": {
+        "load_image": "عرض الصورة"
+      }
     }
   },
   "collections": {
@@ -247,7 +250,8 @@
       "product_count": {
         "one": "منتج واحد",
         "other": "{{ count }} منتجات"
-      }
+      },
+      "all_of_collection": "كل {{ collection }}"
     },
     "sorting": {
       "featured": "المميز",
@@ -337,7 +341,9 @@
   "accessibility": {
     "skip_to_content": "الانتقال إلى المحتوى الرئيسي",
     "close": "إغلاق",
-    "main_navigation": "التنقل الرئيسي"
+    "main_navigation": "التنقل الرئيسي",
+    "previous_slide": "الشريحة السابقة",
+    "next_slide": "الشريحة التالية"
   },
   "templates": {
     "gift_card": {

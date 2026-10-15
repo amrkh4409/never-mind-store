@@ -293,7 +293,8 @@
             <div class="mobile-nav__accordion-content">
               {%- if link.url != blank and link.url != '#' -%}
                 <a href="{{ link.url }}" class="mobile-nav__shop-all-link">
-                  <span>{{ 'collections.general.all_of_collection' | t: collection: link.title | default: 'Shop All' }}</span>
+                  {%- capture translated_link_title -%}{% render 'translate-nav', text: link.title %}{%- endcapture -%}
+                  <span>{{ 'collections.general.all_of_collection' | t: collection: translated_link_title | default: 'Shop All' }}</span>
                   <span aria-hidden="true">{% if is_rtl %}&larr;{% else %}&rarr;{% endif %}</span>
                 </a>
               {%- endif -%}
@@ -310,7 +311,8 @@
                       <div class="mobile-nav__sub-accordion-content">
                         {%- if child.url != blank and child.url != '#' -%}
                           <a href="{{ child.url }}" class="mobile-nav__sub-link" style="font-weight: 600;">
-                            {{ 'collections.general.all_of_collection' | t: collection: child.title | default: 'All' }}
+                            {%- capture translated_child_title -%}{% render 'translate-nav', text: child.title %}{%- endcapture -%}
+                            {{ 'collections.general.all_of_collection' | t: collection: translated_child_title | default: 'All' }}
                           </a>
                         {%- endif -%}
                         {%- for grandchild in child.links -%}

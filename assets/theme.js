@@ -378,6 +378,9 @@
       }
 
       // Click on modal image to zoom in / zoom out
+      let originX = 50;
+      let originY = 50;
+
       if (this.modalImg) {
         this.modalImg.addEventListener('click', (e) => {
           e.preventDefault();
@@ -386,12 +389,14 @@
             const rect = this.modalImg.getBoundingClientRect();
             const xPercent = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
             const yPercent = Math.max(0, Math.min(100, ((e.clientY - rect.top) / rect.height) * 100));
-            this.modalImg.style.transformOrigin = `${xPercent}% ${yPercent}%`;
+            originX = xPercent;
+            originY = yPercent;
+            this.modalImg.style.transformOrigin = `${originX}% ${originY}%`;
           }
           this.toggleModalZoom();
         });
 
-        // Pan image smoothly when zoomed in
+        // Desktop mouse pan when zoomed
         const handlePan = (e) => {
           if (!this.isModalZoomed || !this.modalImg) return;
           const rect = this.modalContent ? this.modalContent.getBoundingClientRect() : this.modalImg.getBoundingClientRect();
@@ -404,6 +409,72 @@
         if (this.modalContent) {
           this.modalContent.addEventListener('mousemove', handlePan);
         }
+      }
+
+      // Mobile Touch Swipe & Pan Gestures
+      if (this.modalContent) {
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchStartTime = 0;
+        let panStartX = 0;
+        let panStartY = 0;
+        let isTouching = false;
+
+        this.modalContent.addEventListener('touchstart', (e) => {
+          if (e.touches.length === 1) {
+            isTouching = true;
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            panStartX = touchStartX;
+            panStartY = touchStartY;
+            touchStartTime = Date.now();
+          }
+        }, { passive: true });
+
+        this.modalContent.addEventListener('touchmove', (e) => {
+          if (!isTouching || e.touches.length !== 1) return;
+
+          // If zoomed in on mobile, pan the image with finger movement
+          if (this.isModalZoomed && this.modalImg) {
+            const currentX = e.touches[0].clientX;
+            const currentY = e.touches[0].clientY;
+            const deltaX = currentX - panStartX;
+            const deltaY = currentY - panStartY;
+            panStartX = currentX;
+            panStartY = currentY;
+
+            originX = Math.max(0, Math.min(100, originX - (deltaX / window.innerWidth) * 70));
+            originY = Math.max(0, Math.min(100, originY - (deltaY / window.innerHeight) * 70));
+            this.modalImg.style.transformOrigin = `${originX}% ${originY}%`;
+          }
+        }, { passive: true });
+
+        this.modalContent.addEventListener('touchend', (e) => {
+          if (!isTouching) return;
+          isTouching = false;
+
+          // If not zoomed, detect horizontal swipe gesture to change slides
+          if (!this.isModalZoomed && e.changedTouches.length === 1) {
+            const deltaX = e.changedTouches[0].clientX - touchStartX;
+            const deltaY = e.changedTouches[0].clientY - touchStartY;
+            const deltaTime = Date.now() - touchStartTime;
+
+            // Swipe threshold: distance > 40px, predominantly horizontal, within 450ms
+            if (Math.abs(deltaX) > 40 && Math.abs(deltaX) > Math.abs(deltaY) * 1.2 && deltaTime < 450) {
+              const isRtl = document.documentElement.dir === 'rtl';
+              if (deltaX < 0) {
+                // Swiped left
+                this.modalStep(isRtl ? -1 : 1);
+              } else {
+                // Swiped right
+                this.modalStep(isRtl ? 1 : -1);
+              }
+            } else if (deltaY > 100 && Math.abs(deltaY) > Math.abs(deltaX) * 2 && deltaTime < 400) {
+              // Swipe down quickly on mobile to dismiss preview modal
+              this.closeModal();
+            }
+          }
+        }, { passive: true });
       }
 
       // Prev & Next navigation inside modal

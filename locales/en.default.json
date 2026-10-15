@@ -219,7 +219,10 @@
       "shipping_free_threshold": "Free Shipping: Automatically applied for orders above 1000 EGP.",
       "returns_policy_text": "We offer a hassle-free 14-day exchange and return policy across all Egyptian governorates. You can also inspect and try the order with the courier before payment.",
       "preview_image": "Preview image",
-      "gallery_viewer": "Product image preview"
+      "gallery_viewer": "Product image preview",
+      "media": {
+        "load_image": "View image"
+      }
     }
   },
   "collections": {
@@ -247,7 +250,8 @@
       "product_count": {
         "one": "{{ count }} product",
         "other": "{{ count }} products"
-      }
+      },
+      "all_of_collection": "All {{ collection }}"
     },
     "sorting": {
       "featured": "Featured",
@@ -337,7 +341,9 @@
   "accessibility": {
     "skip_to_content": "Skip to content",
     "close": "Close",
-    "main_navigation": "Main Navigation"
+    "main_navigation": "Main Navigation",
+    "previous_slide": "Previous slide",
+    "next_slide": "Next slide"
   },
   "templates": {
     "gift_card": {
