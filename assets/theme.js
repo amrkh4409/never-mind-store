@@ -1041,6 +1041,11 @@
 
   // --- Accordion & Modal Helpers ---
   function initAccordions() {
+    // Ensure all initially open accordions (e.g. description) have unconstrained max-height
+    document.querySelectorAll('.accordion-content.is-open').forEach(el => {
+      el.style.maxHeight = 'none';
+    });
+
     document.addEventListener('click', (e) => {
       const header = e.target.closest('.accordion-header');
       if (!header) return;
@@ -1049,6 +1054,9 @@
       const isOpen = content.classList.contains('is-open');
 
       if (isOpen) {
+        // Set exact pixel height before collapsing so CSS transition animates smoothly
+        content.style.maxHeight = `${content.scrollHeight}px`;
+        void content.offsetHeight; // Force reflow
         content.classList.remove('is-open');
         content.style.maxHeight = '0px';
         header.classList.remove('is-active');
@@ -1058,6 +1066,12 @@
         content.style.maxHeight = `${content.scrollHeight + 32}px`;
         header.classList.add('is-active');
         header.setAttribute('aria-expanded', 'true');
+        // Once transition completes, release max-height to 'none' so dynamic content/images never clip
+        setTimeout(() => {
+          if (content.classList.contains('is-open')) {
+            content.style.maxHeight = 'none';
+          }
+        }, 360);
       }
     });
   }
