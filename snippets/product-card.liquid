@@ -18,7 +18,7 @@
   endif
 -%}
 
-<div class="product-card" data-product-card data-product-id="{{ product.id }}">
+<div class="product-card{% if has_secondary_image %} product-card--has-secondary{% endif %}" data-product-card data-product-id="{{ product.id }}">
   <div class="product-card__media-wrapper">
     <a href="{{ product.url }}" aria-label="{{ product.title | escape }}" style="display: block; width: 100%; height: 100%;">
       {%- if product.featured_media -%}

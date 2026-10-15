@@ -991,6 +991,7 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center right;
   z-index: 1;
 }
 
@@ -1308,7 +1309,8 @@ h6, .h6 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.06em; 
     visibility: visible;
   }
 
-  .product-card:hover .product-card__img--primary {
+  .product-card--has-secondary:hover .product-card__img--primary,
+  .product-card:has(.product-card__img--secondary):hover .product-card__img--primary {
     opacity: 0;
   }
 
