@@ -83,15 +83,23 @@
       },
       {
         "type": "checkbox",
+        "id": "enable_free_shipping",
+        "label": "Enable Free Shipping Offer Storewide",
+        "info": "When enabled with a threshold > 0, free shipping calculations and notices appear in Cart and Product pages.",
+        "default": false
+      },
+      {
+        "type": "checkbox",
         "id": "show_free_shipping_bar",
-        "label": "Show Free Shipping Progress Bar",
-        "default": true
+        "label": "Show Free Shipping Progress Bar in Cart Drawer",
+        "default": false
       },
       {
         "type": "number",
         "id": "free_shipping_threshold",
-        "label": "Free Shipping Threshold (EGP)",
-        "default": 1000
+        "label": "Free Shipping Threshold (Store Currency)",
+        "info": "Set to 0 to disable free shipping. Enter amount (e.g. 1500) to activate offer.",
+        "default": 0
       },
       {
         "type": "text",

@@ -86,9 +86,14 @@
       this.shippingContainer = document.getElementById('CartFreeShippingContainer') || this.container?.querySelector('.cart-free-shipping');
       this.countBadges = document.querySelectorAll('[data-cart-count]');
       
-      this.enableFreeShipping = window.NeverMindConfig?.enableFreeShipping ?? true;
-      this.showFreeShippingBar = window.NeverMindConfig?.showFreeShippingBar ?? true;
+      this.enableFreeShipping = window.NeverMindConfig?.enableFreeShipping === true;
+      this.showFreeShippingBar = window.NeverMindConfig?.showFreeShippingBar === true;
       this.threshold = parseFloat(window.NeverMindConfig?.freeShippingThreshold || 0);
+
+      const isInitialShippingEligible = (this.enableFreeShipping === true) && (this.showFreeShippingBar === true) && (this.threshold > 0);
+      if (this.shippingContainer && !isInitialShippingEligible) {
+        this.shippingContainer.style.setProperty("display", "none", "important");
+      }
       
       this.bindEvents();
     }
@@ -196,7 +201,11 @@
       // Update Free Shipping Bar
       const isShippingEligible = this.enableFreeShipping && this.showFreeShippingBar && this.threshold > 0;
       if (this.shippingContainer) {
-        this.shippingContainer.style.display = isShippingEligible ? '' : 'none';
+        if (!isShippingEligible) {
+          this.shippingContainer.style.setProperty('display', 'none', 'important');
+        } else {
+          this.shippingContainer.style.display = '';
+        }
       }
 
       if (isShippingEligible && this.shippingBar && this.shippingText) {

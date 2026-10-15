@@ -387,7 +387,7 @@
                 <li>{{ 'products.product.shipping_cairo_giza' | t }}</li>
                 <li>{{ 'products.product.shipping_alex_delta' | t }}</li>
                 <li>{{ 'products.product.shipping_upper_coastal' | t }}</li>
-                {%- if settings.enable_free_shipping and settings.free_shipping_threshold > 0 -%}
+                {%- if settings.enable_free_shipping == true and settings.free_shipping_threshold > 0 -%}
                   {%- assign fs_cents = settings.free_shipping_threshold | times: 100 -%}
                   {%- assign fs_money = fs_cents | money -%}
                   <li><strong>{{ 'products.product.shipping_free_threshold' | t: threshold: fs_money }}</strong></li>

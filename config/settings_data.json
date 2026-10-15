@@ -29,8 +29,8 @@
     "show_quick_view": true,
     "show_wishlist": true,
     "cart_drawer_enabled": true,
-    "show_free_shipping_bar": true,
-    "free_shipping_threshold": 1000,
+    "show_free_shipping_bar": false,
+    "free_shipping_threshold": 0,
     "free_shipping_message": "Congratulations! You qualify for FREE SHIPPING",
     "enable_cart_notes": true,
     "enable_cod_badge": true,
@@ -54,7 +54,7 @@
           "announcement-bar-0": {
             "type": "announcement",
             "settings": {
-              "text": "FREE SHIPPING ON ORDERS OVER 1000 EGP • CASH ON DELIVERY AVAILABLE • INSPECT PACKAGE BEFORE PAYMENT",
+              "text": "CASH ON DELIVERY AVAILABLE • INSPECT PACKAGE BEFORE PAYMENT",
               "link": ""
             }
           }
@@ -153,6 +153,6 @@
       }
     },
     "content_for_index": [],
-    "enable_free_shipping": true
+    "enable_free_shipping": false
   }
 }

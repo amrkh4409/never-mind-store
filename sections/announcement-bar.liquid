@@ -6,7 +6,7 @@
         {%- assign is_ar = true -%}
       {%- endif -%}
       {%- assign has_free_shipping = false -%}
-      {%- if settings.enable_free_shipping and settings.free_shipping_threshold > 0 -%}
+      {%- if settings.enable_free_shipping == true and settings.free_shipping_threshold > 0 -%}
         {%- assign has_free_shipping = true -%}
         {%- assign fs_cents = settings.free_shipping_threshold | times: 100 -%}
         {%- assign fs_money = fs_cents | money -%}
@@ -30,8 +30,11 @@
               {%- assign a_text = 'الدفع عند الاستلام متاح • فحص ومعاينة الشحنة قبل الدفع' -%}
             {%- endif -%}
           {%- else -%}
-            {%- if a_text contains 'FREE SHIPPING' or a_text contains 'Free Shipping' -%}
+            {%- if a_text contains 'FREE SHIPPING' or a_text contains 'Free Shipping' or a_text contains 'Free shipping' -%}
               {%- assign a_text = a_text | replace: 'FREE SHIPPING ON ORDERS OVER 1000 EGP • ', '' | replace: 'FREE SHIPPING ACROSS EGYPT OVER 1000 EGP • ', '' | replace: 'FREE SHIPPING • ', '' | replace: 'Free Shipping • ', '' -%}
+              {%- if a_text contains 'FREE SHIPPING' or a_text contains 'Free Shipping' -%}
+                {%- assign a_text = 'CASH ON DELIVERY AVAILABLE • INSPECT PACKAGE BEFORE PAYMENT' -%}
+              {%- endif -%}
             {%- endif -%}
           {%- endif -%}
         {%- endif -%}
@@ -81,7 +84,7 @@
           "type": "text",
           "id": "text",
           "label": "Message",
-          "default": "FREE SHIPPING ACROSS EGYPT OVER 1000 EGP • CASH ON DELIVERY AVAILABLE"
+          "default": "CASH ON DELIVERY AVAILABLE • INSPECT PACKAGE BEFORE PAYMENT"
         },
         {
           "type": "url",
@@ -96,7 +99,7 @@
       {
         "type": "announcement",
         "settings": {
-          "text": "FREE SHIPPING ON ORDERS OVER 1000 EGP • CASH ON DELIVERY AVAILABLE • INSPECT PACKAGE BEFORE PAYMENT"
+          "text": "CASH ON DELIVERY AVAILABLE • INSPECT PACKAGE BEFORE PAYMENT"
         }
       }
     ]
