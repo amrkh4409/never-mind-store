@@ -5,11 +5,34 @@
       {%- if request.locale.iso_code == 'ar' or localization.language.iso_code == 'ar' -%}
         {%- assign is_ar = true -%}
       {%- endif -%}
+      {%- assign has_free_shipping = false -%}
+      {%- if settings.enable_free_shipping and settings.free_shipping_threshold > 0 -%}
+        {%- assign has_free_shipping = true -%}
+        {%- assign fs_cents = settings.free_shipping_threshold | times: 100 -%}
+        {%- assign fs_money = fs_cents | money -%}
+      {%- endif -%}
+
       {%- for block in section.blocks -%}
         {%- assign a_text = block.settings.text -%}
-        {%- if is_ar -%}
-          {%- if a_text contains 'FREE SHIPPING' or a_text contains 'Free Shipping' or a_text contains 'CASH ON DELIVERY' -%}
-            {%- assign a_text = 'شحن مجاني لجميع محافظات مصر للطلبات فوق 1000 ج.م • الدفع عند الاستلام متاح' -%}
+        {%- if has_free_shipping -%}
+          {%- if is_ar -%}
+            {%- if a_text contains 'FREE SHIPPING' or a_text contains 'Free Shipping' or a_text contains 'شحن مجاني' or a_text contains '1000' -%}
+              {%- assign a_text = 'شحن مجاني لجميع محافظات مصر للطلبات فوق ' | append: fs_money | append: ' • الدفع عند الاستلام متاح' -%}
+            {%- endif -%}
+          {%- else -%}
+            {%- if a_text contains '1000 EGP' or a_text contains '1000' -%}
+              {%- assign a_text = a_text | replace: '1000 EGP', fs_money | replace: '1000', fs_money -%}
+            {%- endif -%}
+          {%- endif -%}
+        {%- else -%}
+          {%- if is_ar -%}
+            {%- if a_text contains 'FREE SHIPPING' or a_text contains 'Free Shipping' or a_text contains 'شحن مجاني' -%}
+              {%- assign a_text = 'الدفع عند الاستلام متاح • فحص ومعاينة الشحنة قبل الدفع' -%}
+            {%- endif -%}
+          {%- else -%}
+            {%- if a_text contains 'FREE SHIPPING' or a_text contains 'Free Shipping' -%}
+              {%- assign a_text = a_text | replace: 'FREE SHIPPING ON ORDERS OVER 1000 EGP • ', '' | replace: 'FREE SHIPPING ACROSS EGYPT OVER 1000 EGP • ', '' | replace: 'FREE SHIPPING • ', '' | replace: 'Free Shipping • ', '' -%}
+            {%- endif -%}
           {%- endif -%}
         {%- endif -%}
         <div class="announcement-bar__item" {{ block.shopify_attributes }}>

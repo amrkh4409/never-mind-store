@@ -51,7 +51,9 @@
     <script>
       document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
       window.NeverMindConfig = {
-        freeShippingThreshold: {{ settings.free_shipping_threshold | default: 1000 }},
+        enableFreeShipping: {{ settings.enable_free_shipping | default: false | json }},
+        showFreeShippingBar: {{ settings.show_free_shipping_bar | default: false | json }},
+        freeShippingThreshold: {{ settings.free_shipping_threshold | default: 0 }},
         freeShippingUnlockedMsg: {{ 'sections.cart_drawer.free_shipping_achieved' | t | json }},
         currency: {{ cart.currency.iso_code | default: 'EGP' | json }},
         currencySymbol: {{ cart.currency.symbol | json }},

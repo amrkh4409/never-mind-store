@@ -9,23 +9,25 @@
   </div>
 
   <!-- Free Shipping Goal -->
-  <div class="cart-free-shipping">
-    <div id="FreeShippingProgressText" class="cart-free-shipping__text">
-      {%- assign threshold = settings.free_shipping_threshold | default: 1000 -%}
-      {%- assign total_egp = cart.total_price | divided_by: 100.0 -%}
-      {%- if total_egp >= threshold -%}
-        🎉 <strong>{{ 'sections.cart_drawer.free_shipping_achieved' | t }}</strong>
-      {%- else -%}
-        {%- assign remaining = threshold | minus: total_egp | round -%}
-        {{ 'sections.cart_drawer.free_shipping_before' | t }} <strong>{{ remaining }} EGP</strong> {{ 'sections.cart_drawer.free_shipping_after' | t }}
-      {%- endif -%}
+  {%- if settings.enable_free_shipping and settings.show_free_shipping_bar and settings.free_shipping_threshold > 0 -%}
+    <div class="cart-free-shipping" id="CartFreeShippingContainer">
+      <div id="FreeShippingProgressText" class="cart-free-shipping__text">
+        {%- assign threshold_cents = settings.free_shipping_threshold | times: 100 -%}
+        {%- if cart.total_price >= threshold_cents -%}
+          🎉 <strong>{{ 'sections.cart_drawer.free_shipping_achieved' | t }}</strong>
+        {%- else -%}
+          {%- assign remaining_cents = threshold_cents | minus: cart.total_price -%}
+          {%- assign remaining_money = remaining_cents | money -%}
+          {{ 'sections.cart_drawer.free_shipping_before' | t }} <strong>{{ remaining_money }}</strong> {{ 'sections.cart_drawer.free_shipping_after' | t }}
+        {%- endif -%}
+      </div>
+      <div class="cart-free-shipping__bar">
+        {%- assign progress = cart.total_price | times: 100.0 | divided_by: threshold_cents -%}
+        {%- if progress > 100 -%}{%- assign progress = 100 -%}{%- endif -%}
+        <div id="FreeShippingProgressBar" class="cart-free-shipping__progress" style="width: {{ progress }}%;"></div>
+      </div>
     </div>
-    <div class="cart-free-shipping__bar">
-      {%- assign progress = total_egp | times: 100.0 | divided_by: threshold -%}
-      {%- if progress > 100 -%}{%- assign progress = 100 -%}{%- endif -%}
-      <div id="FreeShippingProgressBar" class="cart-free-shipping__progress" style="width: {{ progress }}%;"></div>
-    </div>
-  </div>
+  {%- endif -%}
 
   <!-- Items List -->
   <div id="CartDrawerItems" class="cart-drawer__body">

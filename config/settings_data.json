@@ -152,6 +152,7 @@
         }
       }
     },
-    "content_for_index": []
+    "content_for_index": [],
+    "enable_free_shipping": true
   }
 }

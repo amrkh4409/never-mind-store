@@ -83,9 +83,12 @@
       this.subtotalEl = document.getElementById('CartDrawerSubtotal');
       this.shippingBar = document.getElementById('FreeShippingProgressBar');
       this.shippingText = document.getElementById('FreeShippingProgressText');
+      this.shippingContainer = document.getElementById('CartFreeShippingContainer') || this.container?.querySelector('.cart-free-shipping');
       this.countBadges = document.querySelectorAll('[data-cart-count]');
       
-      this.threshold = parseFloat(window.NeverMindConfig?.freeShippingThreshold || 1000);
+      this.enableFreeShipping = window.NeverMindConfig?.enableFreeShipping ?? true;
+      this.showFreeShippingBar = window.NeverMindConfig?.showFreeShippingBar ?? true;
+      this.threshold = parseFloat(window.NeverMindConfig?.freeShippingThreshold || 0);
       
       this.bindEvents();
     }
@@ -191,18 +194,25 @@
       }
 
       // Update Free Shipping Bar
-      if (this.shippingBar && this.shippingText) {
-        const totalEGP = cart.total_price / 100;
-        const progress = Math.min(100, Math.round((totalEGP / this.threshold) * 100));
+      const isShippingEligible = this.enableFreeShipping && this.showFreeShippingBar && this.threshold > 0;
+      if (this.shippingContainer) {
+        this.shippingContainer.style.display = isShippingEligible ? '' : 'none';
+      }
+
+      if (isShippingEligible && this.shippingBar && this.shippingText) {
+        const thresholdCents = this.threshold * 100;
+        const currentCents = cart.total_price;
+        const progress = Math.min(100, Math.round((currentCents / thresholdCents) * 100));
         this.shippingBar.style.width = `${progress}%`;
 
-        if (totalEGP >= this.threshold) {
+        if (currentCents >= thresholdCents) {
           this.shippingText.innerHTML = `🎉 <strong>${window.NeverMindConfig?.translations?.freeShippingAchieved || window.NeverMindConfig?.freeShippingUnlockedMsg || "You've unlocked FREE SHIPPING!"}</strong>`;
         } else {
-          const remaining = Math.round(this.threshold - totalEGP);
+          const remainingCents = thresholdCents - currentCents;
+          const formattedRemaining = formatMoney(remainingCents);
           const before = window.NeverMindConfig?.translations?.freeShippingBefore || 'Add';
           const after = window.NeverMindConfig?.translations?.freeShippingAfter || 'more for FREE SHIPPING';
-          this.shippingText.innerHTML = `${before} <strong>${remaining} EGP</strong> ${after}`;
+          this.shippingText.innerHTML = `${before} <strong>${formattedRemaining}</strong> ${after}`;
         }
       }
 
