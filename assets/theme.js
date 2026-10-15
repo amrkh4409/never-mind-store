@@ -259,6 +259,7 @@
       this.thumbs = Array.from(this.container.querySelectorAll('[data-gallery-thumb]'));
       this.prevBtn = this.container.querySelector('[data-gallery-prev]');
       this.nextBtn = this.container.querySelector('[data-gallery-next]');
+      this.zoomBtn = this.container.querySelector('[data-gallery-zoom]');
       this.currentIndex = 0;
       this.isScrolling = false;
 
@@ -342,18 +343,25 @@
         });
       }
 
+      // Single zoom button opens the current photo
+      if (this.zoomBtn) {
+        this.zoomBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          this.openModal(this.currentIndex);
+        });
+      }
+
+      // Clicking directly on an image slide opens that photo
       this.slides.forEach((slide, index) => {
         const img = slide.querySelector('.product-gallery__main-img');
-        const zoomBtn = slide.querySelector('[data-gallery-zoom]');
-
-        const handlePreviewClick = (e) => {
-          if (isDragging) return;
-          e.preventDefault();
-          this.openModal(index);
-        };
-
-        if (img) img.addEventListener('click', handlePreviewClick);
-        if (zoomBtn) zoomBtn.addEventListener('click', handlePreviewClick);
+        if (img) {
+          img.addEventListener('click', (e) => {
+            if (isDragging) return;
+            e.preventDefault();
+            this.openModal(index);
+          });
+        }
       });
     }
 
