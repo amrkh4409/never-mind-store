@@ -275,7 +275,9 @@
       this.container = container;
       this.slider = this.container.querySelector('[data-gallery-slider]');
       this.slides = Array.from(this.container.querySelectorAll('[data-gallery-slide]'));
+      this.thumbsContainer = this.container.querySelector('[data-gallery-thumbnails]');
       this.thumbs = Array.from(this.container.querySelectorAll('[data-gallery-thumb]'));
+      this.galleryCounterCurrent = this.container.querySelector('[data-gallery-current]');
       this.prevBtn = this.container.querySelector('[data-gallery-prev]');
       this.nextBtn = this.container.querySelector('[data-gallery-next]');
       this.zoomBtn = this.container.querySelector('[data-gallery-zoom]');
@@ -634,7 +636,7 @@
         }
       });
 
-      this.setActiveState(closestIndex, false);
+      this.setActiveState(closestIndex, true);
     }
 
     slideStep(step) {
@@ -689,11 +691,19 @@
         slide.classList.toggle('is-active', idx === index);
       });
 
+      if (this.galleryCounterCurrent) {
+        this.galleryCounterCurrent.textContent = index + 1;
+      }
+
       this.thumbs.forEach((thumb, idx) => {
         const isActive = idx === index;
         thumb.classList.toggle('is-active', isActive);
-        if (isActive && scrollThumb) {
-          thumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        if (isActive && scrollThumb && this.thumbsContainer) {
+          const thumbLeft = thumb.offsetLeft;
+          const thumbWidth = thumb.offsetWidth;
+          const containerWidth = this.thumbsContainer.clientWidth;
+          const scrollPos = thumbLeft - (containerWidth / 2) + (thumbWidth / 2);
+          this.thumbsContainer.scrollTo({ left: Math.max(0, scrollPos), behavior: 'smooth' });
         }
       });
     }

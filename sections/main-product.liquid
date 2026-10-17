@@ -99,6 +99,11 @@
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
             </button>
+
+            <!-- Gallery Photo Counter -->
+            <div class="product-gallery__counter" data-gallery-counter>
+              <span data-gallery-current>1</span> / <span>{{ product.media.size }}</span>
+            </div>
           {%- endif -%}
         </div>
 
